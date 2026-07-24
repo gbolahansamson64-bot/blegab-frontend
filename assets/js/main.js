@@ -115,7 +115,7 @@ body.innerHTML = items.map(function (item) {
             '<span class="cart-drawer__item-price">$' + Number(product.price).toFixed(2) + '</span>' +
             '<div class="cart-drawer__item-qty">' +
               '<button type="button" class="cart-drawer__qty-btn" data-cart-decrease="' + item.id + '" aria-label="Decrease quantity">&minus;</button>' +
-              '<input type="number" class="cart-drawer__qty-value" value="' + item.qty + '" min="1" data-cart-qty-input="' + item.id + '" />' +
+              '<span class="cart-drawer__qty-value">' + item.qty + '</span>' +
               '<button type="button" class="cart-drawer__qty-btn" data-cart-increase="' + item.id + '" aria-label="Increase quantity">+</button>' +
                 '<button type="button" class="cart-drawer__reset-btn" data-cart-reset="' + item.id + '" aria-label="Reset quantity">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
