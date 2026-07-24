@@ -30,6 +30,13 @@ function formatMoney(amount) {
   return '$' + parts.join('.');
 }
 
+function formatQtyDisplay(num) {
+  if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+  if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return num.toString();
+}
+
 /* -----------------------------
    Main render — rebuilds the row list + summary numbers
    ----------------------------- */
@@ -309,15 +316,3 @@ function initNewsletterForm() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 }
-
-document.addEventListener('change', function (event) {
-  var qtyInput = event.target.closest('[data-cart-page-qty-input]');
-  if (!qtyInput) return;
-  var id = qtyInput.dataset.cartPageQtyInput;
-  var newQty = parseInt(qtyInput.value, 10);
-  if (isNaN(newQty) || newQty < 1) {
-    newQty = 1;
-    qtyInput.value = 1;
-  }
-  window.BLEGAB_CART.setQty(id, newQty);
-});
