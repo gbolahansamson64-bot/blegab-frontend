@@ -140,6 +140,13 @@
     </button>
 
     <div class="account-dropdown" data-account-dropdown>
+      <a href="login.html" class="account-dropdown__item" data-account-guest>
+        <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+        </svg>
+        Sign In
+      </a>
       <a href="signup.html" class="account-dropdown__item" data-account-guest>
         <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -232,40 +239,40 @@
         </li>
 
         <li class="nav-item has-dropdown">
-          <a href="collections.html" class="nav-link">
+          <a href="shop.html" class="nav-link">
             Collections
             <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
           <ul class="nav-dropdown">
-            <li><a href="body-wave.html" class="nav-dropdown__link">Body Wave Wigs</a></li>
-            <li><a href="deep-wave.html" class="nav-dropdown__link">Deep Wave Wigs</a></li>
-            <li><a href="highlight.html" class="nav-dropdown__link">Highlight Wigs</a></li>
-            <li><a href="bob.html" class="nav-dropdown__link">Bob Wigs</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Body Wave Wigs</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Deep Wave Wigs</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Highlight Wigs</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Bob Wigs</a></li>
           </ul>
         </li>
 
         <li class="nav-item has-dropdown">
-          <a href="lace-wigs.html" class="nav-link">
+          <a href="shop.html" class="nav-link">
             Lace Wigs
             <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
           <ul class="nav-dropdown">
-            <li><a href="lace-front.html" class="nav-dropdown__link">Lace Front</a></li>
-            <li><a href="full-lace.html" class="nav-dropdown__link">Full Lace</a></li>
-            <li><a href="hd-lace.html" class="nav-dropdown__link">HD Lace</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Lace Front</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">Full Lace</a></li>
+            <li><a href="shop.html" class="nav-dropdown__link">HD Lace</a></li>
           </ul>
         </li>
 
         <li class="nav-item">
-          <a href="custom.html" class="nav-link">Custom Wigs</a>
+          <a href="shop.html" class="nav-link">Custom Wigs</a>
         </li>
 
         <li class="nav-item">
-          <a href="bone-straight.html" class="nav-link">Bone Straight</a>
+          <a href="shop.html" class="nav-link">Bone Straight</a>
         </li>
 
         <li class="nav-item">
@@ -294,6 +301,19 @@
             </svg>
           </a>
           <ul class="nav-dropdown nav-dropdown--account">
+
+
+          <li data-account-guest>
+            <a href="login.html" class="nav-dropdown__link nav-dropdown__link--signup">
+              <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              Sign In
+            </a>
+          </li>
+
+
             <li data-account-guest>
               <a href="signup.html" class="nav-dropdown__link nav-dropdown__link--signup">
                 <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
