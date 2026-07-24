@@ -69,8 +69,11 @@ function renderCartPage() {
   var subtotal = 0;
 
   listEl.innerHTML = items.map(function (item) {
-    var product = products.find(function (p) { return p.id === item.id; });
-    if (!product) return '';
+var product = products.find(function (p) { return p.id === item.id; });
+if (!product) {
+  console.warn('Cart item has no matching product:', item.id);
+  return '';
+}
 
     var lineTotal = product.price * item.qty;
     subtotal += lineTotal;
