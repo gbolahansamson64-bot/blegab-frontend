@@ -117,12 +117,6 @@ body.innerHTML = items.map(function (item) {
               '<button type="button" class="cart-drawer__qty-btn" data-cart-decrease="' + item.id + '" aria-label="Decrease quantity">&minus;</button>' +
               '<span class="cart-drawer__qty-value">' + item.qty + '</span>' +
               '<button type="button" class="cart-drawer__qty-btn" data-cart-increase="' + item.id + '" aria-label="Increase quantity">+</button>' +
-                '<button type="button" class="cart-drawer__reset-btn" data-cart-reset="' + item.id + '" aria-label="Reset quantity">' +
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-                    '<path d="M21 12a9 9 0 1 1-3.4-7.02" stroke-linecap="round"/>' +
-                    '<path d="M21 3v5h-5" stroke-linecap="round" stroke-linejoin="round"/>' +
-                  '</svg>' +
-                '</button>' +
             '</div>' +
           '</div>' +
 '<div class="cart-drawer__item-actions">' +
