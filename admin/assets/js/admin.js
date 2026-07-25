@@ -325,29 +325,41 @@ function initNotifications() {
   var menu = document.querySelector('[data-notif-menu]');
   var toggle = document.querySelector('[data-notif-toggle]');
   var dropdown = document.querySelector('[data-notif-dropdown]');
+  var overlay = document.querySelector('[data-notif-overlay]');
   var clearAllBtn = document.querySelector('[data-notif-clear-all]');
   if (!menu || !toggle || !dropdown) return;
 
   renderNotifications();
 
+  function openDropdown() {
+    dropdown.classList.add('is-open');
+    toggle.setAttribute('aria-expanded', 'true');
+    if (overlay) overlay.classList.add('is-visible');
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    if (overlay) overlay.classList.remove('is-visible');
+  }
+
   toggle.addEventListener('click', function (e) {
     e.stopPropagation();
-    var isOpen = dropdown.classList.toggle('is-open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
+    dropdown.classList.contains('is-open') ? closeDropdown() : openDropdown();
   });
 
-  document.addEventListener('click', function (e) {
-    if (!menu.contains(e.target)) {
-      dropdown.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
-  });
+  // The overlay sits above everything else and swallows the click
+  // entirely — so whatever's underneath (another button, a link,
+  // etc.) never receives it. This one click ONLY closes the dropdown.
+  if (overlay) {
+    overlay.addEventListener('click', function (e) {
+      e.preventDefault();
+      closeDropdown();
+    });
+  }
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      dropdown.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
+    if (e.key === 'Escape') closeDropdown();
   });
 
   if (clearAllBtn) {
@@ -375,6 +387,13 @@ dropdown.addEventListener('click', function (e) {
   });
 
   initNotifModal();
+
+  // openNotifModal() closes the dropdown behind it directly, so make
+  // sure the overlay comes down too in that case.
+  document.addEventListener('click', function (e) {
+    var openTarget = e.target.closest('[data-notif-open]');
+    if (openTarget && overlay) overlay.classList.remove('is-visible');
+  });
 }
 
 /* -----------------------------
