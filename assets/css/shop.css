@@ -597,6 +597,15 @@
   height: 15px;
 }
 
+.product-card__wishlist.is-active {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+}
+
+.product-card__wishlist.is-active svg {
+  fill: currentColor;
+}
+
 .product-card__name {
   margin-top: var(--space-xs);
   font-size: 13.5px;

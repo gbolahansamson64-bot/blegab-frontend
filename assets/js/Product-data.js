@@ -39,5 +39,6 @@ window.BLEGAB_SHOP_PRODUCTS = [
   { id: 'bob',           name: 'Bob Wig',           price: 280, badge: null,          image: 'assets/images/shopimage/bob.webp',           alt: 'Bob Wig',           url: 'shop.html?category=bob' },
   { id: 'honey-blonde',  name: 'Honey Blonde Wig',  price: 340, badge: null,          image: 'assets/images/shopimage/honeyblonde.webp',   alt: 'Honey Blonde Wig',  url: 'shop.html?category=honey-blonde' },
   { id: 'loose-wave',    name: 'Loose Wave Wig',    price: 310, badge: null,          image: 'assets/images/shopimage/loosewave.webp',     alt: 'Loose Wave Wig',    url: 'shop.html?category=loose-wave' },
-  { id: 'kinky-curly',   name: 'Kinky Curly Wig',   price: 330, badge: null,          image: 'assets/images/shopimage/kinkycurly.webp',    alt: 'Kinky Curly Wig',   url: 'shop.html?category=kinky-curly' }
+  { id: 'kinky-curly',   name: 'Kinky Curly Wig',   price: 330, badge: null,          image: 'assets/images/shopimage/kinkycurly.webp',    alt: 'Kinky Curly Wig',   url: 'shop.html?category=kinky-curly' },
+  { id: 'midnight-allure', name: 'Blegab Midnight Allure', price: 399, badge: null,   image: 'assets/images/shopimage/blegabmidnightallure.webp', alt: 'Blegab Midnight Allure', url: 'shop.html?category=midnight-allure' }
 ];

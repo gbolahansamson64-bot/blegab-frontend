@@ -12,12 +12,14 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   initPasswordToggles();
+  initPasswordChecklists();
   initSignupForm();
   initLoginForm();
   initGoogleButtons();
   initForgotPasswordForm();
   initVerifyCodeForm();
   initResetPasswordForm();
+  initVerifyCodeRestriction();
 });
 
 /* -----------------------------
@@ -35,6 +37,37 @@ function initPasswordToggles() {
       btn.setAttribute('aria-pressed', String(isHidden));
       btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
     });
+  });
+}
+
+
+function initVerifyCodeRestriction() {
+  var codeInput = document.getElementById('verify-code');
+  if (!codeInput) return;
+
+  var invalidEl = document.querySelector('[data-code-invalid]');
+
+  codeInput.addEventListener('input', function () {
+    var value = codeInput.value;
+
+    var badChar = null;
+    for (var i = 0; i < value.length; i++) {
+      if (!/[0-9]/.test(value[i])) {
+        badChar = value[i];
+        break;
+      }
+    }
+
+    if (badChar && invalidEl) {
+      invalidEl.textContent = 'Invalid "' + badChar + '" — only numbers are allowed. Please enter the code sent to your email.';
+      invalidEl.classList.add('is-visible');
+    } else if (invalidEl) {
+      invalidEl.textContent = '';
+      invalidEl.classList.remove('is-visible');
+    }
+
+    var cleaned = value.replace(/[^0-9]/g, '').slice(0, 4);
+    if (cleaned !== value) codeInput.value = cleaned;
   });
 }
 
@@ -135,10 +168,10 @@ function initSignupForm() {
     var password = form.querySelector('#signup-password').value;
     var confirmPassword = form.querySelector('#signup-confirm-password').value;
 
-    if (password.length < 8) {
-      showError(errorEl, 'Password must be at least 8 characters.');
-      return;
-    }
+if (!isPasswordFullyValid(password) || !isPasswordFullyValid(confirmPassword)) {
+  showError(errorEl, 'Please meet all password requirements below.');
+  return;
+}
 
     hideError(errorEl);
 
@@ -163,11 +196,14 @@ function initLoginForm() {
     form.querySelector('#login-password')
   ];
 
-  function isFormComplete() {
-    return requiredFields.every(function (input) {
-      return input.value.trim() !== '';
-    });
-  }
+function isFormComplete() {
+  var filled = requiredFields.every(function (input) {
+    return input.value.trim() !== '';
+  });
+  var passwordInput = document.getElementById('login-password');
+  var passwordValid = passwordInput && isPasswordFullyValid(passwordInput.value);
+  return filled && passwordValid;
+}
 
   function updateSubmitState() {
     submitBtn.classList.toggle('is-disabled', !isFormComplete());
@@ -205,33 +241,40 @@ function initLoginForm() {
 
   updateSubmitState(); // dim the button right away since the form starts empty
 
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
 
-    var firstInvalid = null;
+  var firstInvalid = null;
 
-    requiredFields.forEach(function (input) {
-      if (input.value.trim() === '') {
-        showFieldError(input, 'This field is required.');
-        if (!firstInvalid) firstInvalid = input;
-      } else {
-        clearFieldError(input);
-      }
-    });
-
-    if (firstInvalid) {
-      firstInvalid.focus();
-      return;
+  requiredFields.forEach(function (input) {
+    if (input.value.trim() === '') {
+      showFieldError(input, 'This field is required.');
+      if (!firstInvalid) firstInvalid = input;
+    } else {
+      clearFieldError(input);
     }
-
-    hideError(errorEl);
-
-    var email = form.querySelector('#login-email').value.trim();
-    var name = email.split('@')[0] || 'there';
-
-    window.BLEGAB_AUTH.signIn({ name: name });
-    window.location.href = 'index.html';
   });
+
+  if (firstInvalid) {
+    firstInvalid.focus();
+    return;
+  }
+
+  var passwordValue = form.querySelector('#login-password').value;
+
+  if (!isPasswordFullyValid(passwordValue)) {
+    showError(errorEl, 'Please meet all password requirements above.');
+    return;
+  }
+
+  hideError(errorEl);
+
+  var email = form.querySelector('#login-email').value.trim();
+  var name = email.split('@')[0] || 'there';
+
+  window.BLEGAB_AUTH.signIn({ name: name });
+  window.location.href = 'index.html';
+});
 }
 
 /* -----------------------------
@@ -305,6 +348,11 @@ function initVerifyCodeForm() {
 
     if (code === '') {
       showError(errorEl, 'Please enter the code we sent you.');
+      return;
+    }
+
+      if (!/^\d{4}$/.test(code)) {
+      showError(errorEl, 'Please enter the 4-digit code we sent you.');
       return;
     }
 
@@ -475,10 +523,10 @@ if (messageEl) {
     event.preventDefault();
     var newPassword = form.querySelector('#reset-new-password').value;
     var confirmPassword = form.querySelector('#reset-confirm-password').value;
-    if (newPassword.length < 8) {
-      showError(errorEl, "Password must be at least 8 characters.");
-      return;
-    }
+if (!isPasswordFullyValid(newPassword) || !isPasswordFullyValid(confirmPassword)) {
+  showError(errorEl, 'Please meet all password requirements below.');
+  return;
+}
     if (newPassword !== confirmPassword) {
       showError(errorEl, "Those passwords don't match.");
       return;
@@ -507,4 +555,77 @@ if (messageEl) {
       }
     });
   }
+}
+
+/* -----------------------------
+   Live password requirement checklist
+   ----------------------------- */
+function initPasswordChecklists() {
+  var allowedPattern = /^[^\s]*$/;
+  var symbolPattern = /[^A-Za-z0-9]/;
+
+  document.querySelectorAll('[data-pw-checklist]').forEach(function (checklist) {
+    var fieldId = checklist.dataset.pwChecklist;
+    var input = document.getElementById(fieldId);
+    if (!input) return;
+
+    var invalidEl = checklist.querySelector('[data-pw-invalid]');
+
+    input.addEventListener('focus', function () {
+      checklist.classList.add('is-active');
+    });
+
+    input.addEventListener('blur', function () {
+      checklist.classList.remove('is-active');
+    });
+
+    input.addEventListener('input', function () {
+      var value = input.value;
+
+      var badChar = null;
+      for (var i = 0; i < value.length; i++) {
+        if (!allowedPattern.test(value[i])) {
+          badChar = value[i];
+          break;
+        }
+      }
+
+if (badChar) {
+  invalidEl.textContent = badChar === ' ' ? 'No space allowed' : 'Invalid "' + badChar + '"';
+  invalidEl.classList.add('is-visible');
+} else {
+  invalidEl.textContent = '';
+  invalidEl.classList.remove('is-visible');
+}
+
+      var cleaned = value.split('').filter(function (ch) {
+        return allowedPattern.test(ch);
+      }).join('');
+      if (cleaned !== value) {
+        input.value = cleaned;
+        value = cleaned;
+      }
+
+      setCheck(checklist, 'uppercase', /[A-Z]/.test(value));
+      setCheck(checklist, 'lowercase', /[a-z]/.test(value));
+      setCheck(checklist, 'number', /[0-9]/.test(value));
+      setCheck(checklist, 'length', value.length >= 8);
+      setCheck(checklist, 'symbol', symbolPattern.test(value));
+    });
+  });
+
+  function setCheck(checklist, key, isValid) {
+    var item = checklist.querySelector('[data-check="' + key + '"]');
+    if (item) item.classList.toggle('is-valid', isValid);
+  }
+
+}
+
+function isPasswordFullyValid(value) {
+  return /[A-Z]/.test(value) &&
+         /[a-z]/.test(value) &&
+         /[0-9]/.test(value) &&
+         /[^A-Za-z0-9]/.test(value) &&
+         value.length >= 8 &&
+         /^[^\s]+$/.test(value);
 }

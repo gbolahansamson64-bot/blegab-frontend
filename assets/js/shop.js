@@ -88,9 +88,9 @@ function renderProductGrid(page) {
         '<div class="product-card__image-wrap">' +
           '<img src="' + item.image + '" alt="' + item.name + '" class="product-card__image" loading="lazy">' +
           badgeHTML +
-          '<button class="product-card__wishlist" aria-label="Add to wishlist">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-          '</button>' +
+'<button class="product-card__wishlist' + (window.BLEGAB_WISHLIST && window.BLEGAB_WISHLIST.has(item.id) ? ' is-active' : '') + '" data-wishlist-toggle="' + item.id + '" aria-label="Add to wishlist">' +
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+'</button>' +
         '</div>' +
         '<h3 class="product-card__name">' + item.name + '</h3>' +
         '<p class="product-card__meta">Premium Human Hair</p>' +
@@ -135,6 +135,20 @@ function renderProductGrid(page) {
       }
     });
   });
+
+  // Wishlist toggle
+var wishlistButtons = grid.querySelectorAll('[data-wishlist-toggle]');
+wishlistButtons.forEach(function (btn) {
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var productId = this.dataset.wishlistToggle;
+    if (window.BLEGAB_WISHLIST) {
+      var nowActive = window.BLEGAB_WISHLIST.toggle(productId);
+      this.classList.toggle('is-active', nowActive);
+    }
+  });
+});
 
   // Update results count
   if (countEl) {
