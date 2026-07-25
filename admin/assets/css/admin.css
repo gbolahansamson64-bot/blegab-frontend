@@ -39,6 +39,10 @@
   overflow-y: auto;
 }
 
+.admin-sidebar.is-dragging {
+  transition: none !important;
+}
+
 .admin-sidebar.is-open {
   transform: translateX(0);
 }

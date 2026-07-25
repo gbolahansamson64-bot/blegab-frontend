@@ -41,10 +41,12 @@ function initAdminSidebar() {
     document.body.style.overflow = 'hidden';
   }
 
-  function closeSidebar() {
+function closeSidebar() {
     sidebar.classList.remove('is-open');
     overlay.classList.remove('is-visible');
     document.body.style.overflow = '';
+    sidebar.style.transform = '';
+    sidebar.classList.remove('is-dragging');
   }
 
   toggle.addEventListener('click', function () {
@@ -55,6 +57,66 @@ function initAdminSidebar() {
 
   window.addEventListener('resize', function () {
     if (window.innerWidth >= 1024) closeSidebar();
+  });
+
+  // ---- Swipe-to-close (touch devices only) — drawer opens from the
+  // LEFT, so swipe LEFT to close it.
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchCurrentX = 0;
+  var isDragging = false;
+  var gestureDirection = null;
+  var directionLockThreshold = 10;
+  var swipeThreshold = 80;
+
+  sidebar.addEventListener('touchstart', function (event) {
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+    touchCurrentX = touchStartX;
+    isDragging = true;
+    gestureDirection = null;
+  }, { passive: true });
+
+  sidebar.addEventListener('touchmove', function (event) {
+    if (!isDragging) return;
+
+    touchCurrentX = event.touches[0].clientX;
+    var touchCurrentY = event.touches[0].clientY;
+    var deltaX = touchCurrentX - touchStartX;
+    var deltaY = touchCurrentY - touchStartY;
+
+    if (gestureDirection === null) {
+      if (Math.abs(deltaX) > directionLockThreshold || Math.abs(deltaY) > directionLockThreshold) {
+        gestureDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+        if (gestureDirection === 'horizontal') {
+          sidebar.classList.add('is-dragging');
+        }
+      }
+    }
+
+    if (gestureDirection !== 'horizontal') return;
+
+    // Only allow dragging LEFT (toward closed)
+    if (deltaX < 0) {
+      sidebar.style.transform = 'translateX(' + deltaX + 'px)';
+    }
+  }, { passive: true });
+
+  sidebar.addEventListener('touchend', function () {
+    if (!isDragging) return;
+    isDragging = false;
+
+    if (gestureDirection === 'horizontal') {
+      sidebar.classList.remove('is-dragging');
+      sidebar.style.transform = '';
+
+      var deltaX = touchCurrentX - touchStartX;
+      if (deltaX < -swipeThreshold) {
+        closeSidebar();
+      }
+    }
+
+    gestureDirection = null;
   });
 }
 
