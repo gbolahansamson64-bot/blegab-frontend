@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initAccountMenu();
   initCartDrawer();
   initHeaderScroll();
-  initProductModal();
+  initHeaderProductModal();
 });
 
 
@@ -102,8 +102,11 @@ window.BLEGAB_CART = {
     }
 
 body.innerHTML = items.map(function (item) {
-      var product = products.find(function (p) { return p.id === item.id; });
-      if (!product) return '';
+var product = products.find(function (p) { return p.id === item.id; });
+if (!product) {
+  console.warn('Cart drawer item has no matching product:', item.id);
+  return '';
+}
 
       return '' +
         '<div class="cart-drawer__item">' +
@@ -638,7 +641,7 @@ function initHeaderScroll() {
   }, { passive: true });
 }
 
-function initProductModal() {
+function initHeaderProductModal() {
   var overlay = document.querySelector('[data-product-modal-overlay]');
   var modal = document.querySelector('[data-product-modal]');
   if (!overlay || !modal || !window.BLEGAB_SHOP_PRODUCTS) return;
