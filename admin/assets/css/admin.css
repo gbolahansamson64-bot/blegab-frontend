@@ -1470,3 +1470,7 @@
     width: 13px;
     height: 13px;
   }
+
+  .admin-notif-dropdown.is-dragging {
+  transition: none !important;
+}

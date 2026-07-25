@@ -449,12 +449,81 @@ dropdown.addEventListener('click', function (e) {
   });
 
   initNotifModal();
+  initNotifDropdownSwipe(dropdown, closeDropdown);
 
   // openNotifModal() closes the dropdown behind it directly, so make
   // sure the overlay comes down too in that case.
   document.addEventListener('click', function (e) {
     var openTarget = e.target.closest('[data-notif-open]');
     if (openTarget && overlay) overlay.classList.remove('is-visible');
+  });
+}
+
+/* -----------------------------
+   Swipe-to-close the notification dropdown — drag it left OR
+   right past the threshold to dismiss it, snaps back otherwise.
+   ----------------------------- */
+function initNotifDropdownSwipe(dropdown, closeFn) {
+  if (!dropdown) return;
+
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchCurrentX = 0;
+  var isDragging = false;
+  var gestureDirection = null;
+  var directionLockThreshold = 10;
+  var swipeThreshold = 80;
+
+  dropdown.addEventListener('touchstart', function (event) {
+    if (event.target.closest('button')) return;
+
+    touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+    touchCurrentX = touchStartX;
+    isDragging = true;
+    gestureDirection = null;
+  }, { passive: true });
+
+  dropdown.addEventListener('touchmove', function (event) {
+    if (!isDragging) return;
+
+    touchCurrentX = event.touches[0].clientX;
+    var touchCurrentY = event.touches[0].clientY;
+    var deltaX = touchCurrentX - touchStartX;
+    var deltaY = touchCurrentY - touchStartY;
+
+    if (gestureDirection === null) {
+      if (Math.abs(deltaX) > directionLockThreshold || Math.abs(deltaY) > directionLockThreshold) {
+        gestureDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+        if (gestureDirection === 'horizontal') {
+          dropdown.classList.add('is-dragging');
+        }
+      }
+    }
+
+    if (gestureDirection !== 'horizontal') return;
+
+    dropdown.style.transform = 'translateX(' + deltaX + 'px)';
+    dropdown.style.opacity = String(Math.max(1 - Math.abs(deltaX) / 200, 0.3));
+  }, { passive: true });
+
+  dropdown.addEventListener('touchend', function () {
+    if (!isDragging) return;
+    isDragging = false;
+
+    if (gestureDirection === 'horizontal') {
+      dropdown.classList.remove('is-dragging');
+
+      var deltaX = touchCurrentX - touchStartX;
+      if (Math.abs(deltaX) > swipeThreshold) {
+        closeFn();
+      }
+
+      dropdown.style.transform = '';
+      dropdown.style.opacity = '';
+    }
+
+    gestureDirection = null;
   });
 }
 
