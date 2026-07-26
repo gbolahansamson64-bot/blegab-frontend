@@ -669,8 +669,12 @@ function initHeaderProductModal() {
   var overlay = document.querySelector('[data-product-modal-overlay]');
   var modal = document.querySelector('[data-product-modal]');
   if (!overlay || !modal || !window.BLEGAB_SHOP_PRODUCTS) return;
+  // Guard: shop.js / cart.js also try to init this same modal on their
+  // pages. Without this, clicking "+" or "Add to Cart" fires twice
+  // (once per set of listeners), doubling/quadrupling the quantity.
+  if (modal.dataset.modalInitialized) return;
+  modal.dataset.modalInitialized = 'true';
 
-  var qty = 1;
 
   document.addEventListener('click', function (e) {
     var trigger = e.target.closest('[data-open-product]');
@@ -697,8 +701,13 @@ function initHeaderProductModal() {
     }
 
     modal.dataset.activeProduct = product.id;
-    qty = 1;
-    modal.querySelector('[data-qty-value]').textContent = qty;
+
+    // Show the quantity this product ALREADY has in the cart (not a hardcoded 1).
+    // String() on both sides because product.id may be a number while cart ids
+    // (saved from dataset.openProduct) are always strings — without this,
+    // the match always fails and it falls back to 1 no matter what.
+
+
     modal.classList.add('is-open');
     overlay.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
@@ -721,31 +730,7 @@ function initHeaderProductModal() {
     });
   });
 
-  var qtyIncrease = modal.querySelector('[data-qty-increase]');
-  var qtyDecrease = modal.querySelector('[data-qty-decrease]');
-  var qtyValue = modal.querySelector('[data-qty-value]');
 
-  if (qtyIncrease) {
-    qtyIncrease.addEventListener('click', function () {
-      qty++;
-      qtyValue.textContent = qty;
-    });
-  }
-
-  if (qtyDecrease) {
-    qtyDecrease.addEventListener('click', function () {
-      qty = Math.max(1, qty - 1);
-      qtyValue.textContent = qty;
-    });
-  }
-
-  var addToCartBtn = modal.querySelector('[data-modal-add-to-cart]');
-  if (addToCartBtn && window.BLEGAB_CART) {
-    addToCartBtn.addEventListener('click', function () {
-      window.BLEGAB_CART.addItem(modal.dataset.activeProduct, qty);
-      closeModal();
-    });
-  }
 
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && modal.classList.contains('is-open')) {

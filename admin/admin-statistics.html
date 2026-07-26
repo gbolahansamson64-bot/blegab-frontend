@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statistics & Earnings | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/admin-statistics.css" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+
+    <!-- =====================================================
+         SIDEBAR (same shell as admin.html — keep both in sync)
+         ===================================================== -->
+    <aside class="admin-sidebar" data-admin-sidebar>
+      <div class="admin-sidebar__logo">
+        <svg class="admin-sidebar__logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2c2.5 1.5 4 4 3.5 7-3-1-5 .5-5.5 3 2-.5 3.5.5 4 2.5-2.5 1-5.5.5-7-2-1.5-3 0-7 5-10.5z" fill="currentColor"/>
+        </svg>
+        <div class="admin-sidebar__logo-text">
+          <span class="admin-sidebar__logo-name">BLEGAB</span>
+          <span class="admin-sidebar__logo-tagline">Premium Hair Wigs</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav" aria-label="Admin navigation">
+        <ul class="admin-nav__list">
+          <li class="admin-nav__item">
+            <a href="admin.html" class="admin-nav__link" data-nav-key="overview">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 11l9-8 9 8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Overview
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-statistics.html" class="admin-nav__link is-active" data-nav-key="statistics">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 20V10M11 20V4M18 20v-7" stroke-linecap="round"/>
+              </svg>
+              Statistics
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-products.html" class="admin-nav__link" data-nav-key="products">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="4" rx="1"/>
+                <path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12h4" stroke-linecap="round"/>
+              </svg>
+              Products
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-orders.html" class="admin-nav__link" data-nav-key="orders">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 3h10l1 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 7h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Orders
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-customers.html" class="admin-nav__link" data-nav-key="customers">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5" stroke-linecap="round"/>
+                <circle cx="17" cy="9" r="2.4"/>
+                <path d="M15 13.3c2.5.3 4.5 2.1 4.5 5.2" stroke-linecap="round"/>
+              </svg>
+              Customers
+            </a>
+          </li>
+          <li class="admin-nav__item admin-nav__item--settings">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-settings-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Settings
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-settings-submenu>
+              <li>
+                <a href="admin-settings-store.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 9.5L12 3l9 6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 20v-6h6v6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Store Info
+                </a>
+              </li>
+              <li>
+                <a href="admin-settings-shipping.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 7h11v9H3z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 10h4l3 3v3h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="7" cy="18" r="1.6"/>
+                    <circle cx="17.5" cy="18" r="1.6"/>
+                  </svg>
+                  Shipping &amp; Payments
+                </a>
+              </li>
+              <li>
+              </ul>
+          </li>
+
+          <li class="admin-nav__item admin-nav__item--auth">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-admin-auth-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              Admin Account
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-admin-auth-submenu>
+              <li>
+                <a href="admin-login.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12H9" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign In
+                </a>
+              </li>
+              <li>
+                <a href="admin-signup.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 12H3" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign Up
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="admin-nav__item">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-theme-toggle aria-label="Toggle theme">
+              <svg class="admin-nav__icon admin-nav__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg class="admin-nav__icon admin-nav__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"/>
+                <path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12h2.5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" stroke-linecap="round"/>
+              </svg>
+              <span data-theme-toggle-label>Dark Mode</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="admin-sidebar-overlay" data-admin-sidebar-overlay></div>
+
+    <!-- =====================================================
+         MAIN COLUMN
+         ===================================================== -->
+    <div class="admin-main">
+
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <button type="button" class="admin-topbar__menu-toggle" data-admin-menu-toggle aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="admin-topbar__search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+          <input type="search" placeholder="Search anything..." aria-label="Search" />
+        </div>
+
+        <div class="admin-topbar__actions">
+          <div class="admin-notif-overlay" data-notif-overlay></div>
+
+          <div class="admin-notif-menu" data-notif-menu>
+            <button type="button" class="admin-topbar__bell" aria-label="Notifications" data-notif-toggle aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke-linecap="round"/>
+              </svg>
+              <span class="admin-topbar__bell-count" data-notif-count hidden>0</span>
+            </button>
+
+            <div class="admin-notif-dropdown" data-notif-dropdown>
+              <div class="admin-notif-dropdown__head">
+                <h3 class="admin-notif-dropdown__title">Notifications</h3>
+                <button type="button" class="admin-notif-dropdown__clear" data-notif-clear-all>Clear all</button>
+              </div>
+              <ul class="admin-notif-list" data-notif-list></ul>
+              <p class="admin-notif-empty" data-notif-empty hidden>No Notifications</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page content -->
+      <main class="admin-content">
+
+        <div class="admin-page-head">
+          <div class="admin-page-head__info">
+            <h1 class="admin-page-head__title">Statistics &amp; Earnings</h1>
+            <p class="admin-page-head__subtitle">Track your revenue, spot trends, and export reports whenever you need them.</p>
+          </div>
+
+          <div class="admin-page-head__actions">
+            <button type="button" class="btn btn-primary admin-page-head__add-btn" data-stx-quick-export>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 3v13M7 11l5 5 5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Download Statement
+            </button>
+
+            <div class="admin-date-picker" data-stx-date-picker>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                <path d="M16 3v4M8 3v4M3 10h18" stroke-linecap="round"/>
+              </svg>
+              <span data-stx-date-picker-label>May 24, 2025</span>
+              <svg class="admin-date-picker__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input type="date" class="admin-date-picker__input" data-stx-date-picker-input aria-label="Choose a date to view stats" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings stat cards -->
+        <section class="admin-stats" aria-label="Earnings summary">
+          <div class="admin-stat-card">
+            <span class="admin-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 8h12l-1.2 11H7.2z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="admin-stat-card__label">Today's Earnings</span>
+            <span class="admin-stat-card__value" data-stx-stat="today">$0.00</span>
+            <span class="admin-stat-card__delta" data-stx-delta="today"></span>
+          </div>
+
+          <div class="admin-stat-card">
+            <span class="admin-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                <path d="M16 3v4M8 3v4M3 10h18" stroke-linecap="round"/>
+                <path d="M9 14h1M14 14h1M9 17h1" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="admin-stat-card__label">This Week</span>
+            <span class="admin-stat-card__value" data-stx-stat="week">$0.00</span>
+            <span class="admin-stat-card__delta" data-stx-delta="week"></span>
+          </div>
+
+          <div class="admin-stat-card">
+            <span class="admin-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 20V10M12 20V4M18 20v-7" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="admin-stat-card__label">This Month</span>
+            <span class="admin-stat-card__value" data-stx-stat="month">$0.00</span>
+            <span class="admin-stat-card__delta" data-stx-delta="month"></span>
+          </div>
+
+          <div class="admin-stat-card">
+            <span class="admin-stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 7v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="admin-stat-card__label">This Year</span>
+            <span class="admin-stat-card__value" data-stx-stat="year">$0.00</span>
+            <span class="admin-stat-card__delta" data-stx-delta="year"></span>
+          </div>
+        </section>
+
+        <!-- Revenue chart + earnings breakdown -->
+        <section class="stx-panels-grid">
+
+          <div class="admin-panel stx-chart-panel">
+            <div class="admin-panel__head">
+              <h2 class="admin-panel__title">Revenue Overview</h2>
+              <div class="stx-period-tabs" data-chart-granularity-tabs>
+                <button type="button" class="stx-period-tabs__btn is-active" data-granularity="daily">Daily</button>
+                <button type="button" class="stx-period-tabs__btn" data-granularity="weekly">Weekly</button>
+                <button type="button" class="stx-period-tabs__btn" data-granularity="monthly">Monthly</button>
+              </div>
+            </div>
+            <div class="stx-chart-canvas-wrap">
+              <canvas data-revenue-chart></canvas>
+            </div>
+          </div>
+
+          <div class="admin-panel stx-breakdown-panel">
+            <div class="admin-panel__head">
+              <h2 class="admin-panel__title">Earnings by Category</h2>
+            </div>
+            <div class="stx-breakdown-donut-wrap">
+              <canvas data-breakdown-chart></canvas>
+              <div class="stx-breakdown-donut-center">
+                <span>Total</span>
+                <strong data-breakdown-total>$0.00</strong>
+              </div>
+            </div>
+            <ul class="stx-legend-list" data-breakdown-legend></ul>
+          </div>
+
+        </section>
+
+        <!-- Download earnings statement -->
+        <section class="admin-panel stx-download-panel" id="download-statement">
+          <div class="admin-panel__head">
+            <h2 class="admin-panel__title">Download Earnings Statement</h2>
+          </div>
+
+          <div class="stx-download-grid">
+<div class="stx-field">
+  <label>Date range</label>
+  <div class="stx-dropdown" data-stx-range-dropdown data-value="month">
+    <button type="button" class="stx-dropdown__toggle" data-stx-range-toggle aria-expanded="false">
+      <span data-stx-range-label>This month</span>
+      <svg class="stx-dropdown__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <ul class="stx-dropdown__menu" data-stx-range-menu>
+      <li><button type="button" class="stx-dropdown__item" data-value="today">Today</button></li>
+      <li><button type="button" class="stx-dropdown__item" data-value="week">This week</button></li>
+      <li><button type="button" class="stx-dropdown__item is-active" data-value="month">This month</button></li>
+      <li><button type="button" class="stx-dropdown__item" data-value="year">This year</button></li>
+      <li><button type="button" class="stx-dropdown__item" data-value="custom">Custom range</button></li>
+    </ul>
+  </div>
+</div>
+
+            <div class="stx-field">
+              <label>Format</label>
+              <div class="stx-format-toggle" data-stx-format-toggle>
+                <button type="button" class="stx-format-btn is-active" data-format="pdf">PDF</button>
+                <button type="button" class="stx-format-btn" data-format="csv">CSV</button>
+              </div>
+            </div>
+
+            <div class="stx-field stx-field--action">
+              <label>&nbsp;</label>
+              <button type="button" class="btn btn-primary" data-stx-generate>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 3v13M7 11l5 5 5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Generate &amp; Download
+              </button>
+            </div>
+
+            <div class="stx-custom-range" data-stx-custom-range>
+              <div class="stx-field">
+                <label for="stx-from">From</label>
+                <input type="date" id="stx-from" data-stx-from />
+              </div>
+              <div class="stx-field">
+                <label for="stx-to">To</label>
+                <input type="date" id="stx-to" data-stx-to />
+              </div>
+            </div>
+          </div>
+
+          <p class="stx-download-note"><strong>Backend note:</strong> this statement is currently built from the placeholder data loaded in the dashboard, entirely in the browser. Once the orders/payments API is live, point <code>generateStatement()</code> in <code>admin-statistics.js</code> at a real export endpoint (e.g. <code>/api/admin/statements/export</code>) so the figures always match the ledger.</p>
+        </section>
+
+        <!-- Transaction history -->
+        <section class="admin-panel stx-history-panel">
+          <div class="admin-panel__head">
+            <h2 class="admin-panel__title">Transaction History</h2>
+            <span class="admin-panel__view-all" data-stx-history-count></span>
+          </div>
+
+          <div class="admin-orders-table stx-history-table" role="table">
+            <div class="admin-orders-table__head stx-history-row stx-history-row--head" role="row">
+              <span role="columnheader">Reference</span>
+              <span role="columnheader">Description</span>
+              <span role="columnheader">Date</span>
+              <span role="columnheader">Amount</span>
+              <span role="columnheader">Status</span>
+            </div>
+            <div class="admin-orders-table__body" data-stx-history-list>
+              <!-- rows injected by admin-statistics.js -->
+            </div>
+          </div>
+
+          <div class="stx-history-footer">
+            <button type="button" class="stx-load-more-btn" data-stx-load-more>Load more history</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="admin-notif-modal-overlay" data-notif-modal-overlay></div>
+  <div class="admin-notif-modal" data-notif-modal aria-hidden="true">
+    <button type="button" class="admin-notif-modal__close" data-notif-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <p class="admin-notif-modal__time" data-notif-modal-time></p>
+    <h3 class="admin-notif-modal__title" data-notif-modal-title></h3>
+    <p class="admin-notif-modal__message" data-notif-modal-message></p>
+  </div>
+
+  <!-- Charting + PDF export (client-side placeholder — swap for a backend-generated
+       report once the real API exists; see the note above the statement panel). -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <script src="assets/js/admin-data.js"></script>
+  <script src="assets/js/admin-statistics-data.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-statistics.js"></script>
+  <script src="assets/js/admin-main.js"></script>
+</body>
+</html>

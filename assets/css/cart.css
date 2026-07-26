@@ -88,6 +88,32 @@ body {
   gap: var(--space-sm);
 }
 
+/* Mobile: cap the list to roughly 3 cards tall so extra items
+   scroll inside this box instead of pushing the summary,
+   newsletter, and footer further down the page. */
+@media (max-width: 480px) {
+  .cart-page__list {
+    max-height: 560px;
+    overflow-y: auto;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gold) var(--color-bg-dark);
+  }
+
+  .cart-page__list::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .cart-page__list::-webkit-scrollbar-track {
+    background: var(--color-bg-dark);
+  }
+
+  .cart-page__list::-webkit-scrollbar-thumb {
+    background-color: var(--color-gold);
+    border-radius: var(--radius-pill);
+  }
+}
+
 .cart-page__row {
   display: flex;
   flex-direction: column;

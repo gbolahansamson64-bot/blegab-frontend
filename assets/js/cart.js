@@ -184,7 +184,6 @@ function initProductModal() {
   var modal = document.querySelector('[data-product-modal]');
   if (!overlay || !modal || !window.BLEGAB_SHOP_PRODUCTS) return;
 
-  var qty = 1;
 
   document.addEventListener('click', function (e) {
     var trigger = e.target.closest('[data-open-product]');
@@ -231,38 +230,6 @@ function initProductModal() {
       group.querySelectorAll('.option-pill').forEach(function (p) { p.classList.remove('is-active'); });
       pill.classList.add('is-active');
     });
-  });
-
-  var qtyIncrease = modal.querySelector('[data-qty-increase]');
-  var qtyDecrease = modal.querySelector('[data-qty-decrease]');
-  var qtyValue = modal.querySelector('[data-qty-value]');
-
-  if (qtyIncrease) {
-    qtyIncrease.addEventListener('click', function () {
-      qty++;
-      qtyValue.textContent = qty;
-    });
-  }
-
-  if (qtyDecrease) {
-    qtyDecrease.addEventListener('click', function () {
-      qty = Math.max(1, qty - 1);
-      qtyValue.textContent = qty;
-    });
-  }
-
-  var addToCartBtn = modal.querySelector('[data-modal-add-to-cart]');
-  if (addToCartBtn && window.BLEGAB_CART) {
-    addToCartBtn.addEventListener('click', function () {
-      window.BLEGAB_CART.addItem(modal.dataset.activeProduct, qty);
-      closeModal();
-    });
-  }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
-      closeModal();
-    }
   });
 }
 
