@@ -17,10 +17,10 @@ window.BLEGAB_ADMIN_STATISTICS = {
   /* Stat cards — each figure + its % change vs. the previous
      equivalent period (yesterday / last week / last month / last year). */
   earnings: {
-    today: { value: 812.50,    deltaPct: 12.4, direction: 'up'   },
-    week:  { value: 4360.00,   deltaPct: 8.1,  direction: 'up'   },
-    month: { value: 18420.75,  deltaPct: -3.2, direction: 'down' },
-    year:  { value: 152300.40, deltaPct: 21.6, direction: 'up'   }
+    today: { value: 0,    deltaPct: 0.0, direction: 'up'   },
+    week:  { value: 0,   deltaPct: 0.0,  direction: 'up'   },
+    month: { value: 0,  deltaPct: 0.0, direction: 'up' },
+    year:  { value: 0, deltaPct: 0.0, direction: 'up'   }
   },
 
   /* Revenue chart series, one per granularity tab. */

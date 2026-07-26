@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/admin-products.css" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+
+    <!-- =====================================================
+         SIDEBAR (same shell as admin.html / admin-statistics.html —
+         keep all three in sync)
+         ===================================================== -->
+    <aside class="admin-sidebar" data-admin-sidebar>
+      <div class="admin-sidebar__logo">
+        <svg class="admin-sidebar__logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2c2.5 1.5 4 4 3.5 7-3-1-5 .5-5.5 3 2-.5 3.5.5 4 2.5-2.5 1-5.5.5-7-2-1.5-3 0-7 5-10.5z" fill="currentColor"/>
+        </svg>
+        <div class="admin-sidebar__logo-text">
+          <span class="admin-sidebar__logo-name">BLEGAB</span>
+          <span class="admin-sidebar__logo-tagline">Premium Hair Wigs</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav" aria-label="Admin navigation">
+        <ul class="admin-nav__list">
+          <li class="admin-nav__item">
+            <a href="admin.html" class="admin-nav__link" data-nav-key="overview">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 11l9-8 9 8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Overview
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-statistics.html" class="admin-nav__link" data-nav-key="statistics">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 20V10M11 20V4M18 20v-7" stroke-linecap="round"/>
+              </svg>
+              Statistics
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-products.html" class="admin-nav__link is-active" data-nav-key="products">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="4" rx="1"/>
+                <path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12h4" stroke-linecap="round"/>
+              </svg>
+              Products
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-orders.html" class="admin-nav__link" data-nav-key="orders">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 3h10l1 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 7h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Orders
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-customers.html" class="admin-nav__link" data-nav-key="customers">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5" stroke-linecap="round"/>
+                <circle cx="17" cy="9" r="2.4"/>
+                <path d="M15 13.3c2.5.3 4.5 2.1 4.5 5.2" stroke-linecap="round"/>
+              </svg>
+              Customers
+            </a>
+          </li>
+          <li class="admin-nav__item admin-nav__item--settings">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-settings-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Settings
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-settings-submenu>
+              <li>
+                <a href="admin-settings-store.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 9.5L12 3l9 6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 20v-6h6v6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Store Info
+                </a>
+              </li>
+              <li>
+                <a href="admin-settings-shipping.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 7h11v9H3z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 10h4l3 3v3h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="7" cy="18" r="1.6"/>
+                    <circle cx="17.5" cy="18" r="1.6"/>
+                  </svg>
+                  Shipping &amp; Payments
+                </a>
+              </li>
+              <li>
+              </ul>
+          </li>
+
+          <li class="admin-nav__item admin-nav__item--auth">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-admin-auth-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              Admin Account
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-admin-auth-submenu>
+              <li>
+                <a href="admin-login.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12H9" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign In
+                </a>
+              </li>
+              <li>
+                <a href="admin-signup.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 12H3" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign Up
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="admin-nav__item">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-theme-toggle aria-label="Toggle theme">
+              <svg class="admin-nav__icon admin-nav__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg class="admin-nav__icon admin-nav__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"/>
+                <path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12h2.5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" stroke-linecap="round"/>
+              </svg>
+              <span data-theme-toggle-label>Dark Mode</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="admin-sidebar-overlay" data-admin-sidebar-overlay></div>
+
+    <!-- =====================================================
+         MAIN COLUMN
+         ===================================================== -->
+    <div class="admin-main">
+
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <button type="button" class="admin-topbar__menu-toggle" data-admin-menu-toggle aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="admin-topbar__search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+          <input type="search" placeholder="Search anything..." aria-label="Search" />
+        </div>
+
+        <div class="admin-topbar__actions">
+          <div class="admin-notif-overlay" data-notif-overlay></div>
+
+          <div class="admin-notif-menu" data-notif-menu>
+            <button type="button" class="admin-topbar__bell" aria-label="Notifications" data-notif-toggle aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke-linecap="round"/>
+              </svg>
+              <span class="admin-topbar__bell-count" data-notif-count hidden>0</span>
+            </button>
+
+            <div class="admin-notif-dropdown" data-notif-dropdown>
+              <div class="admin-notif-dropdown__head">
+                <h3 class="admin-notif-dropdown__title">Notifications</h3>
+                <button type="button" class="admin-notif-dropdown__clear" data-notif-clear-all>Clear all</button>
+              </div>
+              <ul class="admin-notif-list" data-notif-list></ul>
+              <p class="admin-notif-empty" data-notif-empty hidden>No Notifications</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page content -->
+      <main class="admin-content">
+
+        <div class="admin-page-head">
+          <div class="admin-page-head__info">
+            <h1 class="admin-page-head__title">Products</h1>
+            <p class="admin-page-head__subtitle">Manage your products, categories, and inventory.</p>
+          </div>
+
+          <div class="admin-page-head__actions">
+            <button type="button" class="btn btn-primary admin-page-head__add-btn" data-prd-add-product>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+              </svg>
+              Add Product
+            </button>
+          </div>
+        </div>
+
+        <div class="prd-layout-grid">
+
+          <!-- Categories panel -->
+          <section class="admin-panel prd-categories-panel">
+            <div class="admin-panel__head">
+              <h2 class="admin-panel__title">Categories</h2>
+              <button type="button" class="prd-add-category-btn" data-prd-add-category>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+                </svg>
+                Add Category
+              </button>
+            </div>
+
+            <ul class="prd-category-list" data-prd-category-list>
+              <!-- rows injected by admin-products.js -->
+            </ul>
+          </section>
+
+          <!-- All Products panel -->
+          <section class="admin-panel prd-products-panel">
+            <div class="admin-panel__head prd-products-head">
+              <h2 class="admin-panel__title">All Products <span class="prd-total-count" data-prd-total-count>(0)</span></h2>
+
+              <div class="prd-toolbar">
+
+                <!-- Category filter dropdown -->
+                <div class="prd-dropdown" data-prd-category-dropdown>
+                  <button type="button" class="prd-dropdown__toggle" data-prd-category-toggle aria-expanded="false">
+                    <span data-prd-category-label>All Categories</span>
+                    <svg class="prd-dropdown__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <ul class="prd-dropdown__menu" data-prd-category-menu></ul>
+                </div>
+
+                <!-- Status filter dropdown -->
+                <div class="prd-dropdown" data-prd-status-dropdown>
+                  <button type="button" class="prd-dropdown__toggle" data-prd-status-toggle aria-expanded="false">
+                    <span data-prd-status-label>All Status</span>
+                    <svg class="prd-dropdown__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <ul class="prd-dropdown__menu" data-prd-status-menu>
+                    <li><button type="button" class="prd-dropdown__item is-active" data-value="all">All Status</button></li>
+                    <li><button type="button" class="prd-dropdown__item" data-value="in-stock">In Stock</button></li>
+                    <li><button type="button" class="prd-dropdown__item" data-value="low-stock">Low Stock</button></li>
+                    <li><button type="button" class="prd-dropdown__item" data-value="out-of-stock">Out of Stock</button></li>
+                  </ul>
+                </div>
+
+                <!-- Advanced filter (sort + price range) -->
+                <div class="prd-dropdown" data-prd-filter-dropdown>
+                  <button type="button" class="prd-dropdown__toggle" data-prd-filter-toggle aria-expanded="false">
+                    <svg class="prd-dropdown__toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M4 5h16l-6 8v5l-4 2v-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Filter
+                  </button>
+                  <div class="prd-dropdown__menu prd-filter-panel" data-prd-filter-panel>
+                    <div class="prd-filter-panel__field">
+                      <label for="prd-sort-select">Sort by</label>
+                      <select id="prd-sort-select" data-prd-sort-select>
+                        <option value="default">Default</option>
+                        <option value="name-asc">Name (A–Z)</option>
+                        <option value="name-desc">Name (Z–A)</option>
+                        <option value="price-asc">Price (Low–High)</option>
+                        <option value="price-desc">Price (High–Low)</option>
+                        <option value="stock-asc">Stock (Low–High)</option>
+                        <option value="stock-desc">Stock (High–Low)</option>
+                      </select>
+                    </div>
+                    <div class="prd-filter-panel__field">
+                      <label>Price range</label>
+                      <div class="prd-filter-panel__row">
+                        <input type="number" min="0" placeholder="Min" data-prd-price-min />
+                        <input type="number" min="0" placeholder="Max" data-prd-price-max />
+                      </div>
+                    </div>
+
+                    <div class="prd-filter-panel__field">
+  <label>Quantity range</label>
+  <div class="prd-filter-panel__row">
+    <input type="number" min="0" placeholder="Min" data-prd-stock-min />
+    <input type="number" min="0" placeholder="Max" data-prd-stock-max />
+  </div>
+</div>
+
+                    <div class="prd-filter-panel__field">
+  <label>Length</label>
+  <select data-prd-length-filter>
+    <option value="all">All Lengths</option>
+    <option value="14">14"</option>
+    <option value="18">18"</option>
+    <option value="22">22"</option>
+    <option value="26">26"</option>
+  </select>
+</div>
+<div class="prd-filter-panel__field">
+  <label>Density</label>
+  <select data-prd-density-filter>
+    <option value="all">All Densities</option>
+    <option value="130%">130%</option>
+    <option value="150%">150%</option>
+    <option value="180%">180%</option>
+    <option value="200%">200%</option>
+  </select>
+</div>
+<div class="prd-filter-panel__field">
+  <label>Lace Type</label>
+  <select data-prd-lacetype-filter>
+    <option value="all">All Lace Types</option>
+    <option value="HD Lace">HD Lace</option>
+    <option value="Transparent Lace">Transparent Lace</option>
+    <option value="Swiss Lace">Swiss Lace</option>
+  </select>
+</div>
+
+                    <div class="prd-filter-panel__actions">
+                      <button type="button" class="prd-filter-panel__reset" data-prd-filter-reset>Reset</button>
+                      <button type="button" class="prd-filter-panel__apply" data-prd-filter-apply>Apply</button>
+                    </div>
+                  </div>
+                </div>
+
+<!-- Search -->
+<div class="prd-search" data-prd-search>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"/>
+    <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+  </svg>
+  <input type="text" placeholder="Search products..." aria-label="Search products" data-prd-search-input />
+  <button type="button" class="prd-search__clear" data-prd-search-clear aria-label="Clear search" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>
+
+              </div>
+            </div>
+
+            <div class="admin-orders-table prd-table" role="table" data-prd-table>
+              <div class="prd-table-head" role="row">
+                <span role="columnheader"><input type="checkbox" data-prd-select-all aria-label="Select all products" /></span>
+                <span role="columnheader">Product</span>
+                <span role="columnheader">Category</span>
+                <span role="columnheader">Price</span>
+                <span role="columnheader">Stock</span>
+                <span role="columnheader">Status</span>
+                <span role="columnheader">Actions</span>
+              </div>
+              <div class="prd-table-body" data-prd-table-body>
+                <!-- rows injected by admin-products.js -->
+              </div>
+            </div>
+
+            <p class="prd-empty-state" data-prd-empty hidden>No products match your filters.</p>
+
+<div class="prd-pagination">
+              <span class="prd-pagination__summary" data-prd-pagination-summary></span>
+              <div class="prd-load-actions" data-prd-load-actions>
+                <button type="button" class="prd-load-btn" data-prd-load-more>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span data-prd-load-more-label>Load More</span>
+                </button>
+                <button type="button" class="prd-load-btn prd-load-btn--all" data-prd-load-all>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/>
+                  </svg>
+                  Load All
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="admin-notif-modal-overlay" data-notif-modal-overlay></div>
+  <div class="admin-notif-modal" data-notif-modal aria-hidden="true">
+    <button type="button" class="admin-notif-modal__close" data-notif-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <p class="admin-notif-modal__time" data-notif-modal-time></p>
+    <h3 class="admin-notif-modal__title" data-notif-modal-title></h3>
+    <p class="admin-notif-modal__message" data-notif-modal-message></p>
+  </div>
+
+  <!-- =====================================================
+       Add / Edit Category dialog
+       ===================================================== -->
+  <div class="prd-modal-overlay" data-prd-category-modal-overlay></div>
+  <div class="prd-modal" data-prd-category-modal aria-hidden="true">
+    <button type="button" class="prd-modal__close" data-prd-category-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <h3 class="prd-modal__title" data-prd-category-modal-title>Add Category</h3>
+    <div class="prd-form-grid">
+      <div class="prd-form-field prd-form-field--full">
+        <label for="prd-category-name-input">Category name</label>
+        <input type="text" id="prd-category-name-input" data-prd-category-name-input placeholder="e.g. Lace Wigs" />
+      </div>
+      <div class="prd-modal__footer">
+        <button type="button" class="btn btn-outline" data-prd-category-modal-cancel>Cancel</button>
+        <button type="button" class="btn btn-primary" data-prd-category-modal-save>Save Category</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       Add / Edit Product dialog
+       Add mode is intentionally inert — see admin-products.js
+       ===================================================== -->
+  <div class="prd-modal-overlay" data-prd-product-modal-overlay></div>
+  <div class="prd-modal" data-prd-product-modal aria-hidden="true">
+    <button type="button" class="prd-modal__close" data-prd-product-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <h3 class="prd-modal__title" data-prd-product-modal-title>Add Product</h3>
+    <div class="prd-form-grid">
+      <div class="prd-form-field prd-form-field--full">
+        <label for="prd-name-input">Product name</label>
+        <input type="text" id="prd-name-input" data-prd-name-input placeholder="e.g. Deep Wave 22&quot;" />
+      </div>
+      <div class="prd-form-field">
+        <label for="prd-sku-input">SKU</label>
+        <input type="text" id="prd-sku-input" data-prd-sku-input placeholder="e.g. DW-22" />
+      </div>
+      <div class="prd-form-field">
+        <label for="prd-category-select">Category</label>
+        <select id="prd-category-select" data-prd-category-select></select>
+      </div>
+      <div class="prd-form-field">
+        <label for="prd-price-input">Price ($)</label>
+        <input type="number" min="0" step="0.01" id="prd-price-input" data-prd-price-input placeholder="0.00" />
+      </div>
+<div class="prd-form-field">
+        <label for="prd-stock-input">Quantity</label>
+        <input type="number" min="0" id="prd-stock-input" data-prd-stock-input placeholder="0" />
+      </div>
+
+      <div class="prd-form-field prd-form-field--full">
+        <label>Product Images</label>
+        <div class="prd-image-uploader" data-prd-image-uploader>
+          <div class="prd-image-main" data-prd-image-main>
+            <img data-prd-image-preview src="" alt="" hidden />
+            <span class="prd-image-placeholder" data-prd-image-placeholder>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+              Add image
+            </span>
+            <div class="prd-image-main__controls">
+              <button type="button" class="prd-icon-btn" data-prd-image-edit aria-label="Change image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="prd-icon-btn prd-icon-btn--danger" data-prd-image-delete aria-label="Remove image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="prd-image-thumbs" data-prd-image-thumbs>
+            <button type="button" class="prd-image-add" data-prd-image-add aria-label="Add another image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <input type="file" accept="image/*" hidden data-prd-image-file-input />
+          <input type="file" accept="image/*" multiple hidden data-prd-image-file-input-extra />
+        </div>
+      </div>
+
+      <div class="prd-form-field">
+        <label for="prd-length-input">Length</label>
+        <input type="text" id="prd-length-input" data-prd-length-input placeholder="e.g. 22&quot;" />
+      </div>
+<div class="prd-form-field">
+  <label for="prd-density-input">Density</label>
+  <input type="text" id="prd-density-input" data-prd-density-input placeholder="e.g. 180%" />
+</div>
+<div class="prd-form-field">
+  <label for="prd-lacetype-input">Lace Type</label>
+  <input type="text" id="prd-lacetype-input" data-prd-lacetype-input placeholder="e.g. HD Lace" />
+</div>
+<div class="prd-form-field prd-form-field--full">
+  <label for="prd-description-input">Description</label>
+  <textarea id="prd-description-input" data-prd-description-input rows="3" placeholder="Short product description"></textarea>
+</div>
+
+      <div class="prd-form-field prd-form-field--full">
+        <label for="prd-status-select">Status</label>
+        <select id="prd-status-select" data-prd-status-select>
+          <option value="in-stock">In Stock</option>
+          <option value="low-stock">Low Stock</option>
+          <option value="out-of-stock">Out of Stock</option>
+        </select>
+      </div>
+
+      <p class="prd-modal__note" data-prd-product-modal-note>
+        <strong>Backend note:</strong> product creation isn't wired up yet. Once the products API exists, point this form's save handler at a real endpoint (e.g. <code>POST /api/admin/products</code>) inside <code>openProductModal()</code> / <code>initProductModal()</code> in <code>admin-products.js</code> so new products persist for real.
+      </p>
+
+      <div class="prd-modal__footer">
+        <button type="button" class="btn btn-outline" data-prd-product-modal-cancel>Cancel</button>
+        <button type="button" class="btn btn-primary" data-prd-product-modal-save>Save Product</button>
+      </div>
+    </div>
+  </div>
+
+<!-- =====================================================
+     View Product dialog (opens on row click)
+     ===================================================== -->
+<div class="prd-modal-overlay" data-prd-view-modal-overlay></div>
+<div class="prd-modal prd-view-modal" data-prd-view-modal aria-hidden="true">
+  <button type="button" class="prd-modal__close" data-prd-view-modal-close aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+  </button>
+
+<div class="prd-view-modal__image-wrap">
+    <img data-prd-view-image src="" alt="" hidden />
+    <span class="prd-view-modal__image-placeholder" data-prd-view-image-placeholder>No image added</span>
+  </div>
+  <div class="prd-view-modal__thumbs" data-prd-view-thumbs></div>
+
+  <h3 class="prd-modal__title" data-prd-view-name></h3>
+  <p class="prd-view-modal__sku" data-prd-view-sku></p>
+
+  <div class="prd-view-modal__details">
+    <div class="prd-view-modal__detail"><span>Category</span><strong data-prd-view-category></strong></div>
+    <div class="prd-view-modal__detail"><span>Price</span><strong data-prd-view-price></strong></div>
+    <div class="prd-view-modal__detail"><span>Stock</span><strong data-prd-view-stock></strong></div>
+    <div class="prd-view-modal__detail"><span>Status</span><strong data-prd-view-status></strong></div>
+    <div class="prd-view-modal__detail"><span>Length</span><strong data-prd-view-length></strong></div>
+    <div class="prd-view-modal__detail"><span>Density</span><strong data-prd-view-density></strong></div>
+    <div class="prd-view-modal__detail prd-view-modal__detail--full"><span>Lace Type</span><strong data-prd-view-lacetype></strong></div>
+  </div>
+
+  <div class="prd-view-modal__description">
+    <span>Description</span>
+    <p data-prd-view-description></p>
+  </div>
+
+  <div class="prd-modal__footer">
+    <button type="button" class="btn btn-outline prd-view-modal__delete" data-prd-view-delete>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Delete
+    </button>
+    <button type="button" class="btn btn-primary" data-prd-view-edit>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Edit
+    </button>
+  </div>
+</div>
+
+<script src="assets/js/admin-data.js"></script>
+<script src="assets/js/admin.js"></script>
+<script src="assets/js/admin-products.js"></script>
+<script src="assets/js/admin-main.js"></script>
+</body>
+</html>

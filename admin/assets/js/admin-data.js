@@ -45,3 +45,13 @@ window.BLEGAB_ADMIN_NOTIFICATIONS = [
   { id: 'notif-low-stock', title: 'Low Stock Alert', message: 'Deep Wave Wig has only 2 left in stock.', time: '2 hours ago' },
   { id: 'notif-new-order', title: 'New Order Received', message: 'Order #BLG-1256 was placed by Sarah Johnson.', time: '3 hours ago' }
 ];
+
+window.BLEGAB_ADMIN_CATEGORIES = [
+  { id: 'cat-default', name: 'Lace Wigs' }
+];
+
+window.BLEGAB_ADMIN_PRODUCTS = [
+  { id: 'prd-1', name: 'Body Wave Wig',  sku: 'BW-001', categoryId: 'cat-default', price: 0, stock: 20, status: 'in-stock',     image: '' },
+  { id: 'prd-2', name: 'Deep Wave Wig',  sku: 'DW-001', categoryId: 'cat-default', price: 0, stock: 3,  status: 'low-stock',    image: '' },
+  { id: 'prd-3', name: 'Straight Wig',   sku: 'ST-001', categoryId: 'cat-default', price: 0, stock: 0,  status: 'out-of-stock', image: '' }
+];
