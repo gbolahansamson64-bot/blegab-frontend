@@ -775,7 +775,7 @@
   }
 
 .prd-filter-panel {
-    right: 700px;
+    right: 50px;
     left: auto;
     width: min(260px, calc(100vw - 32px));
   }
