@@ -63,6 +63,7 @@ function initCheckoutModal() {
 
   continueBtn.addEventListener('click', function () {
     if (currentStep === 1) {
+      if (!validateShippingFields()) return;
       goToStep(2);
     } else {
       // No real payment backend yet — placeholder confirmation.
@@ -75,6 +76,62 @@ function initCheckoutModal() {
   backBtn.addEventListener('click', function () {
     goToStep(1);
   });
+
+  ['checkout-first-name', 'checkout-last-name', 'checkout-email', 'checkout-phone', 'checkout-country', 'checkout-address', 'checkout-city', 'checkout-state', 'checkout-zip'].forEach(function (id) {
+    var input = modal.querySelector('#' + id);
+    if (!input) return;
+    var eventName = input.tagName === 'SELECT' ? 'change' : 'input';
+    input.addEventListener(eventName, function () {
+      var wrapper = input.closest('.checkout-field');
+      var errorEl = wrapper ? wrapper.querySelector('.checkout-field-error') : null;
+      if (input.value.trim() !== '') {
+        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
+        if (errorEl) errorEl.classList.remove('is-visible');
+      }
+    });
+  });
+
+  function validateShippingFields() {
+    var fields = [
+      { input: modal.querySelector('#checkout-first-name'), key: 'first-name', message: 'First name is required.' },
+      { input: modal.querySelector('#checkout-last-name'), key: 'last-name', message: 'Last name is required.' },
+      { input: modal.querySelector('#checkout-email'), key: 'email', message: 'Email address is required.' },
+      { input: modal.querySelector('#checkout-country'), key: 'country', message: 'Country / region is required.' },
+      { input: modal.querySelector('#checkout-address'), key: 'address', message: 'Street address is required.' },
+      { input: modal.querySelector('#checkout-city'), key: 'city', message: 'City is required.' },
+      { input: modal.querySelector('#checkout-state'), key: 'state', message: 'State is required.' },
+      { input: modal.querySelector('#checkout-zip'), key: 'zip', message: 'ZIP code is required.' }
+    ];
+
+    var allFilled = true;
+    var firstInvalidInput = null;
+
+    fields.forEach(function (field) {
+      var errorEl = modal.querySelector('[data-field-error="' + field.key + '"]');
+      var wrapper = field.input ? field.input.closest('.checkout-field') : null;
+      var isEmpty = !field.input || field.input.value.trim() === '';
+
+      if (isEmpty) {
+        allFilled = false;
+        if (!firstInvalidInput) firstInvalidInput = field.input;
+        if (errorEl) {
+          errorEl.textContent = field.message;
+          errorEl.classList.add('is-visible');
+        }
+        if (wrapper) wrapper.classList.add('checkout-field--invalid');
+      } else {
+        if (errorEl) errorEl.classList.remove('is-visible');
+        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
+      }
+    });
+
+    if (!allFilled && firstInvalidInput) {
+      firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalidInput.focus({ preventScroll: true });
+    }
+
+    return allFilled;
+  }
 
   function goToStep(step) {
     currentStep = step;

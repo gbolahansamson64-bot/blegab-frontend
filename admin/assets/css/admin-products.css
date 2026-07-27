@@ -774,12 +774,17 @@
     display: none;
   }
 
-  .prd-filter-panel {
-    right: -150px;
+.prd-filter-panel {
+    right: 0;
+    left: auto;
+    width: min(260px, calc(100vw - 32px));
   }
 
+  [data-prd-category-dropdown] .prd-dropdown__menu,
   [data-prd-status-dropdown] .prd-dropdown__menu {
-    left: -50px;
+    left: auto;
+    right: 0;
+    max-width: calc(100vw - 32px);
   }
 
   .prd-row {
@@ -1226,4 +1231,92 @@
     flex: 1;
     justify-content: center;
   }
+}
+
+/* -----------------------------
+   Bulk actions bar
+   ----------------------------- */
+.prd-bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: var(--space-sm);
+  padding: 10px 14px;
+  background-color: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-sm);
+}
+
+.prd-bulk-bar__count {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-gold);
+  white-space: nowrap;
+}
+
+.prd-bulk-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.prd-bulk-bar__delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: #e57373;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.prd-bulk-bar__delete:hover {
+  border-color: #e57373;
+  background-color: rgba(229, 115, 115, 0.08);
+}
+
+.prd-bulk-bar__delete svg {
+  width: 14px;
+  height: 14px;
+}
+
+.prd-bulk-bar__clear {
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.prd-bulk-bar__clear:hover {
+  color: var(--color-white);
+}
+
+/* -----------------------------
+   Toast (save/delete confirmations)
+   ----------------------------- */
+.prd-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 20px;
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 600;
+  z-index: 400;
+  opacity: 0;
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  pointer-events: none;
+}
+
+.prd-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }

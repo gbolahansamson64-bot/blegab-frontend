@@ -259,10 +259,21 @@ function initMobileNav() {
 
   if (!menuToggle || !primaryNav || !navOverlay) return;
 
+  var scrollLockY = 0;
+
   function openNav() {
     primaryNav.classList.add('is-open');
     navOverlay.classList.add('is-visible');
     menuToggle.setAttribute('aria-expanded', 'true');
+
+    // Pin the page in place so nothing behind the drawer can scroll
+    // or be interacted with until the drawer is closed.
+    scrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + scrollLockY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
   }
 
@@ -270,7 +281,16 @@ function initMobileNav() {
     primaryNav.classList.remove('is-open');
     navOverlay.classList.remove('is-visible');
     menuToggle.setAttribute('aria-expanded', 'false');
+
+    // Undo the pin and restore the exact scroll position
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
     document.body.style.overflow = '';
+    window.scrollTo(0, scrollLockY);
+
     // Reset any inline transform from dragging
     primaryNav.style.transform = '';
     primaryNav.classList.remove('is-dragging');
@@ -563,10 +583,19 @@ function initCartDrawer() {
   var closeBtn = document.querySelector('[data-cart-close]');
   if (!toggle || !drawer || !overlay) return;
 
+  var cartScrollLockY = 0;
+
   function openDrawer() {
     drawer.classList.add('is-open');
     overlay.classList.add('is-visible');
     toggle.setAttribute('aria-expanded', 'true');
+
+    cartScrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + cartScrollLockY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
   }
 
@@ -574,7 +603,14 @@ function initCartDrawer() {
     drawer.classList.remove('is-open');
     overlay.classList.remove('is-visible');
     toggle.setAttribute('aria-expanded', 'false');
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
     document.body.style.overflow = '';
+    window.scrollTo(0, cartScrollLockY);
   }
 
   toggle.addEventListener('click', function () {

@@ -499,3 +499,24 @@
     height: 140px;
   }
 }
+
+/* -----------------------------
+   Mobile overflow fix — grid items default to min-width:auto,
+   which lets the chart canvas (and other wide children) push
+   past the container and stretch the whole page sideways.
+   Forcing min-width:0 makes them respect the grid track width.
+   ----------------------------- */
+.stx-panels-grid > * {
+  min-width: 0;
+}
+
+.stx-chart-canvas-wrap,
+.stx-chart-canvas-wrap canvas,
+.stx-breakdown-donut-wrap canvas {
+  max-width: 100%;
+}
+
+.stx-download-grid,
+.stx-custom-range.is-visible {
+  min-width: 0;
+}

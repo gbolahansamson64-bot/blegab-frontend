@@ -379,6 +379,39 @@
               </div>
             </div>
 
+            <!-- Bulk actions bar — appears when 1+ rows are checked -->
+            <div class="prd-bulk-bar" data-prd-bulk-bar hidden>
+              <span class="prd-bulk-bar__count" data-prd-bulk-count>0 selected</span>
+              <div class="prd-bulk-bar__actions">
+                <div class="prd-dropdown prd-inline-dropdown" data-prd-bulk-status-dropdown>
+                  <button type="button" class="prd-dropdown__toggle" data-prd-bulk-status-toggle aria-expanded="false">
+                    <span>Set Status</span>
+                    <svg class="prd-dropdown__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <ul class="prd-dropdown__menu" data-prd-bulk-status-menu>
+                    <li><button type="button" class="prd-dropdown__item" data-value="in-stock">In Stock</button></li>
+                    <li><button type="button" class="prd-dropdown__item" data-value="low-stock">Low Stock</button></li>
+                    <li><button type="button" class="prd-dropdown__item" data-value="out-of-stock">Out of Stock</button></li>
+                  </ul>
+                </div>
+
+                <div class="prd-dropdown prd-inline-dropdown" data-prd-bulk-category-dropdown>
+                  <button type="button" class="prd-dropdown__toggle" data-prd-bulk-category-toggle aria-expanded="false">
+                    <span>Move to Category</span>
+                    <svg class="prd-dropdown__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <ul class="prd-dropdown__menu" data-prd-bulk-category-menu></ul>
+                </div>
+
+                <button type="button" class="prd-bulk-bar__delete" data-prd-bulk-delete>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Delete
+                </button>
+
+                <button type="button" class="prd-bulk-bar__clear" data-prd-bulk-clear>Clear</button>
+              </div>
+            </div>
+
             <div class="admin-orders-table prd-table" role="table" data-prd-table>
               <div class="prd-table-head" role="row">
                 <span role="columnheader"><input type="checkbox" data-prd-select-all aria-label="Select all products" /></span>
@@ -583,6 +616,10 @@
   </div>
 
   <div class="prd-modal__footer">
+        <button type="button" class="btn btn-outline" data-prd-view-duplicate>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Duplicate
+    </button>
     <button type="button" class="btn btn-outline prd-view-modal__delete" data-prd-view-delete>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Delete
@@ -593,6 +630,8 @@
     </button>
   </div>
 </div>
+
+<div class="prd-toast" data-prd-toast hidden></div>
 
 <script src="assets/js/admin-data.js"></script>
 <script src="assets/js/admin.js"></script>

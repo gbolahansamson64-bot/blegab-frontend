@@ -772,3 +772,85 @@ function formatQtyDisplay(num) {
   if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
   return num.toString();
 }
+
+/* =========================================================
+   GLOBAL VIEWPORT WALL
+   Watches the entire page for ANY element that opens (gains
+   .is-open or .is-visible) and, if it would stick out past the
+   left/right edge of the screen, shifts it back in. This is
+   automatic and site-wide — no per-dropdown wiring needed, and
+   any new dropdown/panel added later is protected for free as
+   long as it follows the existing is-open / is-visible pattern.
+
+   Deliberately skips: sidebars, full-screen overlays, and
+   centered modals — those are already positioned correctly by
+   design and clamping them would fight their own transforms.
+   ========================================================= */
+(function () {
+  var MARGIN = 10;
+  var SKIP_SELECTOR = [
+    '.admin-sidebar',
+    '.admin-sidebar-overlay',
+    '.admin-notif-overlay',
+    '.admin-notif-modal-overlay',
+    '.admin-notif-modal',
+    '.prd-modal-overlay',
+    '.prd-modal',
+    '.cart-drawer',
+    '.cart-drawer-overlay',
+    '.nav-overlay'
+  ].join(', ');
+
+  function isClampable(el) {
+    if (el.matches(SKIP_SELECTOR)) return false;
+    var pos = getComputedStyle(el).position;
+    return pos === 'absolute' || pos === 'fixed';
+  }
+
+  function clamp(el) {
+    el.style.transform = '';
+    requestAnimationFrame(function () {
+      var stillOpen = el.classList.contains('is-open') || el.classList.contains('is-visible');
+      if (!stillOpen) return;
+
+      var rect = el.getBoundingClientRect();
+      var shift = 0;
+
+      if (rect.right > window.innerWidth - MARGIN) {
+        shift = (window.innerWidth - MARGIN) - rect.right;
+      } else if (rect.left < MARGIN) {
+        shift = MARGIN - rect.left;
+      }
+
+      if (shift !== 0) el.style.transform = 'translateX(' + shift + 'px)';
+    });
+  }
+
+  function reset(el) {
+    el.style.transform = '';
+  }
+
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (m) {
+      if (m.type !== 'attributes' || m.attributeName !== 'class') return;
+      var el = m.target;
+      if (!isClampable(el)) return;
+
+      var isOpenNow = el.classList.contains('is-open') || el.classList.contains('is-visible');
+      isOpenNow ? clamp(el) : reset(el);
+    });
+  });
+
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class'],
+    subtree: true
+  });
+
+  // Re-check anything currently open if the screen rotates/resizes
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.is-open, .is-visible').forEach(function (el) {
+      if (isClampable(el)) clamp(el);
+    });
+  });
+})();
