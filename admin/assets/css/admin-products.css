@@ -775,9 +775,15 @@
   }
 
 .prd-filter-panel {
-    right: 0;
+    right: 700px;
     left: auto;
     width: min(260px, calc(100vw - 32px));
+  }
+
+  .prd-filter-panel__field select,
+  .prd-filter-panel__field input,
+  .prd-search input {
+    font-size: 16px;
   }
 
   [data-prd-category-dropdown] .prd-dropdown__menu,
@@ -819,6 +825,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 700px) {
+  .prd-table-head {
+    display: none;
+  }
+
+.prd-filter-panel {
+    right: -150px;
+    left: auto;
+    width: min(260px, calc(100vw - 32px));
+  }}
 
 @media (max-width: 380px) {
   .prd-dropdown__toggle {
