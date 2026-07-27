@@ -1,0 +1,347 @@
+<!-- admin-orders.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orders | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/admin-orders.css" />
+  <link rel="icon" type="image/webp" href="assets/images/favicon.webp" />
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+    <aside class="admin-sidebar" data-admin-sidebar>
+      <div class="admin-sidebar__logo">
+        <svg class="admin-sidebar__logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2c2.5 1.5 4 4 3.5 7-3-1-5 .5-5.5 3 2-.5 3.5.5 4 2.5-2.5 1-5.5.5-7-2-1.5-3 0-7 5-10.5z" fill="currentColor"/>
+        </svg>
+        <div class="admin-sidebar__logo-text">
+          <span class="admin-sidebar__logo-name">BLEGAB</span>
+          <span class="admin-sidebar__logo-tagline">Premium Hair Wigs</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav" aria-label="Admin navigation">
+        <ul class="admin-nav__list">
+          <li class="admin-nav__item">
+            <a href="admin.html" class="admin-nav__link" data-nav-key="overview">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 11l9-8 9 8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Overview
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-statistics.html" class="admin-nav__link" data-nav-key="statistics">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 20V10M11 20V4M18 20v-7" stroke-linecap="round"/>
+              </svg>
+              Statistics
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-products.html" class="admin-nav__link" data-nav-key="products">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="4" rx="1"/>
+                <path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12h4" stroke-linecap="round"/>
+              </svg>
+              Products
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-orders.html" class="admin-nav__link is-active" data-nav-key="orders">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 3h10l1 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 7h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Orders
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-customers.html" class="admin-nav__link" data-nav-key="customers">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5" stroke-linecap="round"/>
+                <circle cx="17" cy="9" r="2.4"/>
+                <path d="M15 13.3c2.5.3 4.5 2.1 4.5 5.2" stroke-linecap="round"/>
+              </svg>
+              Customers
+            </a>
+          </li>
+          <li class="admin-nav__item admin-nav__item--settings">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-settings-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.7 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Settings
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-settings-submenu>
+              <li>
+                <a href="admin-settings-store.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 9.5L12 3l9 6.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 20v-6h6v6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Store Info
+                </a>
+              </li>
+              <li>
+                <a href="admin-settings-shipping.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M3 7h11v9H3z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 10h4l3 3v3h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="7" cy="18" r="1.6"/>
+                    <circle cx="17.5" cy="18" r="1.6"/>
+                  </svg>
+                  Shipping &amp; Payments
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="admin-nav__item admin-nav__item--auth">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-admin-auth-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              Admin Account
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-admin-auth-submenu>
+              <li>
+                <a href="admin-login.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M21 12H9" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign In
+                </a>
+              </li>
+              <li>
+                <a href="admin-signup.html" class="admin-nav__sublink">
+                  <svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M15 12H3" stroke-linecap="round"/>
+                  </svg>
+                  Admin Sign Up
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="admin-nav__item">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-theme-toggle aria-label="Toggle theme">
+              <svg class="admin-nav__icon admin-nav__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg class="admin-nav__icon admin-nav__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.5"/>
+                <path d="M12 2.5v2.5M12 19v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M2.5 12h2.5M19 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" stroke-linecap="round"/>
+              </svg>
+              <span data-theme-toggle-label>Dark Mode</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="admin-sidebar-overlay" data-admin-sidebar-overlay></div>
+
+    <!-- =====================================================
+         MAIN COLUMN
+         ===================================================== -->
+    <div class="admin-main">
+
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <button type="button" class="admin-topbar__menu-toggle" data-admin-menu-toggle aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="admin-topbar__search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+          <input type="search" placeholder="Search orders..." aria-label="Search" />
+        </div>
+
+        <div class="admin-topbar__actions">
+          <div class="admin-notif-overlay" data-notif-overlay></div>
+
+          <div class="admin-notif-menu" data-notif-menu>
+            <button type="button" class="admin-topbar__bell" aria-label="Notifications" data-notif-toggle aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke-linecap="round"/>
+              </svg>
+              <span class="admin-topbar__bell-count" data-notif-count hidden>0</span>
+            </button>
+
+            <div class="admin-notif-dropdown" data-notif-dropdown>
+              <div class="admin-notif-dropdown__head">
+                <h3 class="admin-notif-dropdown__title">Notifications</h3>
+                <button type="button" class="admin-notif-dropdown__clear" data-notif-clear-all>Clear all</button>
+              </div>
+              <ul class="admin-notif-list" data-notif-list></ul>
+              <p class="admin-notif-empty" data-notif-empty hidden>No Notifications</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- =====================================================
+           PAGE CONTENT — ORDERS
+           ===================================================== -->
+      <main class="admin-content">
+        <div class="admin-page-head">
+          <div class="admin-page-head__info">
+            <h1 class="admin-page-head__title">Orders</h1>
+            <p class="admin-page-head__subtitle">Manage and track all customer orders.</p>
+          </div>
+<div class="admin-page-head__actions">
+  <div class="admin-orders-download-all">
+    <button type="button" class="admin-orders-download-all__btn" data-download-toggle aria-label="Download all orders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download All
+    </button>
+    <div class="download-menu" data-download-menu>
+      <button type="button" class="download-menu__item" data-download-pdf="all">Download as PDF</button>
+      <button type="button" class="download-menu__item" data-download-doc="all">Download as DOC</button>
+    </div>
+  </div>
+
+  <button type="button" class="admin-orders-delete-selected__btn" data-delete-selected hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M3 6h18" stroke-linecap="round"/>
+    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span data-delete-selected-count>Delete Selected</span>
+</button>
+
+<!-- NEW -->
+<div class="admin-orders-filter" data-orders-filter-custom>
+  <button type="button" class="admin-orders-filter__btn" data-orders-filter-toggle aria-haspopup="listbox" aria-expanded="false">
+    <span data-orders-filter-label>All Orders</span>
+    <svg class="admin-orders-filter__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <ul class="admin-orders-filter__menu" data-orders-filter-menu role="listbox">
+    <li role="option" data-value="all" class="admin-orders-filter__option is-selected">All Orders</li>
+    <li role="option" data-value="pending" class="admin-orders-filter__option">Pending</li>
+    <li role="option" data-value="processing" class="admin-orders-filter__option">Processing</li>
+    <li role="option" data-value="shipped" class="admin-orders-filter__option">Shipped</li>
+    <li role="option" data-value="delivered" class="admin-orders-filter__option">Delivered</li>
+    <li role="option" data-value="cancelled" class="admin-orders-filter__option">Cancelled</li>
+  </ul>
+</div>
+</div>
+        </div>
+
+        <div class="admin-orders-container">
+          <div class="admin-orders-table__head">
+            <!-- NEW -->
+<span class="admin-orders-table__head-order">
+  <button type="button" class="order-row__check" data-select-all-toggle aria-label="Select all orders">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  Order
+</span>
+            <span>Product</span>
+            <span>Customer</span>
+            <span>State</span>
+            <span>Total</span>
+            <span>Status</span>
+            <span>Date</span>
+            <span></span>
+          </div>
+
+          <div class="admin-orders-list" data-orders-list>
+            <!-- Orders injected by admin-orders.js -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Order Detail Modal -->
+  <div class="order-modal-overlay" data-order-modal-overlay></div>
+  <div class="order-modal" data-order-modal aria-hidden="true">
+    <div class="order-modal__header">
+      <h2 class="order-modal__title">Order Details</h2>
+      <button type="button" class="order-modal__close" data-order-modal-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+<div class="order-modal__body" data-order-modal-body>
+      <!-- Populated by JS -->
+    </div>
+    <div class="order-modal__footer">
+      <button type="button" class="order-modal__download-btn" data-modal-download-pdf>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download PDF
+      </button>
+      <button type="button" class="order-modal__download-btn" data-modal-download-doc>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Download DOC
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification detail modal (shared) -->
+  <div class="admin-notif-modal-overlay" data-notif-modal-overlay></div>
+  <div class="admin-notif-modal" data-notif-modal aria-hidden="true">
+    <button type="button" class="admin-notif-modal__close" data-notif-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+    </button>
+    <p class="admin-notif-modal__time" data-notif-modal-time></p>
+    <h3 class="admin-notif-modal__title" data-notif-modal-title></h3>
+    <p class="admin-notif-modal__message" data-notif-modal-message></p>
+  </div>
+
+  <script src="assets/js/admin-data.js"></script>
+  <script src="assets/js/admin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="assets/js/admin-orders.js"></script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+// assets/js/admin-orders.js
+/* =========================================================
+   ADMIN ORDERS PAGE JS
+   Renders orders list with expandable detail modal.
+   ========================================================= */
+
+document.addEventListener('DOMContentLoaded', function () {
+  initOrdersPage();
+  initOrderModal();
+  initOrdersFilter();
+});
+
+/* -----------------------------
+   Orders data — swap for API call later
+   ----------------------------- */
+window.BLEGAB_ADMIN_ORDERS = [
+  {
+    id: 'BLG-1256',
+    productName: 'Body Wave Lace Front Wig',
+    productDescription: 'Premium 100% virgin human hair body wave wig with a pre-plucked hairline and bleached knots for a seamless, natural-looking scalp.',
+    productSku: 'SKU-BW-2401-001',
+    productImage: 'assets/images/admin/products/body-wave.webp',
+    quantity: 1,
+    length: '24 inches',
+    density: '200%',
+    laceType: '13x4 HD Lace',
+    category: 'Lace Front Wigs',
+    customerName: 'Sarah Johnson',
+    customerEmail: 'sarah.johnson@email.com',
+    customerPhone: '+1 (555) 234-5678',
+    country: 'United States',
+    streetAddress: '742 Evergreen Terrace',
+    apartment: 'Apt 4B',
+    city: 'Springfield',
+    state: 'Illinois',
+    zipCode: '62701',
+    paymentMethod: 'Credit Card (Visa ****4242)',
+    paymentDate: 'May 24, 2025',
+    paymentTime: '10:45 AM',
+    total: 650.00,
+    status: 'pending',
+    orderDate: 'May 24, 2025'
+  },
+  {
+    id: 'BLG-1255',
+    productName: 'Deep Wave Full Lace Wig',
+    productDescription: 'Luxurious deep wave texture with baby hair and bleached knots for a natural, undetectable hairline that blends effortlessly with your skin.',
+    productSku: 'SKU-DW-2401-042',
+    productImage: 'assets/images/admin/products/deep-wave.webp',
+    quantity: 1,
+    length: '22 inches',
+    density: '180%',
+    laceType: '13x6 Transparent Lace',
+    category: 'Full Lace Wigs',
+    customerName: 'Amanda Brown',
+    customerEmail: 'amanda.brown@email.com',
+    customerPhone: '+1 (555) 876-5432',
+    country: 'Canada',
+    streetAddress: '1500 Rue Sainte-Catherine',
+    apartment: '',
+    city: 'Montreal',
+    state: 'Quebec',
+    zipCode: 'H3G 1S8',
+    paymentMethod: 'PayPal',
+    paymentDate: 'May 24, 2025',
+    paymentTime: '09:32 AM',
+    total: 420.00,
+    status: 'processing',
+    orderDate: 'May 24, 2025'
+  },
+  {
+    id: 'BLG-1254',
+    productName: 'Bone Straight HD Lace Wig',
+    productDescription: 'Silky straight texture with invisible HD lace that melts into any skin tone for a flawless, undetectable finish.',
+    productSku: 'SKU-BS-2401-018',
+    productImage: 'assets/images/admin/products/bone-straight.webp',
+    quantity: 2,
+    length: '20 inches',
+    density: '150%',
+    laceType: '5x5 HD Lace',
+    category: 'HD Lace Wigs',
+    customerName: 'Jessica Williams',
+    customerEmail: 'jessica.w@email.com',
+    customerPhone: '+1 (555) 345-6789',
+    country: 'United Kingdom',
+    streetAddress: '221B Baker Street',
+    apartment: 'Flat 3',
+    city: 'London',
+    state: 'England',
+    zipCode: 'NW1 6XE',
+    paymentMethod: 'Credit Card (MasterCard ****8791)',
+    paymentDate: 'May 24, 2025',
+    paymentTime: '08:15 AM',
+    total: 760.00,
+    status: 'shipped',
+    orderDate: 'May 24, 2025'
+  }
+];
+
+/* -----------------------------
+   Status labels
+   ----------------------------- */
+var ORDER_STATUS_LABELS = {
+  pending: 'Pending',
+  processing: 'Processing',
+  shipped: 'Shipped',
+  delivered: 'Delivered',
+  cancelled: 'Cancelled'
+};
+
+/* -----------------------------
+   Country name -> short code
+   Add more as needed; falls back to the full name if not listed.
+   ----------------------------- */
+var COUNTRY_CODES = {
+  'United States': 'USA',
+  'Canada': 'CA',
+  'United Kingdom': 'UK',
+  'Nigeria': 'NG',
+  'Ghana': 'GH',
+  'South Africa': 'ZA',
+  'Australia': 'AU'
+};
+
+function shortCountry(country) {
+  return COUNTRY_CODES[country] || country;
+}
+
+/* -----------------------------
+   Render orders list
+   ----------------------------- */
+function initOrdersPage() {
+  renderOrders(window.BLEGAB_ADMIN_ORDERS);
+}
+
+var currentOrders = [];
+var selectedOrderIds = new Set();
+
+function renderOrders(orders) {
+  currentOrders = orders || [];
+  var list = document.querySelector('[data-orders-list]');
+  if (!list) return;
+
+  if (!orders || orders.length === 0) {
+    list.innerHTML = '' +
+      '<div class="admin-orders-empty">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+          '<path d="M7 3h10l1 4H6z" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M5 7h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>' +
+        '<p class="admin-orders-empty__title">No orders found</p>' +
+        '<p class="admin-orders-empty__text">Orders will appear here when customers make purchases.</p>' +
+      '</div>';
+    return;
+  }
+
+  list.innerHTML = orders.map(function (order) {
+    var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+
+    return '' +
+      '<div class="order-row" data-order-id="' + order.id + '">' +
+// NEW
+'<div class="order-row__id-section">' +
+  '<button type="button" class="order-row__check' + (selectedOrderIds.has(order.id) ? ' is-checked' : '') + '" data-row-check aria-label="Select order">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+      '<path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>' +
+  '</button>' +
+  '<span class="order-row__id">#' + order.id + '</span>' +
+'</div>' +
+        '<div class="order-row__product">' +
+          '<img src="' + order.productImage + '" alt="' + order.productName + '" class="order-row__product-image" />' +
+          '<div class="order-row__product-info">' +
+            '<span class="order-row__product-name">' + order.productName + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="order-row__customer">' +
+          '<span class="order-row__customer-name">' + order.customerName + '</span>' +
+          '<span class="order-row__customer-country">' + shortCountry(order.country) + '</span>' +
+        '</div>' +
+        '<span class="order-row__state">' + order.state + '</span>' +
+        '<span class="order-row__total">$' + order.total.toFixed(2) + '</span>' +
+        '<div class="order-row__status-wrap">' +
+          '<span class="order-status order-status--' + order.status + '">' + statusLabel + '</span>' +
+        '</div>' +
+'<span class="order-row__date">' + order.orderDate + '</span>' +
+        '<div class="order-row__actions">' +
+          '<button type="button" class="order-row__view" data-download-toggle aria-label="Order actions">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+              '<circle cx="12" cy="12" r="1.5"/>' +
+              '<circle cx="12" cy="5" r="1.5"/>' +
+              '<circle cx="12" cy="19" r="1.5"/>' +
+            '</svg>' +
+          '</button>' +
+// NEW
+'<div class="download-menu" data-download-menu>' +
+  '<button type="button" class="download-menu__item" data-download-pdf="' + order.id + '">Download as PDF</button>' +
+  '<button type="button" class="download-menu__item" data-download-doc="' + order.id + '">Download as DOC</button>' +
+  '<button type="button" class="download-menu__item download-menu__item--delete" data-delete-order="' + order.id + '">Delete</button>' +
+'</div>' +
+        '</div>' +
+      '</div>';
+  }).join('');
+
+  updateDeleteSelectedUI();
+}
+
+function updateDeleteSelectedUI() {
+  var btn = document.querySelector('[data-delete-selected]');
+  if (btn) {
+    var count = selectedOrderIds.size;
+    btn.hidden = count === 0;
+    var countLabel = btn.querySelector('[data-delete-selected-count]');
+    if (countLabel) countLabel.textContent = 'Delete Selected (' + count + ')';
+  }
+
+  var selectAllBtn = document.querySelector('[data-select-all-toggle]');
+  if (selectAllBtn) {
+    var allSelected = currentOrders.length > 0 && currentOrders.every(function (o) { return selectedOrderIds.has(o.id); });
+    selectAllBtn.classList.toggle('is-checked', allSelected);
+  }
+}
+
+function toggleOrderSelection(id) {
+  if (selectedOrderIds.has(id)) {
+    selectedOrderIds.delete(id);
+  } else {
+    selectedOrderIds.add(id);
+  }
+  var rowCheck = document.querySelector('.order-row[data-order-id="' + id + '"] [data-row-check]');
+  if (rowCheck) rowCheck.classList.toggle('is-checked', selectedOrderIds.has(id));
+  updateDeleteSelectedUI();
+}
+
+function setAllSelected(select) {
+  selectedOrderIds.clear();
+  if (select) {
+    currentOrders.forEach(function (o) { selectedOrderIds.add(o.id); });
+  }
+  document.querySelectorAll('[data-row-check]').forEach(function (el) {
+    var id = el.closest('.order-row').dataset.orderId;
+    el.classList.toggle('is-checked', selectedOrderIds.has(id));
+  });
+  updateDeleteSelectedUI();
+}
+
+function applyOrdersFilter(status) {
+  if (!status || status === 'all') {
+    renderOrders(window.BLEGAB_ADMIN_ORDERS);
+  } else {
+    renderOrders(window.BLEGAB_ADMIN_ORDERS.filter(function (o) { return o.status === status; }));
+  }
+}
+
+function deleteOrderById(id) {
+  window.BLEGAB_ADMIN_ORDERS = window.BLEGAB_ADMIN_ORDERS.filter(function (o) { return o.id !== id; });
+  selectedOrderIds.delete(id);
+  var toggleBtn = document.querySelector('[data-orders-filter-toggle]');
+  applyOrdersFilter(toggleBtn ? toggleBtn.dataset.ordersFilterValue : 'all');
+}
+
+function deleteSelectedOrders() {
+  if (selectedOrderIds.size === 0) return;
+  window.BLEGAB_ADMIN_ORDERS = window.BLEGAB_ADMIN_ORDERS.filter(function (o) { return !selectedOrderIds.has(o.id); });
+  selectedOrderIds.clear();
+  var toggleBtn = document.querySelector('[data-orders-filter-toggle]');
+  applyOrdersFilter(toggleBtn ? toggleBtn.dataset.ordersFilterValue : 'all');
+}
+
+/* -----------------------------
+   Order detail modal
+   ----------------------------- */
+function initOrderModal() {
+  var overlay = document.querySelector('[data-order-modal-overlay]');
+  var modal = document.querySelector('[data-order-modal]');
+  var closeBtn = document.querySelector('[data-order-modal-close]');
+
+  if (!overlay || !modal) return;
+
+var currentModalOrder = null;
+
+  // Row click opens modal; dots button opens the download menu instead
+  document.addEventListener('click', function (e) {
+    var toggleBtn = e.target.closest('[data-download-toggle]');
+    var pdfBtn = e.target.closest('[data-download-pdf]');
+    var docBtn = e.target.closest('[data-download-doc]');
+    var row = e.target.closest('.order-row');
+
+    var rowCheckBtn = e.target.closest('[data-row-check]');
+    var selectAllBtn = e.target.closest('[data-select-all-toggle]');
+    var deleteOrderBtn = e.target.closest('[data-delete-order]');
+    var deleteSelectedBtn = e.target.closest('[data-delete-selected]');
+
+    if (rowCheckBtn) {
+      e.stopPropagation();
+      var checkRow = rowCheckBtn.closest('.order-row');
+      if (checkRow) toggleOrderSelection(checkRow.dataset.orderId);
+      return;
+    }
+
+    if (selectAllBtn) {
+      e.stopPropagation();
+      var allCurrentlySelected = currentOrders.length > 0 && currentOrders.every(function (o) { return selectedOrderIds.has(o.id); });
+      setAllSelected(!allCurrentlySelected);
+      return;
+    }
+
+    if (deleteOrderBtn) {
+      e.stopPropagation();
+      var delId = deleteOrderBtn.dataset.deleteOrder;
+      if (confirm('Delete order #' + delId + '? This cannot be undone.')) {
+        deleteOrderById(delId);
+      }
+      closeAllDownloadMenus();
+      return;
+    }
+
+    if (deleteSelectedBtn) {
+      e.stopPropagation();
+      if (confirm('Delete ' + selectedOrderIds.size + ' selected order(s)? This cannot be undone.')) {
+        deleteSelectedOrders();
+      }
+      return;
+    }
+
+    if (toggleBtn) {
+      e.stopPropagation();
+      var menu = toggleBtn.nextElementSibling;
+      var isOpen = menu.classList.contains('is-open');
+      closeAllDownloadMenus();
+      if (!isOpen) menu.classList.add('is-open');
+      return;
+    }
+
+    if (pdfBtn) {
+      e.stopPropagation();
+      var pdfVal = pdfBtn.dataset.downloadPdf;
+      if (pdfVal === 'all') {
+        downloadOrdersPdf(currentOrders, 'orders-export', 'Orders Report');
+      } else {
+        var pdfOrder = window.BLEGAB_ADMIN_ORDERS.find(function (o) { return o.id === pdfVal; });
+        if (pdfOrder) downloadOrderPdf(pdfOrder);
+      }
+      closeAllDownloadMenus();
+      return;
+    }
+
+    if (docBtn) {
+      e.stopPropagation();
+      var docVal = docBtn.dataset.downloadDoc;
+      if (docVal === 'all') {
+        downloadDocFile('orders-export', ordersTableHtml(currentOrders, 'Orders Report'));
+      } else {
+        var docOrder = window.BLEGAB_ADMIN_ORDERS.find(function (o) { return o.id === docVal; });
+        if (docOrder) downloadDocFile('order-' + docOrder.id, orderDetailHtml(docOrder));
+      }
+      closeAllDownloadMenus();
+      return;
+    }
+
+    if (row) {
+      var orderId = row.dataset.orderId;
+      var order = window.BLEGAB_ADMIN_ORDERS.find(function (o) { return o.id === orderId; });
+      if (order) openOrderModal(order);
+    }
+
+    if (!toggleBtn && !e.target.closest('[data-download-menu]')) {
+      closeAllDownloadMenus();
+    }
+  });
+
+  var modalPdfBtn = document.querySelector('[data-modal-download-pdf]');
+  var modalDocBtn = document.querySelector('[data-modal-download-doc]');
+
+  if (modalPdfBtn) {
+    modalPdfBtn.addEventListener('click', function () {
+      if (currentModalOrder) downloadOrderPdf(currentModalOrder);
+    });
+  }
+  if (modalDocBtn) {
+    modalDocBtn.addEventListener('click', function () {
+      if (currentModalOrder) downloadDocFile('order-' + currentModalOrder.id, orderDetailHtml(currentModalOrder));
+    });
+  }
+
+  function openOrderModal(order) {
+    currentModalOrder = order;
+    var body = document.querySelector('[data-order-modal-body]');
+    if (!body) return;
+
+    var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+
+    body.innerHTML = '' +
+      '<div class="order-detail-section">' +
+        '<h3 class="order-detail-section__title">Order Information</h3>' +
+        '<div class="order-detail-grid">' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Order ID</span>' +
+            '<span class="order-detail-item__value">#' + order.id + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Status</span>' +
+            '<span class="order-status order-status--' + order.status + '">' + statusLabel + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Payment Date</span>' +
+            '<span class="order-detail-item__value">' + order.paymentDate + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Payment Time</span>' +
+            '<span class="order-detail-item__value">' + order.paymentTime + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Payment Method</span>' +
+            '<span class="order-detail-item__value">' + order.paymentMethod + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Total</span>' +
+            '<span class="order-detail-item__value" style="color:var(--color-gold);font-weight:700;">$' + order.total.toFixed(2) + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="order-detail-section">' +
+        '<h3 class="order-detail-section__title">Product Details</h3>' +
+        '<div class="order-detail-grid">' +
+          '<div class="order-detail-item order-detail-item--full">' +
+            '<span class="order-detail-item__label">Product Name</span>' +
+            '<span class="order-detail-item__value">' + order.productName + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item order-detail-item--full">' +
+            '<span class="order-detail-item__label">Description</span>' +
+            '<span class="order-detail-item__value">' + order.productDescription + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">SKU Number</span>' +
+            '<span class="order-detail-item__value" style="color:var(--color-gold);">' + order.productSku + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Category</span>' +
+            '<span class="order-detail-item__value">' + order.category + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Quantity</span>' +
+            '<span class="order-detail-item__value">' + order.quantity + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Length</span>' +
+            '<span class="order-detail-item__value">' + order.length + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Density</span>' +
+            '<span class="order-detail-item__value">' + order.density + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Lace Type</span>' +
+            '<span class="order-detail-item__value">' + order.laceType + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="order-detail-section">' +
+        '<h3 class="order-detail-section__title">Customer Details</h3>' +
+        '<div class="order-detail-grid">' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Full Name</span>' +
+            '<span class="order-detail-item__value">' + order.customerName + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Email</span>' +
+            '<span class="order-detail-item__value">' + order.customerEmail + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Phone</span>' +
+            '<span class="order-detail-item__value">' + order.customerPhone + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Country</span>' +
+            '<span class="order-detail-item__value">' + order.country + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Street Address</span>' +
+            '<span class="order-detail-item__value">' + order.streetAddress + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">Apartment</span>' +
+            '<span class="order-detail-item__value">' + (order.apartment || '—') + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">City</span>' +
+            '<span class="order-detail-item__value">' + order.city + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">State</span>' +
+            '<span class="order-detail-item__value">' + order.state + '</span>' +
+          '</div>' +
+          '<div class="order-detail-item">' +
+            '<span class="order-detail-item__label">ZIP Code</span>' +
+            '<span class="order-detail-item__value">' + order.zipCode + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    modal.classList.add('is-open');
+    overlay.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    overlay.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeModal();
+    }
+  });
+}
+
+/* -----------------------------
+   Filter by status
+   ----------------------------- */
+function initOrdersFilter() {
+  var wrap = document.querySelector('[data-orders-filter-custom]');
+  var toggleBtn = document.querySelector('[data-orders-filter-toggle]');
+  var menu = document.querySelector('[data-orders-filter-menu]');
+  var label = document.querySelector('[data-orders-filter-label]');
+  if (!wrap || !toggleBtn || !menu) return;
+
+  toggleBtn.dataset.ordersFilterValue = 'all';
+
+  toggleBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    wrap.classList.toggle('is-open');
+    toggleBtn.setAttribute('aria-expanded', wrap.classList.contains('is-open'));
+  });
+
+  menu.querySelectorAll('[data-value]').forEach(function (option) {
+    option.addEventListener('click', function () {
+      var value = option.dataset.value;
+      toggleBtn.dataset.ordersFilterValue = value;
+      label.textContent = option.textContent;
+
+      menu.querySelectorAll('.admin-orders-filter__option').forEach(function (o) {
+        o.classList.remove('is-selected');
+      });
+      option.classList.add('is-selected');
+
+      selectedOrderIds.clear();
+      applyOrdersFilter(value);
+
+      wrap.classList.remove('is-open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!wrap.contains(e.target)) {
+      wrap.classList.remove('is-open');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+/* -----------------------------
+   Download menu helpers
+   ----------------------------- */
+function closeAllDownloadMenus() {
+  document.querySelectorAll('.download-menu.is-open').forEach(function (m) {
+    m.classList.remove('is-open');
+  });
+}
+
+function orderDetailHtml(order) {
+  var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+  var labelStyle = 'color:#888;font-size:11px;text-transform:uppercase;margin-bottom:2px;';
+  var valueStyle = 'font-size:13px;margin-bottom:10px;';
+
+  function item(label, value) {
+    return '<div style="' + labelStyle + '">' + label + '</div>' +
+           '<div style="' + valueStyle + '">' + value + '</div>';
+  }
+
+  return '<div style="font-family:Arial,sans-serif;color:#111;">' +
+    '<h1 style="font-size:18px;">Order #' + order.id + '</h1>' +
+    item('Status', statusLabel) +
+    item('Total', '$' + order.total.toFixed(2)) +
+    item('Payment Date', order.paymentDate) +
+    item('Payment Time', order.paymentTime) +
+    item('Payment Method', order.paymentMethod) +
+    '<h2 style="font-size:14px;margin-top:16px;">Product</h2>' +
+    item('Product Name', order.productName) +
+    item('Description', order.productDescription) +
+    item('SKU', order.productSku) +
+    item('Category', order.category) +
+    item('Quantity', order.quantity) +
+    item('Length', order.length) +
+    item('Density', order.density) +
+    item('Lace Type', order.laceType) +
+    '<h2 style="font-size:14px;margin-top:16px;">Customer</h2>' +
+    item('Full Name', order.customerName) +
+    item('Email', order.customerEmail) +
+    item('Phone', order.customerPhone) +
+    item('Address', order.streetAddress + (order.apartment ? ', ' + order.apartment : '') + ', ' + order.city + ', ' + order.state + ' ' + order.zipCode) +
+  '</div>';
+}
+
+function ordersTableHtml(orders, title) {
+  var pageBreak = '<br clear="all" style="page-break-before:always;">';
+
+  var sections = orders.map(function (order, index) {
+    return (index > 0 ? pageBreak : '') + orderDetailHtml(order);
+  }).join('');
+
+  return '<h1 style="font-family:Arial,sans-serif;font-size:20px;">' + title + '</h1>' + sections;
+}
+
+function downloadDocFile(filename, innerHtml) {
+  var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+    '<head><meta charset="utf-8"><title>' + filename + '</title></head>' +
+    '<body>' + innerHtml + '</body></html>';
+
+  var blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = filename + '.doc';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function downloadOrderPdf(order) {
+  var doc = new window.jspdf.jsPDF();
+  var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+  var y = 20;
+
+  doc.setFontSize(16);
+  doc.text('Order #' + order.id, 14, y); y += 10;
+  doc.setFontSize(11);
+
+  [
+    'Status: ' + statusLabel,
+    'Total: $' + order.total.toFixed(2),
+    'Payment Date: ' + order.paymentDate,
+    'Payment Time: ' + order.paymentTime,
+    'Payment Method: ' + order.paymentMethod,
+    '',
+    'Product: ' + order.productName,
+    'SKU: ' + order.productSku,
+    'Category: ' + order.category,
+    'Quantity: ' + order.quantity,
+    'Length: ' + order.length,
+    'Density: ' + order.density,
+    'Lace Type: ' + order.laceType,
+    '',
+    'Customer: ' + order.customerName,
+    'Email: ' + order.customerEmail,
+    'Phone: ' + order.customerPhone,
+    'Address: ' + order.streetAddress + (order.apartment ? ', ' + order.apartment : '') + ', ' + order.city + ', ' + order.state + ' ' + order.zipCode
+  ].forEach(function (line) {
+    doc.text(line, 14, y);
+    y += 8;
+  });
+
+  doc.save('order-' + order.id + '.pdf');
+}
+
+function downloadOrdersPdf(orders, filename, title) {
+  var doc = new window.jspdf.jsPDF();
+
+  orders.forEach(function (order, index) {
+    if (index > 0) doc.addPage();
+    var y = 20;
+    var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+
+    doc.setFontSize(16);
+    doc.text('Order #' + order.id, 14, y); y += 10;
+    doc.setFontSize(11);
+
+    [
+      'Status: ' + statusLabel,
+      'Total: $' + order.total.toFixed(2),
+      'Payment Date: ' + order.paymentDate,
+      'Payment Time: ' + order.paymentTime,
+      'Payment Method: ' + order.paymentMethod,
+      '',
+      'Product: ' + order.productName,
+      'SKU: ' + order.productSku,
+      'Category: ' + order.category,
+      'Quantity: ' + order.quantity,
+      'Length: ' + order.length,
+      'Density: ' + order.density,
+      'Lace Type: ' + order.laceType,
+      '',
+      'Customer: ' + order.customerName,
+      'Email: ' + order.customerEmail,
+      'Phone: ' + order.customerPhone,
+      'Address: ' + order.streetAddress + (order.apartment ? ', ' + order.apartment : '') + ', ' + order.city + ', ' + order.state + ' ' + order.zipCode
+    ].forEach(function (line) {
+      if (y > 280) { doc.addPage(); y = 20; }
+      doc.text(line, 14, y);
+      y += 8;
+    });
+  });
+
+  doc.save(filename + '.pdf');
+}
+
+/* -----------------------------
+   Backend-ready structure
+   Replace window.BLEGAB_ADMIN_ORDERS with a fetch call:
+
+   fetch('/api/admin/orders')
+     .then(res => res.json())
+     .then(data => {
+       window.BLEGAB_ADMIN_ORDERS = data;
+       renderOrders(data);
+     });
+
+   The rest of the code stays the same.
+   ----------------------------- */
