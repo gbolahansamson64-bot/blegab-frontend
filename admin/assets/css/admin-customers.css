@@ -1,0 +1,795 @@
+/* assets/css/admin-customers.css */
+/* =========================================================
+   ADMIN CUSTOMERS PAGE STYLES
+   Mirrors the structure/patterns in admin-orders.css.
+   ========================================================= */
+
+.admin-customers-container {
+  background-color: var(--color-bg-dark-alt);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.admin-customers-table__head {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr 1.4fr 1.1fr 1fr 50px;
+  gap: var(--space-sm);
+  padding: 14px var(--space-md);
+  border-bottom: 1px solid var(--color-border-dark);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-dark);
+}
+
+.admin-customers-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each customer row */
+.customer-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr 1.4fr 1.1fr 1fr 50px;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: 16px var(--space-md);
+  border-bottom: 1px solid var(--color-border-dark);
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.customer-row:hover {
+  background-color: var(--color-bg-dark);
+}
+
+.customer-row:last-child {
+  border-bottom: none;
+}
+
+/* Checkbox (shared look with the orders page check) */
+.customer-row__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-dark);
+  background-color: transparent;
+  color: transparent;
+  flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.customer-row__check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.customer-row__check:hover {
+  border-color: var(--color-gold);
+}
+
+.customer-row__check.is-checked {
+  background-color: rgba(111, 207, 120, 0.16);
+  border-color: transparent;
+  color: #6fcf78;
+}
+
+.admin-customers-table__head-customer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Customer profile: checkbox + avatar + name */
+.customer-row__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.customer-row__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: var(--color-bg-dark);
+}
+
+.customer-row__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.customer-row__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-row__id {
+  margin-top: 1px;
+  font-size: 10px;
+  color: var(--color-gold);
+  font-weight: 500;
+}
+
+/* Status badge */
+.customer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.customer-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.customer-status--online  { background-color: rgba(111, 207, 120, 0.16); color: #6fcf78; }
+.customer-status--offline { background-color: rgba(185, 180, 171, 0.16); color: var(--color-text-muted); }
+
+/* Email / Phone */
+.customer-row__email,
+.customer-row__phone {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Location: state stacked over country */
+.customer-row__location {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.customer-row__state {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-row__country {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* Row actions + dropdown (3-dot button) */
+.customer-row__view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  color: var(--color-gold);
+  transition: all var(--transition-fast);
+  margin-left: auto;
+}
+
+.customer-row__view:hover {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  border-color: var(--color-gold);
+}
+
+.customer-row__view svg {
+  width: 16px;
+  height: 16px;
+}
+
+.customer-row__actions {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* -----------------------------
+   Row action dropdown (Download PDF/DOC, Share, Delete)
+   Overflow is left visible (unlike a plain single-level menu)
+   so the nested Share submenu can flyout to the side without
+   being clipped.
+   ----------------------------- */
+.download-menu {
+  position: fixed;
+  top:0;
+  right: auto;
+  left: 0;
+  min-width: 170px;
+  background: var(--color-bg-dark-alt);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  overflow: visible;
+  z-index: 20;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+}
+
+.download-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.download-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-white);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.download-menu__item:first-child {
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+}
+
+.download-menu__item:last-child {
+  border-bottom-left-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.download-menu__item:hover {
+  background-color: var(--color-bg-dark);
+  color: var(--color-gold);
+}
+
+.download-menu__item--share svg {
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-muted);
+  transform: rotate(-90deg);
+  flex-shrink: 0;
+}
+
+.download-menu__item--delete {
+  color: #e57373;
+  background-color: rgba(229, 115, 115, 0.12);
+}
+
+.download-menu__item--delete:hover {
+  background-color: rgba(229, 115, 115, 0.22);
+  color: #e57373;
+}
+
+/* Nested "Share" flyout submenu — opens to the left of the
+   parent menu since the parent is right-aligned to the row. */
+.download-submenu {
+  position: fixed;
+  top: 0;
+  right: auto;
+  left: 0;
+  min-width: 150px;
+  background: var(--color-bg-dark-alt);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  overflow: hidden;
+  z-index: 21;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+}
+
+.download-submenu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Download All button */
+.admin-customers-download-all {
+  position: relative;
+}
+
+.admin-customers-download-all__btn,
+.admin-customers-share-all__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-customers-download-all__btn svg,
+.admin-customers-share-all__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-customers-download-all__btn:hover,
+.admin-customers-share-all__btn:hover {
+  background-color: transparent;
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+/* Share All button — same weight as Download All, sits beside it */
+.admin-customers-share-all {
+  position: relative;
+}
+
+/* Delete Selected button */
+.admin-customers-delete-selected__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid rgba(229, 115, 115, 0.4);
+  border-radius: var(--radius-sm);
+  background-color: rgba(229, 115, 115, 0.12);
+  color: #e57373;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.admin-customers-delete-selected__btn:hover {
+  background-color: rgba(229, 115, 115, 0.22);
+}
+
+.admin-customers-delete-selected__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Custom filter dropdown */
+.admin-customers-filter {
+  position: relative;
+}
+
+.admin-customers-filter__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 150px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-dark-alt);
+  color: var(--color-white);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.admin-customers-filter__btn:hover {
+  border-color: var(--color-gold);
+}
+
+.admin-customers-filter__caret {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.admin-customers-filter.is-open .admin-customers-filter__caret {
+  transform: rotate(180deg);
+}
+
+.admin-customers-filter__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  background: var(--color-bg-dark-alt);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  overflow: hidden;
+  z-index: 20;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-customers-filter.is-open .admin-customers-filter__menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.admin-customers-filter__option {
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-white);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-customers-filter__option:hover {
+  background-color: var(--color-bg-dark);
+  color: var(--color-gold);
+}
+
+.admin-customers-filter__option.is-selected {
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+/* Empty state */
+.admin-customers-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.admin-customers-empty svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-sm);
+  opacity: 0.5;
+}
+
+.admin-customers-empty__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-white);
+  margin-bottom: 4px;
+}
+
+.admin-customers-empty__text {
+  font-size: 12.5px;
+}
+
+/* Pagination */
+.admin-customers-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 4px 4px;
+}
+
+.admin-customers-pagination__summary {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.admin-customers-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cus-page-btn {
+  min-width: 30px;
+  height: 30px;
+  padding-inline: 6px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.cus-page-btn:hover:not(:disabled) {
+  border-color: var(--color-gold);
+  color: var(--color-white);
+}
+
+.cus-page-btn.is-active {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #1a1a1a;
+}
+
+.cus-page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* =============================================================
+   CUSTOMER DETAIL MODAL
+   ============================================================= */
+.customer-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+  z-index: 300;
+}
+
+.customer-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.customer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  width: min(560px, 92vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-bg-dark-alt);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-md);
+  z-index: 301;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-base), transform var(--transition-base), visibility var(--transition-base);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold) var(--color-bg-dark);
+}
+
+.customer-modal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.customer-modal::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+}
+
+.customer-modal::-webkit-scrollbar-thumb {
+  background-color: var(--color-gold);
+  border-radius: var(--radius-pill);
+}
+
+.customer-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.customer-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-md) 0;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-dark-alt);
+  z-index: 2;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.customer-modal__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.customer-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  transition: all var(--transition-fast);
+}
+
+.customer-modal__close:hover {
+  background-color: var(--color-bg-dark);
+  color: var(--color-gold);
+}
+
+.customer-modal__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.customer-modal__body {
+  padding: var(--space-md);
+}
+
+.customer-detail-section {
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.customer-detail-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.customer-detail-section__title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.customer-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.customer-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.customer-detail-item--full {
+  grid-column: 1 / -1;
+}
+
+.customer-detail-item__label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.customer-detail-item__value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-white);
+  word-break: break-word;
+}
+
+.customer-modal__footer {
+  display: flex;
+  gap: 10px;
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border-dark);
+  position: sticky;
+  bottom: 0;
+  background: var(--color-bg-dark-alt);
+}
+
+.customer-modal__download-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-dark);
+  color: var(--color-gold);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.customer-modal__download-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.customer-modal__download-btn:hover {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+}
+
+/* =============================================================
+   MOBILE & TABLET (<1024px)
+   ============================================================= */
+@media (max-width: 1023.98px) {
+  .admin-customers-table__head {
+    display: none;
+  }
+
+  .customer-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "profile view"
+      "status  status"
+      "email   phone"
+      "location location";
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .customer-row__profile { grid-area: profile; }
+  .customer-row__view { grid-area: view; }
+  .customer-row__status-wrap { grid-area: status; }
+  .customer-row__email { grid-area: email; }
+  .customer-row__phone { grid-area: phone; text-align: right; }
+  .customer-row__location { grid-area: location; }
+
+  .customer-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .customer-row {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .customer-row__avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .customer-row__name {
+    font-size: 12px;
+  }
+
+  .customer-row__view {
+    width: 32px;
+    height: 32px;
+  }
+}

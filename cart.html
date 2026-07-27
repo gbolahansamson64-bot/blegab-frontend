@@ -334,28 +334,28 @@
                 <label>Apartment, Suite, Unit, etc. (Optional)</label>
                 <input type="text" placeholder="Apartment, Suite, Unit, etc. (Optional)" />
               </div>
-
+              
+              <div class="checkout-field">
+                <label>State <span class="checkout-field__required">*</span></label>
+                <span class="checkout-field-error" data-field-error="state"></span>
+                <div class="checkout-combobox" data-state-combobox>
+                  <input type="text" id="checkout-state" class="checkout-combobox__input" placeholder="Select country first" autocomplete="off" disabled required />
+                  <ul class="checkout-combobox__list" data-state-combobox-list hidden></ul>
+                </div>
+              </div>
               <div class="checkout-field-row checkout-field-row--city-state-zip">
                 <div class="checkout-field">
                   <label>City <span class="checkout-field__required">*</span></label>
                   <span class="checkout-field-error" data-field-error="city"></span>
-                  <input type="text" id="checkout-city" placeholder="Enter your city" required />
+                  <div class="checkout-combobox" data-city-combobox>
+                    <input type="text" id="checkout-city" class="checkout-combobox__input" placeholder="Select state first" autocomplete="off" disabled required />
+                    <ul class="checkout-combobox__list" data-city-combobox-list hidden></ul>
+                  </div>
                 </div>
                 <div class="checkout-field">
-                  <label>State <span class="checkout-field__required">*</span></label>
-                  <span class="checkout-field-error" data-field-error="state"></span>
-                  <select id="checkout-state" required>
-                    <option value="">Select state</option>
-                    <option>Lagos</option>
-                    <option>Abuja (FCT)</option>
-                    <option>Ondo</option>
-                    <option>Rivers</option>
-                  </select>
-                </div>
-                <div class="checkout-field">
-                  <label>ZIP Code <span class="checkout-field__required">*</span></label>
+                  <label>POSTAL/ZIP Code<span class="checkout-field__required">*</span></label>
                   <span class="checkout-field-error" data-field-error="zip"></span>
-                  <input type="text" id="checkout-zip" placeholder="Enter ZIP code" required />
+                  <input type="text" id="checkout-zip" placeholder="Enter postal/zip code" required />
                 </div>
               </div>
 
@@ -395,58 +395,50 @@
                   </span>
                 </label>
 
-                <label class="checkout-payment-option" data-payment-method="gpay">
-                  <input type="radio" name="payment-method" />
-                  <span class="checkout-payment-option__radio"></span>
-                  <span class="checkout-payment-option__info">
-                    <strong>Google Pay (GPay)</strong>
-                    <span>Pay easily with Google Pay</span>
-                  </span>
-                  <span class="pay-logo pay-logo--gpay">
-                    <svg class="pay-logo__gicon" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fill="#4285F4" d="M19.6 10.23c0-.67-.06-1.31-.17-1.93H10v3.65h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.24z"/>
-                      <path fill="#34A853" d="M10 20c2.7 0 4.96-.9 6.62-2.43l-3.24-2.5c-.9.6-2.04.96-3.38.96-2.6 0-4.8-1.75-5.6-4.11H1.06v2.58A10 10 0 0 0 10 20z"/>
-                      <path fill="#FBBC05" d="M4.4 11.92a5.99 5.99 0 0 1 0-3.84V5.5H1.06a10 10 0 0 0 0 9l3.34-2.58z"/>
-                      <path fill="#EA4335" d="M10 3.96c1.47 0 2.79.5 3.83 1.5l2.87-2.87A9.96 9.96 0 0 0 10 0 10 10 0 0 0 1.06 5.5l3.34 2.58C5.2 5.71 7.4 3.96 10 3.96z"/>
-                    </svg>
-                    <span>Pay</span>
-                  </span>
-                </label>
+                <div class="checkout-payment-options__logos-row" role="group" aria-label="Other payment options">
+                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="gpay" aria-label="Google Pay">
+                    <input type="radio" name="payment-method" />
+                    <span class="pay-logo pay-logo--gpay">
+                      <svg class="pay-logo__gicon" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill="#4285F4" d="M19.6 10.23c0-.67-.06-1.31-.17-1.93H10v3.65h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.24z"/>
+                        <path fill="#34A853" d="M10 20c2.7 0 4.96-.9 6.62-2.43l-3.24-2.5c-.9.6-2.04.96-3.38.96-2.6 0-4.8-1.75-5.6-4.11H1.06v2.58A10 10 0 0 0 10 20z"/>
+                        <path fill="#FBBC05" d="M4.4 11.92a5.99 5.99 0 0 1 0-3.84V5.5H1.06a10 10 0 0 0 0 9l3.34-2.58z"/>
+                        <path fill="#EA4335" d="M10 3.96c1.47 0 2.79.5 3.83 1.5l2.87-2.87A9.96 9.96 0 0 0 10 0 10 10 0 0 0 1.06 5.5l3.34 2.58C5.2 5.71 7.4 3.96 10 3.96z"/>
+                      </svg>
+                      <span>Pay</span>
+                    </span>
+                  </label>
 
-                <label class="checkout-payment-option" data-payment-method="stripe">
-                  <input type="radio" name="payment-method" />
-                  <span class="checkout-payment-option__radio"></span>
-                  <span class="checkout-payment-option__info">
-                    <strong>Stripe</strong>
-                    <span>Pay securely with Stripe</span>
-                  </span>
-                  <span class="pay-logo pay-logo--stripe">stripe</span>
-                </label>
+                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="cashapp" aria-label="Cash App">
+                    <input type="radio" name="payment-method" />
+                    <span class="pay-logo pay-logo--cashapp">
+                      <img src="assets/images/shopimage/cashapp-logo.png" alt="" class="pay-logo__cashapp-icon" />
+                        <path fill="currentColor" d="M13.2 6.4c-1-.4-2-.4-2.9-.1-.8.3-1.3.9-1.3 1.6 0 .8.6 1.2 1.9 1.6l1 .3c2.1.6 3.2 1.6 3.2 3.3 0 1.9-1.4 3.2-3.6 3.5l-.3 1.3c-.1.3-.3.5-.6.5h-1c-.4 0-.6-.3-.6-.7l.3-1.2c-1.1-.2-2.1-.6-2.9-1.2-.3-.2-.3-.5-.1-.8l.6-.8c.2-.3.5-.3.8-.1.7.5 1.6.9 2.6.9 1.2 0 2-.5 2-1.4 0-.8-.5-1.2-1.9-1.6l-1-.3c-1.9-.5-3.1-1.5-3.1-3.2 0-1.7 1.2-2.9 3.2-3.3l.3-1.3c.1-.3.3-.5.6-.5h1c.4 0 .6.3.5.7l-.3 1.2c.9.2 1.7.5 2.4 1 .3.2.3.5.1.8l-.5.7c-.2.3-.5.3-.8.1z"/>
+                      </svg>
+                      <span>Cash App</span>
+                    </span>
+                  </label>
 
-                <label class="checkout-payment-option" data-payment-method="applepay">
-                  <input type="radio" name="payment-method" />
-                  <span class="checkout-payment-option__radio"></span>
-                  <span class="checkout-payment-option__info">
-                    <strong>Apple Pay</strong>
-                    <span>Pay with Apple Pay</span>
-                  </span>
-                  <span class="pay-logo pay-logo--applepay">
-                    <svg class="pay-logo__apple" viewBox="0 0 14 16" aria-hidden="true">
-                      <path fill="currentColor" d="M11.6 8.5c0-1.8 1.4-2.7 1.5-2.8-.8-1.2-2.1-1.3-2.5-1.4-1.1-.1-2.1.6-2.7.6-.6 0-1.4-.6-2.3-.6-1.2 0-2.3.7-2.9 1.7-1.2 2.1-.3 5.3.9 7 .6.9 1.3 1.8 2.2 1.8.9 0 1.2-.6 2.3-.6s1.4.6 2.3.5c1-.1 1.4-.5 1.9-1.3.6-.9.9-1.8.9-1.8-.1 0-1.6-.6-1.6-2.1zM9.3 3c.5-.6.8-1.4.7-2.2-.7 0-1.5.4-2 1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.3 2-.9z"/>
-                    </svg>
-                    <span>Pay</span>
-                  </span>
-                </label>
+                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="applepay" aria-label="Apple Pay">
+                    <input type="radio" name="payment-method" />
+                    <span class="pay-logo pay-logo--applepay">
+                      <svg class="pay-logo__apple" viewBox="0 0 14 16" aria-hidden="true">
+                        <path fill="currentColor" d="M11.6 8.5c0-1.8 1.4-2.7 1.5-2.8-.8-1.2-2.1-1.3-2.5-1.4-1.1-.1-2.1.6-2.7.6-.6 0-1.4-.6-2.3-.6-1.2 0-2.3.7-2.9 1.7-1.2 2.1-.3 5.3.9 7 .6.9 1.3 1.8 2.2 1.8.9 0 1.2-.6 2.3-.6s1.4.6 2.3.5c1-.1 1.4-.5 1.9-1.3.6-.9.9-1.8.9-1.8-.1 0-1.6-.6-1.6-2.1zM9.3 3c.5-.6.8-1.4.7-2.2-.7 0-1.5.4-2 1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.3 2-.9z"/>
+                      </svg>
+                      <span>Pay</span>
+                    </span>
+                  </label>
 
-                <label class="checkout-payment-option" data-payment-method="afterpay">
-                  <input type="radio" name="payment-method" />
-                  <span class="checkout-payment-option__radio"></span>
-                  <span class="checkout-payment-option__info">
-                    <strong>AfterPay</strong>
-                    <span>Buy now, pay later with AfterPay</span>
-                  </span>
-                  <span class="pay-logo pay-logo--afterpay">afterpay</span>
-                </label>
+                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="afterpay" aria-label="AfterPay">
+                    <input type="radio" name="payment-method" />
+                    <span class="pay-logo pay-logo--afterpay">afterpay</span>
+                  </label>
+
+                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="klarna" aria-label="Klarna">
+                    <input type="radio" name="payment-method" />
+                    <span class="pay-logo pay-logo--klarna">Klarna</span>
+                  </label>
+                </div>
               </div>
 
               <p class="checkout-secure-note">
@@ -488,10 +480,10 @@
               </div>
             </div>
 
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="stripe" hidden>
+            <div class="checkout-section checkout-payment-panel" data-payment-panel="cashapp" hidden>
               <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge">stripe</span>
-                <p>You'll securely enter your card details via Stripe's encrypted checkout.</p>
+                <span class="checkout-redirect-panel__badge">Cash App</span>
+                <p>You'll be redirected to Cash App to complete your purchase securely.</p>
               </div>
             </div>
 
@@ -507,6 +499,13 @@
                 <span class="checkout-redirect-panel__badge">afterpay</span>
                 <p>Split your total into 4 interest-free payments.</p>
                 <div class="checkout-afterpay-breakdown" data-afterpay-breakdown></div>
+              </div>
+            </div>
+
+            <div class="checkout-section checkout-payment-panel" data-payment-panel="klarna" hidden>
+              <div class="checkout-redirect-panel">
+                <span class="checkout-redirect-panel__badge">Klarna</span>
+                <p>Pay in 4 interest-free installments, or pay in full, with Klarna.</p>
               </div>
             </div>
 
@@ -584,7 +583,7 @@
   <script src="assets/js/footer.js"></script>
 
   <!-- Scripts -->
-  <script src="assets/js/Product-data.js"></script>
+  <script src="assets/js/product-data.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/checkout.js"></script>

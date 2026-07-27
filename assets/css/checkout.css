@@ -151,6 +151,7 @@
   padding: var(--space-md) var(--space-lg) var(--space-lg);
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   overscroll-behavior-x: none;
 }
 
@@ -178,6 +179,17 @@
 
 .checkout-field {
   margin-bottom: var(--space-xs);
+}
+
+.checkout-field-error {
+  display: none;
+  font-size: 11px;
+  color: #e5484d;
+  margin-top: 4px;
+}
+
+.checkout-field-error.is-visible {
+  display: block;
 }
 
 .checkout-field label {
@@ -238,6 +250,61 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-xs);
+}
+
+/* ---------- Searchable state combobox ---------- */
+.checkout-combobox {
+  position: relative;
+}
+
+.checkout-combobox__input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b9b4ab' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+
+.checkout-combobox__input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkout-combobox__list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.checkout-combobox__option {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--color-white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.checkout-combobox__option:hover,
+.checkout-combobox__option.is-active {
+  background: var(--color-gold);
+  color: var(--color-bg-dark);
+}
+
+.checkout-combobox__empty {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--color-text-muted);
 }
 
 /* ---------- Payment method options (step 1) ---------- */
@@ -319,6 +386,167 @@
   background: var(--color-bg-dark);
   border: 1px solid var(--color-border-dark);
   white-space: nowrap;
+}
+
+/* ---------- Card-row mini logos (Visa / Mastercard / Verve) ---------- */
+.pay-logos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pay-logos .pay-logo {
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+.pay-logo--visa {
+  background: #fff;
+  color: #1a1f71;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.pay-logo--verve {
+  background: #f4f4f4;
+  color: #0a5c36;
+  font-weight: 700;
+}
+
+.pay-logo--mastercard {
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pay-logo__circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.pay-logo__circle--red {
+  background: #eb001b;
+}
+
+.pay-logo__circle--yellow {
+  background: #f79e1b;
+  margin-left: -6px;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Logo-only payment row (GPay / Stripe / Apple Pay / AfterPay) ---------- */
+.checkout-payment-options__logos-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.checkout-payment-option--logo-only {
+  padding: 0;
+  height: 50px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  justify-content: center;
+}
+
+.checkout-payment-option--logo-only:hover {
+  border-color: var(--color-gold-dark);
+}
+
+.checkout-payment-option--logo-only.is-active {
+  border-color: var(--color-gold);
+  background: transparent;
+}
+
+.checkout-payment-option--logo-only .pay-logo {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+@media (max-width: 480px) {
+  .checkout-payment-options__logos-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------- Payment brand marks ---------- */
+.pay-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pay-logo--gpay {
+  background: #ffffff;
+  color: #3c4043;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pay-logo__gicon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.pay-logo--cashapp {
+  background: #00d632;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  gap: 3px;
+  padding-inline: 4px;
+}
+
+.pay-logo__cashapp-icon {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.pay-logo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pay-logo--applepay {
+  background: #000000;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.pay-logo__apple {
+  width: 14px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.pay-logo--afterpay {
+  background: #b2fce4;
+  color: #000000;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 800;
+}
+
+.pay-logo--klarna {
+  background: #ffb3c7;
+  color: #17120f;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .checkout-secure-note {
@@ -746,6 +974,26 @@
     display: none;
   }
 
+  @media (min-width: 481px) and (max-width: 860px) {
+  .checkout-payment-option[data-payment-method="cashapp"] {
+    height: 60px;
+  }
+
+  .pay-logo--cashapp {
+    font-size: 12px;
+    gap: 2px;
+    padding-inline: 6px;
+    flex-wrap: wrap;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .pay-logo__cashapp-icon {
+    width: 15px;
+    height: 15px;
+  }
+}
+
   /* ---------- Save info checkbox ---------- */
   .checkout-save-info {
     display: flex;
@@ -900,4 +1148,40 @@
 .checkout-modal__body::-webkit-scrollbar-thumb {
   background-color: var(--color-gold);
   border-radius: var(--radius-pill);
+}
+
+/* -----------------------------
+   Order confirmation toast — shown after a demo order is placed,
+   auto-redirects to the homepage (see checkout.js)
+   ----------------------------- */
+.checkout-order-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: var(--color-gold);
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 10000;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .checkout-order-toast {
+    left: var(--space-sm);
+    right: var(--space-sm);
+    transform: none;
+    width: auto;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    white-space: normal;
+    line-height: 1.4;
+  }
 }

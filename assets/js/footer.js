@@ -62,11 +62,11 @@
           <h3 class="footer-col__title">Shop</h3>
           <ul class="footer-col__list">
             <li><a href="shop.html" class="footer-col__link">All Wigs</a></li>
-            <li><a href="lace-wigs.html" class="footer-col__link">Lace Wigs</a></li>
-            <li><a href="bone-straight.html" class="footer-col__link">Bone Straight</a></li>
+            <li><a href="shop.html?category=lace" class="footer-col__link">Lace Wigs</a></li>
+            <li><a href="shop.html"?category=bonestraight class="footer-col__link">Bone Straight</a></li>
             <li><a href="shop.html?category=curly" class="footer-col__link">Curly Wigs</a></li>
             <li><a href="shop.html?category=bob" class="footer-col__link">Bob Wigs</a></li>
-            <li><a href="custom.html" class="footer-col__link">Custom Wigs</a></li>
+            <li><a href="shop.html?category=custom" class="footer-col__link">Custom Wigs</a></li>
           </ul>
         </div>
 
@@ -76,14 +76,6 @@
             <li><a href="about-us.html" class="footer-col__link">About Us</a></li>
             <li><a href="faqs.html" class="footer-col__link">FAQs</a></li>
             <li><a href="contact-us.html" class="footer-col__link">Contact Us</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h3 class="footer-col__title">Account</h3>
-          <ul class="footer-col__list">
-            <li><a href="account.html" class="footer-col__link">My Account</a></li>
-            <li><a href="contact-us.html" class="footer-col__link">Customer Support</a></li>
           </ul>
         </div>
 
