@@ -133,15 +133,25 @@ function initOrdersPage() {
   renderOrders(window.BLEGAB_ADMIN_ORDERS);
 }
 
+window.addEventListener('resize', function () {
+  ordCurrentPage = 1;
+  renderOrders(currentOrders);
+});
+
 var currentOrders = [];
 var selectedOrderIds = new Set();
+var ordCurrentPage = 1;
+
+function ordGetPageSize() {
+  return window.matchMedia('(max-width: 1023.98px)').matches ? 5 : 10;
+}
 
 function renderOrders(orders) {
   currentOrders = orders || [];
   var list = document.querySelector('[data-orders-list]');
   if (!list) return;
 
-  if (!orders || orders.length === 0) {
+  if (currentOrders.length === 0) {
     list.innerHTML = '' +
       '<div class="admin-orders-empty">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
@@ -151,23 +161,29 @@ function renderOrders(orders) {
         '<p class="admin-orders-empty__title">No orders found</p>' +
         '<p class="admin-orders-empty__text">Orders will appear here when customers make purchases.</p>' +
       '</div>';
+    renderOrdersPagination(0, 0, ordGetPageSize());
     return;
   }
 
-  list.innerHTML = orders.map(function (order) {
+  var ordPageSize = ordGetPageSize();
+  var ordTotalPages = Math.max(1, Math.ceil(currentOrders.length / ordPageSize));
+  if (ordCurrentPage > ordTotalPages) ordCurrentPage = ordTotalPages;
+  if (ordCurrentPage < 1) ordCurrentPage = 1;
+  var pageItems = currentOrders.slice((ordCurrentPage - 1) * ordPageSize, ordCurrentPage * ordPageSize);
+
+  list.innerHTML = pageItems.map(function (order) {
     var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
 
     return '' +
       '<div class="order-row" data-order-id="' + order.id + '">' +
-// NEW
-'<div class="order-row__id-section">' +
-  '<button type="button" class="order-row__check' + (selectedOrderIds.has(order.id) ? ' is-checked' : '') + '" data-row-check aria-label="Select order">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
-      '<path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>' +
-  '</button>' +
-  '<span class="order-row__id">#' + order.id + '</span>' +
-'</div>' +
+        '<div class="order-row__id-section">' +
+          '<button type="button" class="order-row__check' + (selectedOrderIds.has(order.id) ? ' is-checked' : '') + '" data-row-check aria-label="Select order">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+              '<path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>' +
+          '</button>' +
+          '<span class="order-row__id">#' + order.id + '</span>' +
+        '</div>' +
         '<div class="order-row__product">' +
           '<img src="' + order.productImage + '" alt="' + order.productName + '" class="order-row__product-image" />' +
           '<div class="order-row__product-info">' +
@@ -183,7 +199,7 @@ function renderOrders(orders) {
         '<div class="order-row__status-wrap">' +
           '<span class="order-status order-status--' + order.status + '">' + statusLabel + '</span>' +
         '</div>' +
-'<span class="order-row__date">' + order.orderDate + '</span>' +
+        '<span class="order-row__date">' + order.orderDate + '</span>' +
         '<div class="order-row__actions">' +
           '<button type="button" class="order-row__view" data-download-toggle aria-label="Order actions">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
@@ -192,17 +208,42 @@ function renderOrders(orders) {
               '<circle cx="12" cy="19" r="1.5"/>' +
             '</svg>' +
           '</button>' +
-// NEW
-'<div class="download-menu" data-download-menu>' +
-  '<button type="button" class="download-menu__item" data-download-pdf="' + order.id + '">Download as PDF</button>' +
-  '<button type="button" class="download-menu__item" data-download-doc="' + order.id + '">Download as DOC</button>' +
-  '<button type="button" class="download-menu__item download-menu__item--delete" data-delete-order="' + order.id + '">Delete</button>' +
-'</div>' +
+          '<div class="download-menu" data-download-menu>' +
+            '<button type="button" class="download-menu__item" data-download-pdf="' + order.id + '">Download as PDF</button>' +
+            '<button type="button" class="download-menu__item" data-download-doc="' + order.id + '">Download as DOC</button>' +
+            '<button type="button" class="download-menu__item download-menu__item--delete" data-delete-order="' + order.id + '">Delete</button>' +
+          '</div>' +
         '</div>' +
       '</div>';
   }).join('');
 
   updateDeleteSelectedUI();
+  renderOrdersPagination(ordTotalPages, currentOrders.length, ordPageSize);
+}
+
+function renderOrdersPagination(totalPages, totalItems, pageSize) {
+  var wrap = document.querySelector('[data-orders-pagination]');
+  var summary = document.querySelector('[data-orders-pagination-summary]');
+  var pages = document.querySelector('[data-orders-pagination-pages]');
+  if (!wrap || !pages) return;
+
+  if (totalItems === 0 || totalPages <= 1) {
+    wrap.hidden = true;
+    pages.innerHTML = '';
+    return;
+  }
+  wrap.hidden = false;
+
+  var start = (ordCurrentPage - 1) * pageSize + 1;
+  var end = Math.min(ordCurrentPage * pageSize, totalItems);
+  if (summary) summary.textContent = 'Showing ' + start + '\u2013' + end + ' of ' + totalItems + ' orders';
+
+  var html = '<button type="button" class="ord-page-btn" data-ord-page="prev"' + (ordCurrentPage === 1 ? ' disabled' : '') + ' aria-label="Previous page">\u2039</button>';
+  for (var i = 1; i <= totalPages; i++) {
+    html += '<button type="button" class="ord-page-btn' + (i === ordCurrentPage ? ' is-active' : '') + '" data-ord-page="' + i + '">' + i + '</button>';
+  }
+  html += '<button type="button" class="ord-page-btn" data-ord-page="next"' + (ordCurrentPage === totalPages ? ' disabled' : '') + ' aria-label="Next page">\u203a</button>';
+  pages.innerHTML = html;
 }
 
 function updateDeleteSelectedUI() {
@@ -277,10 +318,12 @@ function initOrderModal() {
 
   if (!overlay || !modal) return;
 
-var currentModalOrder = null;
+  var currentModalOrder = null;
 
-  // Row click opens modal; dots button opens the download menu instead
+  // Row click opens modal; dots button opens the download menu instead;
+  // pagination buttons move between pages.
   document.addEventListener('click', function (e) {
+    var pageBtn = e.target.closest('[data-ord-page]');
     var toggleBtn = e.target.closest('[data-download-toggle]');
     var pdfBtn = e.target.closest('[data-download-pdf]');
     var docBtn = e.target.closest('[data-download-doc]');
@@ -290,6 +333,16 @@ var currentModalOrder = null;
     var selectAllBtn = e.target.closest('[data-select-all-toggle]');
     var deleteOrderBtn = e.target.closest('[data-delete-order]');
     var deleteSelectedBtn = e.target.closest('[data-delete-selected]');
+
+    if (pageBtn) {
+      e.stopPropagation();
+      var val = pageBtn.dataset.ordPage;
+      if (val === 'prev') ordCurrentPage--;
+      else if (val === 'next') ordCurrentPage++;
+      else ordCurrentPage = parseInt(val, 10);
+      renderOrders(currentOrders);
+      return;
+    }
 
     if (rowCheckBtn) {
       e.stopPropagation();
@@ -362,6 +415,7 @@ var currentModalOrder = null;
       var orderId = row.dataset.orderId;
       var order = window.BLEGAB_ADMIN_ORDERS.find(function (o) { return o.id === orderId; });
       if (order) openOrderModal(order);
+      return;
     }
 
     if (!toggleBtn && !e.target.closest('[data-download-menu]')) {
@@ -484,7 +538,7 @@ var currentModalOrder = null;
           '</div>' +
           '<div class="order-detail-item">' +
             '<span class="order-detail-item__label">Apartment</span>' +
-            '<span class="order-detail-item__value">' + (order.apartment || '—') + '</span>' +
+            '<span class="order-detail-item__value">' + (order.apartment || '\u2014') + '</span>' +
           '</div>' +
           '<div class="order-detail-item">' +
             '<span class="order-detail-item__label">City</span>' +
@@ -554,6 +608,7 @@ function initOrdersFilter() {
       option.classList.add('is-selected');
 
       selectedOrderIds.clear();
+      ordCurrentPage = 1;
       applyOrdersFilter(value);
 
       wrap.classList.remove('is-open');

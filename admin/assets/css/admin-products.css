@@ -774,6 +774,11 @@
     display: none;
   }
 
+  .prd-category-list {
+    max-height: 176px; /* ≈ 3 rows (row ~54px incl. padding + 4px gap) */
+    overflow-y: auto;
+  }
+
 .prd-filter-panel {
     right: 50px;
     left: auto;
