@@ -74,7 +74,7 @@
           <h3 class="footer-col__title">Help</h3>
           <ul class="footer-col__list">
             <li><a href="about-us.html" class="footer-col__link">About Us</a></li>
-            <li><a href="faqs.html" class="footer-col__link">FAQs</a></li>
+            <li><a href="contact-us.html#faq-section" class="footer-col__link">FAQs</a></li>
             <li><a href="contact-us.html" class="footer-col__link">Contact Us</a></li>
           </ul>
         </div>

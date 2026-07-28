@@ -471,7 +471,46 @@
 
 @media (max-width: 480px) {
   .checkout-payment-options__logos-row {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .checkout-payment-option--logo-only {
+    height: 42px;
+  }
+
+  .pay-logo {
+    font-size: 9px;
+    gap: 2px;
+    padding-inline: 2px;
+  }
+
+  .pay-logo--gpay,
+  .pay-logo--applepay,
+  .pay-logo--afterpay,
+  .pay-logo--klarna {
+    font-size: 9px;
+  }
+
+  .pay-logo--cashapp {
+    font-size: 8px;
+    gap: 2px;
+    padding-inline: 2px;
+  }
+
+  .pay-logo__gicon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .pay-logo__cashapp-icon {
+    width: 11px;
+    height: 11px;
+  }
+
+  .pay-logo__apple {
+    width: 9px;
+    height: 11px;
   }
 }
 
@@ -930,10 +969,12 @@
 
   .checkout-modal__actions {
     order: 5;
+    margin-top: 8px;
   }
 
   .checkout-ssl-note {
     order: 6;
+    margin-top: 4px;
   }
 
   /* ---------- Icon-prefixed, label-less inputs ---------- */
