@@ -1,0 +1,81 @@
+<!-- admin-login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Sign In | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin-auth.css" />
+  <link rel="icon" type="image/webp" href="assets/images/favicon.webp" />
+</head>
+<body class="admin-body admin-auth-body">
+
+  <main class="admin-auth-page">
+    <div class="admin-auth-card">
+
+<div class="admin-auth-logo">
+  <img src="assets/images/adminlogo.webp" alt="Blegab Luxury Wigs" class="admin-auth-logo-mark" />
+</div>
+
+      <div class="admin-auth-lock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="9" rx="2"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1 class="admin-auth-title">Admin Sign In</h1>
+      <p class="admin-auth-subtitle">Restricted access — authorized personnel only.</p>
+
+      <p class="admin-auth-error" data-auth-error hidden></p>
+
+      <form class="admin-auth-form" data-admin-login-form novalidate>
+        <div class="admin-auth-field">
+          <label class="admin-auth-label" for="admin-login-email">Email</label>
+          <input class="admin-auth-input" type="email" id="admin-login-email" name="email" autocomplete="username" required />
+        </div>
+
+        <div class="admin-auth-field">
+          <label class="admin-auth-label" for="admin-login-password">Password</label>
+          <div class="admin-auth-password-wrap">
+            <input class="admin-auth-input" type="password" id="admin-login-password" name="password" autocomplete="current-password" required minlength="6" />
+            <button type="button" class="admin-auth-password-toggle" data-password-toggle aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-auth-field">
+          <label class="admin-auth-label" for="admin-login-code">Admin Access Code</label>
+          <input class="admin-auth-input" type="password" id="admin-login-code" name="accessCode" autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="8" data-access-code-input required />
+        </div>
+
+        <button type="submit" class="admin-auth-submit" data-submit-btn>
+  <span class="admin-auth-submit-text">Sign In</span>
+  <span class="admin-auth-spinner" data-submit-spinner hidden></span>
+</button>
+      </form>
+
+      <p class="admin-auth-footer">
+        <a href="admin-forgot-password.html" class="admin-auth-link">Forgot password or access code?</a>
+      </p>
+      <p class="admin-auth-footer">
+        Need admin access? <a href="admin-signup.html" class="admin-auth-link">Sign up</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="assets/js/admin-data.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!-- admin-verify-code.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Recovery Code | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin-auth.css" />
+  <link rel="icon" type="image/webp" href="assets/images/favicon.webp" />
+</head>
+<body class="admin-body admin-auth-body">
+
+  <main class="admin-auth-page">
+    <div class="admin-auth-card">
+
+<div class="admin-auth-logo">
+  <img src="assets/images/adminlogo.webp" alt="Blegab Luxury Wigs" class="admin-auth-logo-mark" />
+</div>
+
+      <div class="admin-auth-lock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="9" rx="2"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <h1 class="admin-auth-title">Enter Verification Code</h1>
+      <p class="admin-auth-subtitle">A 6-digit code was sent to the email below. Enter it to continue.</p>
+
+      <p class="admin-auth-error" data-auth-error hidden></p>
+
+      <form class="admin-auth-form" data-admin-verify-form novalidate>
+        <div class="admin-auth-field">
+          <label class="admin-auth-label" for="admin-verify-email">Sent To</label>
+          <input class="admin-auth-input" type="email" id="admin-verify-email" disabled />
+        </div>
+
+        <div class="admin-auth-field">
+          <label class="admin-auth-label" for="admin-verify-code-input">Verification Code</label>
+          <input class="admin-auth-input" type="text" id="admin-verify-code-input" name="verificationCode" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" required />
+        </div>
+
+        <button type="submit" class="admin-auth-submit" data-submit-btn>
+          <span class="admin-auth-submit-text">Verify Code</span>
+          <span class="admin-auth-spinner" data-submit-spinner hidden></span>
+        </button>
+      </form>
+
+      <p class="admin-auth-footer">
+        <a href="admin-forgot-password.html" class="admin-auth-link">Back</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="assets/js/admin-data.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-auth.js"></script>
+</body>
+</html>

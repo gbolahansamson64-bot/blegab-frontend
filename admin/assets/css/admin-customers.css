@@ -218,23 +218,23 @@
 }
 
 /* -----------------------------
-   Row action dropdown (Download PDF/DOC, Share, Delete)
-   Overflow is left visible (unlike a plain single-level menu)
-   so the nested Share submenu can flyout to the side without
-   being clipped.
+   Row action dropdown (Download PDF/DOC/CSV, Delete).
+   position: fixed + JS-set top/left (see positionFloatingMenu in
+   admin-customers.js) so it always renders on top of everything,
+   in the viewport, and is never clipped by the table's overflow.
    ----------------------------- */
 .download-menu {
   position: fixed;
-  top:0;
-  right: auto;
+  top: 0;
   left: 0;
+  right: auto;
   min-width: 170px;
   background: var(--color-bg-dark-alt);
   border: 1px solid var(--color-border-dark);
   border-radius: var(--radius-sm);
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  overflow: visible;
-  z-index: 20;
+  overflow: hidden;
+  z-index: 500;
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
@@ -250,7 +250,7 @@
 .download-menu__item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 8px;
   width: 100%;
   text-align: left;
@@ -261,6 +261,13 @@
   background: none;
   border: none;
   cursor: pointer;
+}
+
+.download-menu__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .download-menu__item:first-child {
@@ -278,14 +285,6 @@
   color: var(--color-gold);
 }
 
-.download-menu__item--share svg {
-  width: 12px;
-  height: 12px;
-  color: var(--color-text-muted);
-  transform: rotate(-90deg);
-  flex-shrink: 0;
-}
-
 .download-menu__item--delete {
   color: #e57373;
   background-color: rgba(229, 115, 115, 0.12);
@@ -296,39 +295,12 @@
   color: #e57373;
 }
 
-/* Nested "Share" flyout submenu — opens to the left of the
-   parent menu since the parent is right-aligned to the row. */
-.download-submenu {
-  position: fixed;
-  top: 0;
-  right: auto;
-  left: 0;
-  min-width: 150px;
-  background: var(--color-bg-dark-alt);
-  border: 1px solid var(--color-border-dark);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  overflow: hidden;
-  z-index: 21;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(4px);
-  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility var(--transition-fast);
-}
-
-.download-submenu.is-open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
-}
-
 /* Download All button */
 .admin-customers-download-all {
   position: relative;
 }
 
-.admin-customers-download-all__btn,
-.admin-customers-share-all__btn {
+.admin-customers-download-all__btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -344,22 +316,15 @@
   white-space: nowrap;
 }
 
-.admin-customers-download-all__btn svg,
-.admin-customers-share-all__btn svg {
+.admin-customers-download-all__btn svg {
   width: 16px;
   height: 16px;
 }
 
-.admin-customers-download-all__btn:hover,
-.admin-customers-share-all__btn:hover {
+.admin-customers-download-all__btn:hover {
   background-color: transparent;
   color: var(--color-gold);
   border-color: var(--color-gold);
-}
-
-/* Share All button — same weight as Download All, sits beside it */
-.admin-customers-share-all {
-  position: relative;
 }
 
 /* Delete Selected button */

@@ -3,8 +3,8 @@
    ADMIN CUSTOMERS PAGE JS
    Renders the customers list with an expandable detail modal.
    Mirrors admin-orders.js patterns (selection, filter,
-   pagination, download menu) and adds a "Share" flyout
-   (CSV/PDF via the Web Share API, falling back to a download).
+   pagination, download menu). Each customer (and the whole
+   list) can be downloaded as PDF, DOC, or CSV.
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -159,14 +159,7 @@ function renderCustomers(customers) {
           '<div class="download-menu" data-download-menu>' +
             '<button type="button" class="download-menu__item" data-download-pdf="' + customer.id + '">Download as PDF</button>' +
             '<button type="button" class="download-menu__item" data-download-doc="' + customer.id + '">Download as DOC</button>' +
-            '<button type="button" class="download-menu__item download-menu__item--share" data-share-toggle="' + customer.id + '">' +
-              'Share' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-            '</button>' +
-            '<div class="download-submenu" data-share-submenu="' + customer.id + '">' +
-              '<button type="button" class="download-menu__item" data-share-csv="' + customer.id + '">Share as CSV</button>' +
-              '<button type="button" class="download-menu__item" data-share-pdf="' + customer.id + '">Share as PDF</button>' +
-            '</div>' +
+            '<button type="button" class="download-menu__item" data-download-csv="' + customer.id + '">Download as CSV</button>' +
             '<button type="button" class="download-menu__item download-menu__item--delete" data-delete-customer="' + customer.id + '">Delete</button>' +
           '</div>' +
         '</div>' +
@@ -277,15 +270,13 @@ function initCustomerModal() {
   var currentModalCustomer = null;
 
   // Row click opens the modal; the dots button opens the download menu;
-  // the Share item opens its nested submenu; pagination buttons page.
+  // pagination buttons page.
   document.addEventListener('click', function (e) {
     var pageBtn = e.target.closest('[data-cus-page]');
     var toggleBtn = e.target.closest('[data-download-toggle]');
-    var shareToggleBtn = e.target.closest('[data-share-toggle]');
     var pdfBtn = e.target.closest('[data-download-pdf]');
     var docBtn = e.target.closest('[data-download-doc]');
-    var shareCsvBtn = e.target.closest('[data-share-csv]');
-    var sharePdfBtn = e.target.closest('[data-share-pdf]');
+    var csvBtn = e.target.closest('[data-download-csv]');
     var row = e.target.closest('.customer-row');
 
     var rowCheckBtn = e.target.closest('[data-row-check]');
@@ -335,31 +326,17 @@ function initCustomerModal() {
       return;
     }
 
-    // Nested "Share" toggle — opens its flyout submenu without closing
-    // the parent 3-dot menu it lives inside.
-    if (shareToggleBtn) {
+    if (toggleBtn) {
       e.stopPropagation();
-      var submenu = document.querySelector('[data-share-submenu="' + shareToggleBtn.dataset.shareToggle + '"]');
-      if (submenu) {
-        var wasOpen = submenu.classList.contains('is-open');
-        closeAllShareSubmenus();
-        positionFloatingMenu(shareToggleBtn, submenu, true); // true = flyout to the side
-        if (!wasOpen) submenu.classList.add('is-open');
+      var menu = toggleBtn.nextElementSibling;
+      var isOpen = menu.classList.contains('is-open');
+      closeAllDownloadMenus();
+      if (!isOpen) {
+        positionFloatingMenu(toggleBtn, menu);
+        menu.classList.add('is-open');
       }
       return;
     }
-
-if (toggleBtn) {
-  e.stopPropagation();
-  var menu = toggleBtn.nextElementSibling;
-  var isOpen = menu.classList.contains('is-open');
-  closeAllDownloadMenus();
-  if (!isOpen) {
-    positionFloatingMenu(toggleBtn, menu);   // ADD THIS
-    menu.classList.add('is-open');
-  }
-  return;
-}
 
     if (pdfBtn) {
       e.stopPropagation();
@@ -387,27 +364,14 @@ if (toggleBtn) {
       return;
     }
 
-    if (shareCsvBtn) {
+    if (csvBtn) {
       e.stopPropagation();
-      var csvVal = shareCsvBtn.dataset.shareCsv;
+      var csvVal = csvBtn.dataset.downloadCsv;
       if (csvVal === 'all') {
-        shareCustomersCsv(currentCustomers, 'customers-export');
+        downloadCustomersCsv(currentCustomers, 'customers-export');
       } else {
         var csvCustomer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === csvVal; });
-        if (csvCustomer) shareCustomerCsv(csvCustomer);
-      }
-      closeAllDownloadMenus();
-      return;
-    }
-
-    if (sharePdfBtn) {
-      e.stopPropagation();
-      var sharePdfVal = sharePdfBtn.dataset.sharePdf;
-      if (sharePdfVal === 'all') {
-        shareCustomersPdf(currentCustomers, 'customers-export');
-      } else {
-        var sharePdfCustomer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === sharePdfVal; });
-        if (sharePdfCustomer) shareCustomerPdf(sharePdfCustomer);
+        if (csvCustomer) downloadCustomerCsv(csvCustomer);
       }
       closeAllDownloadMenus();
       return;
@@ -427,6 +391,7 @@ if (toggleBtn) {
 
   var modalPdfBtn = document.querySelector('[data-modal-download-pdf]');
   var modalDocBtn = document.querySelector('[data-modal-download-doc]');
+  var modalCsvBtn = document.querySelector('[data-modal-download-csv]');
 
   if (modalPdfBtn) {
     modalPdfBtn.addEventListener('click', function () {
@@ -436,6 +401,11 @@ if (toggleBtn) {
   if (modalDocBtn) {
     modalDocBtn.addEventListener('click', function () {
       if (currentModalCustomer) downloadDocFile('customer-' + currentModalCustomer.id, customerDetailHtml(currentModalCustomer));
+    });
+  }
+  if (modalCsvBtn) {
+    modalCsvBtn.addEventListener('click', function () {
+      if (currentModalCustomer) downloadCustomerCsv(currentModalCustomer);
     });
   }
 
@@ -563,29 +533,36 @@ function initCustomersFilter() {
 }
 
 /* -----------------------------
-   Download / share menu helpers
+   Download menu helpers
    ----------------------------- */
 function closeAllDownloadMenus() {
-  document.querySelectorAll('.download-menu.is-open, .download-submenu.is-open').forEach(function (m) {
+  document.querySelectorAll('.download-menu.is-open').forEach(function (m) {
     m.classList.remove('is-open');
   });
 }
 
-function closeAllShareSubmenus() {
-  document.querySelectorAll('.download-submenu.is-open').forEach(function (m) {
-    m.classList.remove('is-open');
-  });
-}
-
-function positionFloatingMenu(anchorBtn, menu, isSubmenu) {
+// Positions a fixed-position dropdown against its trigger button so it
+// always renders on top, in the viewport, and is never clipped by the
+// table's overflow.
+function positionFloatingMenu(anchorBtn, menu) {
   var rect = anchorBtn.getBoundingClientRect();
-  menu.style.top = rect.bottom + 6 + 'px';
-  if (isSubmenu) {
-    menu.style.left = (rect.left - menu.offsetWidth - 6) + 'px';
-    menu.style.top = rect.top + 'px';
-  } else {
-    menu.style.left = (rect.right - menu.offsetWidth) + 'px';
+  var margin = 8;
+  var viewportWidth = window.innerWidth;
+
+  // Default: right edge of menu aligned to right edge of button.
+  var left = rect.right - menu.offsetWidth + 40;
+
+  // Clamp so it never spills past the right edge of the screen...
+  if (left + menu.offsetWidth > viewportWidth - margin) {
+    left = viewportWidth - menu.offsetWidth - margin;
   }
+  // ...or off the left edge either.
+  if (left < margin) {
+    left = margin;
+  }
+
+  menu.style.top = rect.bottom + 6 + 'px';
+  menu.style.left = left + 'px';
 }
 
 function customerDetailHtml(customer) {
@@ -630,7 +607,7 @@ function downloadDocFile(filename, innerHtml) {
 }
 
 /* -----------------------------
-   PDF builders (shared by download + share)
+   PDF builders
    ----------------------------- */
 function customerPdfLines(customer) {
   var statusLabel = CUSTOMER_STATUS_LABELS[customer.status] || customer.status;
@@ -709,8 +686,20 @@ function customersToCsv(customers) {
   return [header].concat(rows).join('\r\n');
 }
 
+function downloadCustomerCsv(customer) {
+  var csv = customersToCsv([customer]);
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  triggerBlobDownload(blob, 'customer-' + customer.id + '.csv');
+}
+
+function downloadCustomersCsv(customers, filename) {
+  var csv = customersToCsv(customers);
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  triggerBlobDownload(blob, filename + '.csv');
+}
+
 /* -----------------------------
-   Blob download / share helpers
+   Blob download helper
    ----------------------------- */
 function triggerBlobDownload(blob, filename) {
   var url = URL.createObjectURL(blob);
@@ -721,50 +710,6 @@ function triggerBlobDownload(blob, filename) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
-}
-
-// Uses the native share sheet (mobile/desktop browsers that support the
-// Web Share API with files) so the admin can hand a record straight to
-// email, WhatsApp, AirDrop, etc. Falls back to a normal file download
-// on browsers that don't support sharing files (most desktop browsers).
-function shareBlob(blob, filename, title) {
-  var file;
-  try {
-    file = new File([blob], filename, { type: blob.type });
-  } catch (err) {
-    triggerBlobDownload(blob, filename);
-    return;
-  }
-
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file], title: title }).catch(function () {
-      triggerBlobDownload(blob, filename);
-    });
-  } else {
-    triggerBlobDownload(blob, filename);
-  }
-}
-
-function shareCustomerCsv(customer) {
-  var csv = customersToCsv([customer]);
-  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  shareBlob(blob, 'customer-' + customer.id + '.csv', 'Customer ' + customer.name);
-}
-
-function shareCustomerPdf(customer) {
-  var blob = buildCustomerPdfDoc(customer).output('blob');
-  shareBlob(blob, 'customer-' + customer.id + '.pdf', 'Customer ' + customer.name);
-}
-
-function shareCustomersCsv(customers, filename) {
-  var csv = customersToCsv(customers);
-  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-  shareBlob(blob, filename + '.csv', 'Customers Export');
-}
-
-function shareCustomersPdf(customers, filename) {
-  var blob = buildCustomersPdfDoc(customers, 'Customers Report').output('blob');
-  shareBlob(blob, filename + '.pdf', 'Customers Export');
 }
 
 /* -----------------------------

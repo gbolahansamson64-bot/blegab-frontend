@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initNotifications();
   initThemeToggle();
   initViewStatsLinks();
+  renderAdminAuthState();
 });
 
 /* -----------------------------
@@ -649,3 +650,76 @@ function initThemeToggle() {
     if (label) label.textContent = isLight ? 'Light Mode' : 'Dark Mode';
   }
 }
+/* -----------------------------
+   Admin auth state (mock, frontend-only for now).
+   Once a real backend is wired up, call:
+     BLEGAB_ADMIN_AUTH.signIn({ name, email })   // on successful login/signup
+     BLEGAB_ADMIN_AUTH.signOut()                 // on logout
+   and the sidebar (on every admin page) updates itself
+   automatically — Sign In/Sign Up flip to Sign Out.
+   ----------------------------- */
+window.BLEGAB_ADMIN_AUTH = {
+  getUser: function () {
+    try { return JSON.parse(localStorage.getItem('blegab_admin_user')); }
+    catch (e) { return null; }
+  },
+  signIn: function (user) {
+    localStorage.setItem('blegab_admin_user', JSON.stringify(user));
+    renderAdminAuthState();
+  },
+  signOut: function () {
+    localStorage.removeItem('blegab_admin_user');
+    renderAdminAuthState();
+  }
+};
+
+function renderAdminAuthState() {
+  var submenu = document.querySelector('[data-admin-auth-submenu]');
+  if (!submenu) return;
+  var user = window.BLEGAB_ADMIN_AUTH.getUser();
+
+  if (user) {
+    submenu.innerHTML =
+      '<li class="admin-nav__sublink admin-nav__sublink--static">Signed in as ' + (user.name || user.email) + '</li>' +
+      '<li>' +
+        '<button type="button" class="admin-nav__sublink admin-nav__sublink--btn" data-admin-signout>' +
+          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+            '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M10 17l-5-5 5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M15 12H3" stroke-linecap="round"/>' +
+          '</svg>' +
+          'Sign Out' +
+        '</button>' +
+      '</li>';
+  } else {
+    submenu.innerHTML =
+      '<li>' +
+        '<a href="admin-login.html" class="admin-nav__sublink">' +
+          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+            '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M21 12H9" stroke-linecap="round"/>' +
+          '</svg>' +
+          'Admin Sign In' +
+        '</a>' +
+      '</li>' +
+      '<li>' +
+        '<a href="admin-signup.html" class="admin-nav__sublink">' +
+          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+            '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M15 12H3" stroke-linecap="round"/>' +
+          '</svg>' +
+          'Admin Sign Up' +
+        '</a>' +
+      '</li>';
+  }
+}
+
+document.addEventListener('click', function (e) {
+  var signOutBtn = e.target.closest('[data-admin-signout]');
+  if (signOutBtn) {
+    window.BLEGAB_ADMIN_AUTH.signOut();
+    window.location.href = 'admin-login.html';
+  }
+});
