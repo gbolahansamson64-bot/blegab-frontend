@@ -1,0 +1,200 @@
+/* =========================================================
+   TERMS OF SERVICE PAGE — terms.html
+   Uses the same design tokens as the rest of the site.
+   Load order: base.css -> terms.css
+   ========================================================= */
+
+.terms {
+  padding-block: var(--space-2xl) var(--space-2xl);
+  background-color: var(--color-bg-dark);
+}
+
+.terms__container {
+  max-width: 700px;
+}
+
+/* -----------------------------
+   Back button
+   ----------------------------- */
+.terms__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.terms__back:hover {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+}
+
+.terms__back svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* -----------------------------
+   Header
+   ----------------------------- */
+.terms__header {
+  text-align: center;
+}
+
+.terms__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-gold);
+  text-transform: uppercase;
+}
+
+.terms__divider {
+  width: 64px;
+  height: 2px;
+  margin: var(--space-sm) auto 0;
+  background-color: var(--color-gold);
+}
+
+.terms__updated {
+  margin-top: var(--space-sm);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* -----------------------------
+   Intro
+   ----------------------------- */
+.terms__intro {
+  margin-top: var(--space-lg);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+/* -----------------------------
+   Numbered list
+   ----------------------------- */
+.terms__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.terms__item {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.terms__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+.terms__item-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.terms__item-body {
+  flex: 1 1 auto;
+  padding-top: 4px;
+}
+
+.terms__item-title {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.terms__item-text {
+  position: relative;
+  margin-top: var(--space-xs);
+  padding-left: var(--space-sm);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.terms__item-text::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--color-text-muted);
+}
+
+/* -----------------------------
+   Contact sub-list (item 9)
+   ----------------------------- */
+.terms__contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  padding-left: var(--space-sm);
+}
+
+.terms__contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.terms__contact-item a {
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.terms__contact-item a:hover {
+  color: var(--color-gold);
+}
+
+.terms__contact-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+.terms__contact-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* -----------------------------
+   Mobile
+   ----------------------------- */
+@media (max-width: 480px) {
+  .terms__item {
+    gap: var(--space-xs);
+  }
+
+  .terms__item-title {
+    font-size: 12px;
+  }
+
+  .terms__item-text,
+  .terms__contact-item {
+    font-size: 13.5px;
+  }
+}

@@ -1,0 +1,242 @@
+/* =========================================================
+   BLEGAB LUXURY WIGS — PRIVACY POLICY PAGE
+   Requires base.css to be loaded first (design tokens).
+   ========================================================= */
+
+.privacy-page {
+  background-color: var(--color-bg-dark);
+  padding-block: var(--space-2xl) var(--space-2xl);
+}
+
+.privacy-container {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* -----------------------------
+   Back button
+   ----------------------------- */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: var(--space-lg);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.back-btn:hover {
+  color: var(--color-gold);
+}
+
+.back-btn__icon {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+}
+
+.back-btn:hover .back-btn__icon {
+  transform: translateX(-2px);
+}
+
+
+/* -----------------------------
+   Header
+   ----------------------------- */
+.privacy-header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.privacy-header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 42px;
+  letter-spacing: 0.03em;
+  color: var(--color-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.divider-line {
+  width: 64px;
+  height: 1px;
+  background-color: var(--color-gold-dark);
+}
+
+.divider-diamond {
+  color: var(--color-gold);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.last-updated {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* -----------------------------
+   Intro
+   ----------------------------- */
+.privacy-intro {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto var(--space-xl);
+}
+
+/* -----------------------------
+   Sections
+   ----------------------------- */
+.privacy-section {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.privacy-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.privacy-section h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: var(--color-gold);
+}
+
+.section-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.section-number {
+  margin-right: 2px;
+}
+
+.privacy-section p {
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+  padding-left: calc(26px + var(--space-xs));
+}
+
+.privacy-section p + p {
+  margin-top: var(--space-xs);
+}
+
+.privacy-section ul {
+  padding-left: calc(26px + var(--space-xs));
+  margin-top: var(--space-xs);
+}
+
+.privacy-section ul li {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+  padding-left: var(--space-sm);
+}
+
+.privacy-section ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 5px;
+  height: 5px;
+  background-color: var(--color-gold);
+  border-radius: 1px;
+}
+
+/* -----------------------------
+   Contact list
+   ----------------------------- */
+.contact-list {
+  padding-left: calc(26px + var(--space-xs));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  color: var(--color-text-muted);
+  padding-left: 0;
+}
+
+.contact-list li::before {
+  content: none;
+}
+
+.contact-list li svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-gold);
+}
+
+/* -----------------------------
+   Responsive
+   ----------------------------- */
+@media (max-width: 599px) {
+  .privacy-header h1 {
+    font-size: 30px;
+  }
+
+  .privacy-section p,
+  .privacy-section ul,
+  .contact-list {
+    padding-left: 0;
+  }
+
+  .privacy-section h2 {
+    font-size: 16px;
+  }
+}

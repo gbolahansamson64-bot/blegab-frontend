@@ -260,41 +260,6 @@
   height: 14px;
 }
 
-/* Price slider */
-.shop-filter__price-display {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.shop-filter__price-left {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-gold);
-  transition: color var(--transition-fast);
-}
-
-.shop-filter__price-right {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
-}
-
-.shop-filter__price-right.is-active {
-  color: var(--color-gold);
-}
-
-.shop-filter__price-left.is-muted {
-  color: var(--color-text-muted);
-}
-
-.shop-filter__range {
-  width: 100%;
-  accent-color: var(--color-gold);
-  margin: 0;
-}
 
 /* -----------------------------
    Toolbar

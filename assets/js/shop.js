@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initProductModal();
   initPaginationArrows();
   initCustomSelect();
-  initPriceSlider();
   initClearFilters();
   
   // Recalculate on resize
@@ -519,41 +518,6 @@ function initCustomSelect() {
   });
 }
 
-function initPriceSlider() {
-  var slider = document.querySelector('[data-price-slider]');
-  var priceLeft = document.querySelector('.shop-filter__price-left');
-  var priceRight = document.querySelector('[data-price-end]');
-  if (!slider || !priceLeft || !priceRight) return;
-
-  var prices = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-
-  // Stop slider touch from closing the panel
-  slider.addEventListener('touchstart', function (e) {
-    e.stopPropagation();
-  });
-
-  slider.addEventListener('touchmove', function (e) {
-    e.stopPropagation();
-  });
-
-  slider.addEventListener('touchend', function (e) {
-    e.stopPropagation();
-  });
-
-  slider.addEventListener('input', function () {
-    var step = parseInt(this.value);
-    var price = prices[step - 1];
-    priceLeft.textContent = '$' + price;
-
-    if (step === 10) {
-      priceRight.classList.add('is-active');
-      priceLeft.classList.add('is-muted');
-    } else {
-      priceRight.classList.remove('is-active');
-      priceLeft.classList.remove('is-muted');
-    }
-  });
-}
 
 
 function initClearFilters() {
