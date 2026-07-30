@@ -404,7 +404,7 @@ function hideSuccess(el) {
         server, verify it there, create/find the user, and issue
         a real session — don't trust localStorage for that part.
    ----------------------------- */
-var GOOGLE_CLIENT_ID = 'PASTE_YOUR_GOOGLE_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
+var GOOGLE_CLIENT_ID = '1096587723395-peq7ihlpo1453ekg6epnbpqst8pcaeoo.apps.googleusercontent.com';
 
 function initGoogleButtons() {
   var buttons = document.querySelectorAll('[data-google-auth]');
