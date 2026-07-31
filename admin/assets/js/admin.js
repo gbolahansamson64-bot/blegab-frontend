@@ -331,7 +331,7 @@ function renderRecentOrders() {
     var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
 
     return '' +
-      '<a href="admin-order-detail.html?id=' + order.id + '" class="admin-order-row" role="row">' +
+      '<div class="admin-order-row order-row" data-order-id="' + order.id + '" role="row">' +
         '<span class="admin-order-row__id-wrap" role="cell">' +
           '<span class="admin-order-row__icon">' +
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
@@ -350,7 +350,7 @@ function renderRecentOrders() {
         '<svg class="admin-order-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
           '<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg>' +
-      '</a>';
+      '</div>';
   }).join('');
 }
 

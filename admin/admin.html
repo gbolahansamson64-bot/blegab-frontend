@@ -11,6 +11,7 @@
 
   <link rel="stylesheet" href="assets/css/admin-base.css" />
   <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/admin-orders.css" />
   <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
 </head>
 <body class="admin-body">
@@ -316,6 +317,24 @@
     </div>
   </div>
 
+  <!-- Order Detail Modal -->
+<div class="order-modal-overlay" data-order-modal-overlay></div>
+<div class="order-modal" data-order-modal aria-hidden="true">
+  <div class="order-modal__header">
+    <h2 class="order-modal__title">Order Details</h2>
+    <button type="button" class="order-modal__close" data-order-modal-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="order-modal__body" data-order-modal-body></div>
+  <div class="order-modal__footer">
+    <button type="button" class="order-modal__download-btn" data-modal-download-pdf">Download PDF</button>
+    <button type="button" class="order-modal__download-btn" data-modal-download-doc">Download DOC</button>
+  </div>
+</div>
+
 <div class="admin-notif-modal-overlay" data-notif-modal-overlay></div>
   <div class="admin-notif-modal" data-notif-modal aria-hidden="true">
     <button type="button" class="admin-notif-modal__close" data-notif-modal-close aria-label="Close">
@@ -326,8 +345,10 @@
     <p class="admin-notif-modal__message" data-notif-modal-message></p>
   </div>
 
-  <script src="assets/js/admin-data.js"></script>
+<script src="assets/js/admin-data.js"></script>
   <script src="assets/js/admin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="assets/js/admin-orders.js"></script>
   <script src="assets/js/admin-main.js"></script>
 </body>
 </html>

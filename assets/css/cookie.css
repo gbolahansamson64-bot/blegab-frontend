@@ -236,6 +236,10 @@
 /* =========================================================
    COOKIE PREFERENCES MODAL
    ========================================================= */
+body.cc-scroll-lock {
+  overflow: hidden;
+}
+
 .cookie-modal-overlay {
   position: fixed;
   inset: 0;
@@ -262,6 +266,7 @@
   max-width: 820px;
   max-height: 88vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background-color: var(--color-bg-dark-alt);
   border: var(--cc-border);
   border-radius: 20px;

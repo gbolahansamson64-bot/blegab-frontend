@@ -859,6 +859,10 @@
   border-bottom: none;
 }
 
+.admin-order-row.order-row {
+  grid-template-columns: 1.4fr 1.4fr 1.4fr 1fr 20px;
+}
+
 .admin-order-row__id-wrap {
   display: flex;
   align-items: center;
@@ -1197,6 +1201,14 @@
     gap: 8px 10px;
     padding: 14px 16px;
     border-radius: var(--radius-sm);
+  }
+
+  .admin-order-row.order-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "id       chevron"
+      "customer customer"
+      "status   total";
   }
 
   .admin-order-row__id-wrap {
