@@ -289,7 +289,7 @@ function initMobileNav() {
     document.body.style.right = '';
     document.body.style.width = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, scrollLockY);
+    window.scrollTo({ top: scrollLockY, left: 0, behavior: 'instant' });
 
     // Reset any inline transform from dragging
     primaryNav.style.transform = '';
@@ -610,7 +610,7 @@ function initCartDrawer() {
     document.body.style.right = '';
     document.body.style.width = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, cartScrollLockY);
+    window.scrollTo({ top: cartScrollLockY, left: 0, behavior: 'instant' });
   }
 
   toggle.addEventListener('click', function () {

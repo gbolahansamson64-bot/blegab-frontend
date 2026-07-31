@@ -205,6 +205,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0 var(--space-md) var(--space-md);
     scrollbar-width: thin;
     scrollbar-color: var(--color-gold) var(--color-bg-dark);
@@ -260,6 +261,41 @@
   height: 14px;
 }
 
+/* Price slider */
+.shop-filter__price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.shop-filter__price-left {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-gold);
+  transition: color var(--transition-fast);
+}
+
+.shop-filter__price-right {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.shop-filter__price-right.is-active {
+  color: var(--color-gold);
+}
+
+.shop-filter__price-left.is-muted {
+  color: var(--color-text-muted);
+}
+
+.shop-filter__range {
+  width: 100%;
+  accent-color: var(--color-gold);
+  margin: 0;
+}
 
 /* -----------------------------
    Toolbar
@@ -449,6 +485,8 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity var(--transition-base), visibility var(--transition-base);
+    overscroll-behavior: contain;
+    touch-action: none;
   }
 
   .shop-filter-overlay.is-visible {
@@ -466,6 +504,7 @@
     background-color: var(--color-bg-dark);
     z-index: 61;
     overflow: hidden;
+    overscroll-behavior: contain;
     transform: translateX(-100%);
     transition: transform var(--transition-base);
     display: flex;

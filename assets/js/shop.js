@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initProductModal();
   initPaginationArrows();
   initCustomSelect();
+  initPriceSlider();
   initClearFilters();
   
   // Recalculate on resize
@@ -307,18 +308,40 @@ function initShopFilterPanel() {
   var closeBtn = document.querySelector('[data-filter-close]');
   if (!trigger || !panel || !overlay) return;
 
+  var lockedScrollY = 0;
+
+  function lockBodyScroll() {
+    lockedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + lockedScrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, lockedScrollY);
+  }
+
   function openPanel() {
     panel.classList.add('is-open');
     overlay.classList.add('is-visible');
     trigger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
   }
 
   function closePanel() {
     panel.classList.remove('is-open');
     overlay.classList.remove('is-visible');
     trigger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    unlockBodyScroll();
   }
 
   trigger.addEventListener('click', openPanel);
@@ -518,6 +541,41 @@ function initCustomSelect() {
   });
 }
 
+function initPriceSlider() {
+  var slider = document.querySelector('[data-price-slider]');
+  var priceLeft = document.querySelector('.shop-filter__price-left');
+  var priceRight = document.querySelector('[data-price-end]');
+  if (!slider || !priceLeft || !priceRight) return;
+
+  var prices = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+
+  // Stop slider touch from closing the panel
+  slider.addEventListener('touchstart', function (e) {
+    e.stopPropagation();
+  });
+
+  slider.addEventListener('touchmove', function (e) {
+    e.stopPropagation();
+  });
+
+  slider.addEventListener('touchend', function (e) {
+    e.stopPropagation();
+  });
+
+  slider.addEventListener('input', function () {
+    var step = parseInt(this.value);
+    var price = prices[step - 1];
+    priceLeft.textContent = '$' + price;
+
+    if (step === 10) {
+      priceRight.classList.add('is-active');
+      priceLeft.classList.add('is-muted');
+    } else {
+      priceRight.classList.remove('is-active');
+      priceLeft.classList.remove('is-muted');
+    }
+  });
+}
 
 
 function initClearFilters() {
