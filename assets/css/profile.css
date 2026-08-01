@@ -8,26 +8,6 @@
 /* -----------------------------
    Light / dark theme
    ----------------------------- */
-:root[data-theme="light"] {
-  --color-bg-dark: var(--color-bg-light);
-  --color-bg-dark-alt: var(--color-white);
-  --color-white: #201d17;
-  --color-text-muted: var(--color-text-muted-light);
-  --color-border-dark: var(--color-border-light);
-}
-
-:root[data-theme="light"] body {
-  color: var(--color-white);
-}
-
-:root[data-theme="light"] .profile-card {
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.18);
-}
-
-:root[data-theme="light"] .field input,
-:root[data-theme="light"] .field select {
-  background-color: var(--color-off-white);
-}
 
 .profile-page {
   min-height: 60vh;
@@ -85,42 +65,6 @@
   padding: 10px 20px;
 }
 
-/* Theme toggle — sun / moon swap */
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--color-border-dark);
-  color: var(--color-white);
-  flex-shrink: 0;
-  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
-}
-
-.theme-toggle:hover {
-  border-color: var(--color-gold);
-  color: var(--color-gold);
-  background-color: rgba(212, 175, 55, 0.08);
-}
-
-.theme-toggle__icon {
-  width: 18px;
-  height: 18px;
-}
-
-.theme-toggle__icon--moon {
-  display: none;
-}
-
-:root[data-theme="light"] .theme-toggle__icon--sun {
-  display: none;
-}
-
-:root[data-theme="light"] .theme-toggle__icon--moon {
-  display: block;
-}
 
 /* -----------------------------
    Heading
