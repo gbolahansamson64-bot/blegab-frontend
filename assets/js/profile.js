@@ -406,14 +406,16 @@ function wireFieldChangeTracking() {
   }
 
   /* ---- Back button: return to wherever they came from ---- */
-  function wireBack() {
-    if (!backBtn) return;
-    backBtn.addEventListener('click', function () {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = 'index.html';
-      }
-    });
-  }
-}
+function wireBack() {
+  if (!backBtn) return;
+  backBtn.addEventListener('click', function () {
+    var ref = document.referrer;
+    var cameFromSite = ref && ref.indexOf(window.location.origin) === 0;
+
+    if (cameFromSite) {
+      window.location.href = ref;
+    } else {
+      window.location.href = 'index.html';
+    }
+  });
+}}
