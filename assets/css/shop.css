@@ -928,6 +928,8 @@
   visibility: hidden;
   transition: opacity var(--transition-base), visibility var(--transition-base);
   z-index: 300;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .product-modal-overlay.is-open {
@@ -943,6 +945,7 @@
   width: min(920px, 92vw);
   max-height: 88vh;
   overflow: hidden;
+  overscroll-behavior: contain;
   background: var(--color-bg-dark-alt);
   border: 1px solid var(--color-border-dark);
   border-radius: var(--radius-md);
@@ -963,6 +966,7 @@
 .product-modal__scroll {
   max-height: 88vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-md);

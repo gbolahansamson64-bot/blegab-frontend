@@ -361,7 +361,7 @@
 
               <div class="checkout-field">
                 <label>Phone Number (Optional)</label>
-                <input type="tel" id="checkout-phone" placeholder="+1 555 123 4567" />
+                <input type="tel" id="checkout-phone" placeholder="555 123 4567" />
               </div>
 
               <label class="checkout-save-info">
@@ -455,20 +455,20 @@
               <h3>Card Details</h3>
               <div class="checkout-field">
                 <label>Name on Card</label>
-                <input type="text" placeholder="Enter name as shown on card" />
+                <input type="text" id="checkout-card-name" autocomplete="cc-name" placeholder="Enter name as shown on card" />
               </div>
               <div class="checkout-field">
                 <label>Card Number</label>
-                <input type="text" placeholder="1234 5678 9012 3456" />
+                <input type="text" id="checkout-card-number" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" />
               </div>
               <div class="checkout-field-row">
                 <div class="checkout-field">
                   <label>Expiry Date</label>
-                  <input type="text" placeholder="MM/YY" />
+                  <input type="text" id="checkout-expiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" />
                 </div>
                 <div class="checkout-field">
                   <label>CVV</label>
-                  <input type="text" placeholder="123" />
+                  <input type="text" id="checkout-cvv" inputmode="numeric" autocomplete="cc-csc" maxlength="3" placeholder="123" />
                 </div>
               </div>
             </div>

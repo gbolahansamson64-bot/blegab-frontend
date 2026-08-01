@@ -166,6 +166,16 @@
         </svg>
         Sign Out
       </button>
+
+      <a href="profile.html" class="account-dropdown__item account-dropdown__item--profile" data-account-signed-in hidden>
+        <span class="profile-btn__icon-circle">
+          <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+          </svg>
+        </span>
+        Profile
+      </a>
     </div>
   </div>
 
@@ -336,6 +346,17 @@
                 </svg>
                 Sign Out
               </button>
+            </li>
+            <li data-account-signed-in hidden>
+              <a href="profile.html" class="nav-dropdown__link nav-dropdown__link--profile">
+                <span class="profile-btn__icon-circle">
+                  <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                Profile
+              </a>
             </li>
           </ul>
         </li>

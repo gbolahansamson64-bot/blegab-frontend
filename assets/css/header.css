@@ -288,6 +288,37 @@
   color: #ff8a80;
 }
 
+/* Profile button — gold background so it stands out from the rest of the menu */
+.account-dropdown__item--profile {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.account-dropdown__item--profile:hover {
+  background-color: var(--color-gold-light);
+  color: #1a1a1a;
+}
+
+/* Circular badge that holds the user icon, used on both mobile and desktop Profile buttons */
+.profile-btn__icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.profile-btn__icon-circle .account-dropdown__icon,
+.profile-btn__icon-circle .nav-dropdown__link-icon {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+}
+
 /* Account icon — outline while signed out, filled once signed in */
 .account-menu__icon--filled,
 .nav-link__icon--filled {
@@ -1066,6 +1097,18 @@ body.announcement-dismissed .primary-nav__header {
 .nav-dropdown--account .nav-dropdown__link--logout:hover {
   background-color: rgba(229, 115, 115, 0.22);
   color: #ff8a80;
+}
+
+/* Profile button — gold background so it stands out from the rest of the menu */
+.nav-dropdown--account .nav-dropdown__link--profile {
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.nav-dropdown--account .nav-dropdown__link--profile:hover {
+  background-color: var(--color-gold-light);
+  color: #1a1a1a;
 }
 
 /* Overlay behind the mobile nav drawer */

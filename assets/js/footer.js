@@ -76,6 +76,8 @@
             <li><a href="about-us.html" class="footer-col__link">About Us</a></li>
             <li><a href="contact-us.html#faq-section" class="footer-col__link">FAQs</a></li>
             <li><a href="contact-us.html" class="footer-col__link">Contact Us</a></li>
+            <li><a href="privacy.html" class="footer-col__link">Privacy Policy</a></li>
+            <li><a href="terms.html" class="footer-col__link">Terms of Service</a></li>
             <li><a href="#" data-open-cookie-settings class="footer-col__link">Cookie Settings</a></li>
           </ul>
         </div>

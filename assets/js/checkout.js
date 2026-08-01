@@ -245,6 +245,11 @@ function initCheckoutModal() {
     if (errorEl) errorEl.classList.remove('is-visible');
 
     populateCities(value);
+
+    // Whatever ZIP was showing belonged to the old state/city — clear it
+    // before autoFillZip() re-fills it (or leaves it blank for UK/manual entry).
+    if (zipEl) zipEl.value = '';
+    autoFillZip();
   }
 
   function scrollActiveStateIntoView() {
@@ -340,6 +345,8 @@ function initCheckoutModal() {
     var errorEl = modal.querySelector('[data-field-error="city"]');
     if (wrapper) wrapper.classList.remove('checkout-field--invalid');
     if (errorEl) errorEl.classList.remove('is-visible');
+
+    autoFillZip(value);
   }
 
   function scrollActiveCityIntoView() {
@@ -445,16 +452,494 @@ function initCheckoutModal() {
       selectCity(option.getAttribute('data-city-value'));
     });
   }
+if (countryEl) {
+  countryEl.addEventListener('change', function () {
+    populateStates(countryEl.value);
+    var wrapper = stateEl ? stateEl.closest('.checkout-field') : null;
+    var errorEl = modal.querySelector('[data-field-error="state"]');
+    if (wrapper) wrapper.classList.remove('checkout-field--invalid');
+    if (errorEl) errorEl.classList.remove('is-visible');
 
-  if (countryEl) {
-    countryEl.addEventListener('change', function () {
-      populateStates(countryEl.value);
-      var wrapper = stateEl ? stateEl.closest('.checkout-field') : null;
-      var errorEl = modal.querySelector('[data-field-error="state"]');
-      if (wrapper) wrapper.classList.remove('checkout-field--invalid');
-      if (errorEl) errorEl.classList.remove('is-visible');
-    });
+    // Country changed, so whatever postal code was filled/typed no longer applies.
+    if (zipEl) {
+      zipEl.value = '';
+      var zipWrapper = zipEl.closest('.checkout-field');
+      var zipErrorEl = modal.querySelector('[data-field-error="zip"]');
+      if (zipWrapper) zipWrapper.classList.remove('checkout-field--invalid');
+      if (zipErrorEl) zipErrorEl.classList.remove('is-visible');
+    }
+  });
+}
+
+var COUNTRY_DIAL_CODES = {
+  'Nigeria': '+234',
+  'United States': '+1',
+  'United Kingdom': '+44',
+  'Canada': '+1'
+};
+
+var phoneEl = modal.querySelector('#checkout-phone');
+if (phoneEl) {
+  var PHONE_LOCAL_LENGTH = 10;
+  // 10 digits formatted as "XXX XXX XXXX" = 12 characters with spaces.
+  phoneEl.setAttribute('maxlength', String(PHONE_LOCAL_LENGTH + 2));
+
+  // If a pasted number already includes the selected country's dial code
+  // (with or without a leading + or 00), strip it off — the badge next to
+  // the field already shows the code, so this field should only ever hold
+  // the local number.
+  function stripCountryCode(digits) {
+    var country = countryEl ? countryEl.value : '';
+    var dialCode = (COUNTRY_DIAL_CODES[country] || '').replace('+', '');
+    if (!dialCode) return digits;
+
+    var codeFound = false;
+
+    if (digits.indexOf('00' + dialCode) === 0) {
+      digits = digits.slice(2 + dialCode.length);
+      codeFound = true;
+    } else if (digits.indexOf(dialCode) === 0) {
+      digits = digits.slice(dialCode.length);
+      codeFound = true;
+    }
+
+    // Only drop a leftover trunk "0" when we actually just removed a
+    // country code (e.g. +234 0801... -> 801...). If no code was found,
+    // leave the digits alone — a leading 0 may be a legitimate local number.
+    if (codeFound && digits.charAt(0) === '0') digits = digits.slice(1);
+
+    return digits;
   }
+
+  // Groups digits as "XXX XXX XXXX" (e.g. 1234567890 -> "123 456 7890").
+  function formatPhoneDisplay(digits) {
+    var groups = [];
+    if (digits.length > 6) {
+      groups.push(digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 10));
+    } else if (digits.length > 3) {
+      groups.push(digits.slice(0, 3), digits.slice(3, 6));
+    } else {
+      groups.push(digits);
+    }
+    return groups.filter(function (g) { return g.length; }).join(' ');
+  }
+
+  phoneEl.addEventListener('input', function () {
+    var digitsOnly = phoneEl.value.replace(/\D/g, '').slice(0, PHONE_LOCAL_LENGTH);
+    phoneEl.value = formatPhoneDisplay(digitsOnly);
+  });
+
+  phoneEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    // Block new digits once at the 10-digit cap, unless replacing a
+    // selected range (e.g. user has text selected and types over it).
+    var hasSelection = phoneEl.selectionStart !== phoneEl.selectionEnd;
+    var digitsOnly = phoneEl.value.replace(/\D/g, '');
+    if (!hasSelection && digitsOnly.length >= PHONE_LOCAL_LENGTH) {
+      e.preventDefault();
+    }
+  });
+
+  phoneEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var digitsOnly = stripCountryCode(pasted.replace(/\D/g, '')).slice(0, PHONE_LOCAL_LENGTH);
+    phoneEl.value = formatPhoneDisplay(digitsOnly);
+  });
+}
+
+if (phoneEl) {
+  // Wrap the phone input with a dial-code badge (built in JS so no HTML edits needed).
+  var phoneWrap = document.createElement('div');
+  phoneWrap.className = 'checkout-phone-wrap';
+
+  var codeBadge = document.createElement('span');
+  codeBadge.className = 'checkout-phone-code';
+
+  phoneEl.parentNode.insertBefore(phoneWrap, phoneEl);
+  phoneWrap.appendChild(codeBadge);
+  phoneWrap.appendChild(phoneEl);
+
+  function updatePhoneCode() {
+    var country = countryEl ? countryEl.value : '';
+    codeBadge.textContent = COUNTRY_DIAL_CODES[country] || '+';
+  }
+
+  updatePhoneCode();
+  if (countryEl) countryEl.addEventListener('change', updatePhoneCode);
+}
+
+var nameFieldIds = ['checkout-first-name', 'checkout-last-name', 'checkout-card-name'];
+var namePattern = /^[A-Za-z\s'-]$/;
+
+nameFieldIds.forEach(function (id) {
+  var nameEl = modal.querySelector('#' + id);
+  if (!nameEl) return;
+
+  nameEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!namePattern.test(e.key)) e.preventDefault();
+  });
+
+  nameEl.addEventListener('input', function () {
+    var cleaned = nameEl.value.replace(/[^A-Za-z\s'-]/g, '');
+    if (nameEl.value !== cleaned) nameEl.value = cleaned;
+  });
+
+  nameEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var cleaned = pasted.replace(/[^A-Za-z\s'-]/g, '');
+    var start = nameEl.selectionStart;
+    var end = nameEl.selectionEnd;
+    nameEl.value = nameEl.value.slice(0, start) + cleaned + nameEl.value.slice(end);
+  });
+});
+
+if (stateEl) {
+  var statePattern = /^[A-Za-z\s'-]$/;
+
+  stateEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', 'Escape', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!statePattern.test(e.key)) e.preventDefault();
+  });
+
+  stateEl.addEventListener('input', function () {
+    var cleaned = stateEl.value.replace(/[^A-Za-z\s'-]/g, '');
+    if (stateEl.value !== cleaned) stateEl.value = cleaned;
+  });
+
+  stateEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var cleaned = pasted.replace(/[^A-Za-z\s'-]/g, '');
+    var start = stateEl.selectionStart;
+    var end = stateEl.selectionEnd;
+    stateEl.value = stateEl.value.slice(0, start) + cleaned + stateEl.value.slice(end);
+  });
+}
+
+// ---------- CVV: digits only, 3-digit cap ----------
+var cvvEl = modal.querySelector('#checkout-cvv');
+if (cvvEl) {
+  var CVV_MAX_DIGITS = 3;
+
+  cvvEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    var hasSelection = cvvEl.selectionStart !== cvvEl.selectionEnd;
+    if (!hasSelection && cvvEl.value.replace(/\D/g, '').length >= CVV_MAX_DIGITS) {
+      e.preventDefault();
+    }
+  });
+
+  cvvEl.addEventListener('input', function () {
+    var cleaned = cvvEl.value.replace(/\D/g, '').slice(0, CVV_MAX_DIGITS);
+    if (cvvEl.value !== cleaned) cvvEl.value = cleaned;
+  });
+
+  cvvEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var cleaned = pasted.replace(/\D/g, '');
+    var start = cvvEl.selectionStart;
+    var end = cvvEl.selectionEnd;
+    var existingDigits = cvvEl.value.replace(/\D/g, '');
+    var merged = (existingDigits.slice(0, start) + cleaned + existingDigits.slice(end)).slice(0, CVV_MAX_DIGITS);
+    cvvEl.value = merged;
+    var caretPos = Math.min(start + cleaned.length, merged.length);
+    cvvEl.setSelectionRange(caretPos, caretPos);
+  });
+}
+
+// ---------- Expiry date: MM/YY, auto-slash, live month validation (01-12) ----------
+var expiryEl = modal.querySelector('#checkout-expiry');
+if (expiryEl) {
+  // Rebuilds a valid MM+YY digit string from raw input, correcting/dropping
+  // digits as they're typed so an invalid month can never be reached:
+  // - a first digit of 2-9 is auto-padded to "0X" (e.g. typing "3" -> "03")
+  // - "00" is never allowed (second digit after a leading 0 must be 1-9)
+  // - "13"-"19" are never allowed (second digit after a leading 1 must be 0-2)
+  function buildExpiryDigits(raw) {
+    var source = raw.replace(/\D/g, '');
+    var result = '';
+    for (var i = 0; i < source.length && result.length < 4; i++) {
+      var ch = source.charAt(i);
+      if (result.length === 0) {
+        if (ch === '0' || ch === '1') {
+          result += ch;
+        } else {
+          result += '0' + ch; // 2-9 typed first -> auto leading zero, month complete
+        }
+      } else if (result.length === 1) {
+        var firstDigit = result.charAt(0);
+        if (firstDigit === '0') {
+          if (ch !== '0') result += ch; // block "00"
+        } else { // firstDigit === '1'
+          if (ch >= '0' && ch <= '2') result += ch; // block "13"-"19"
+        }
+      } else {
+        result += ch; // year digits — any 0-9 allowed
+      }
+    }
+    return result;
+  }
+
+  function formatExpiryDisplay(digits) {
+    return digits.length <= 2 ? digits : digits.slice(0, 2) + '/' + digits.slice(2);
+  }
+
+  // Given the finished digit string and how many raw digits preceded the
+  // caret before this edit, works out where the caret should land after
+  // the value is rebuilt and re-slashed.
+  function expiryCaretPos(digits, digitsBeforeCaret) {
+    var caretDigits = Math.min(digitsBeforeCaret, digits.length);
+    var slashOffset = caretDigits > 2 ? 1 : 0;
+    return Math.min(caretDigits + slashOffset, formatExpiryDisplay(digits).length);
+  }
+
+  function applyExpiryValue(digits, digitsBeforeCaret) {
+    var formatted = formatExpiryDisplay(digits);
+    var caretPos = expiryCaretPos(digits, digitsBeforeCaret);
+    expiryEl.value = formatted;
+    expiryEl.setSelectionRange(caretPos, caretPos);
+  }
+
+  expiryEl.addEventListener('keydown', function (e) {
+    // Backspacing right after the auto-inserted "/" should remove the
+    // month digit before it too, not just leave a dangling slash.
+    if (e.key === 'Backspace' && expiryEl.selectionStart === expiryEl.selectionEnd) {
+      var pos = expiryEl.selectionStart;
+      if (pos > 0 && expiryEl.value.charAt(pos - 1) === '/') {
+        e.preventDefault();
+        var digitsBeforeCaret = expiryEl.value.slice(0, pos - 2).replace(/\D/g, '').length;
+        var newDigits = buildExpiryDigits(expiryEl.value.slice(0, pos - 2) + expiryEl.value.slice(pos));
+        applyExpiryValue(newDigits, digitsBeforeCaret);
+        return;
+      }
+      return; // normal backspace — let the input handler reformat
+    }
+
+    var allowedKeys = ['Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    var hasSelection = expiryEl.selectionStart !== expiryEl.selectionEnd;
+    var digitsOnly = expiryEl.value.replace(/\D/g, '');
+    if (!hasSelection && digitsOnly.length >= 4) {
+      e.preventDefault();
+    }
+  });
+
+  expiryEl.addEventListener('input', function () {
+    var caret = expiryEl.selectionStart;
+    var digitsBeforeCaret = expiryEl.value.slice(0, caret).replace(/\D/g, '').length;
+    var digits = buildExpiryDigits(expiryEl.value);
+    applyExpiryValue(digits, digitsBeforeCaret);
+  });
+
+  expiryEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var start = expiryEl.selectionStart;
+    var end = expiryEl.selectionEnd;
+    var existingRaw = expiryEl.value;
+    var merged = existingRaw.slice(0, start) + pasted + existingRaw.slice(end);
+    var digitsBeforeCaret = existingRaw.slice(0, start).replace(/\D/g, '').length +
+      pasted.replace(/\D/g, '').length;
+    var digits = buildExpiryDigits(merged);
+    applyExpiryValue(digits, digitsBeforeCaret);
+  });
+}
+
+// ---------- Card number: digits only, 16-digit cap, "4 4 4 4" grouping ----------
+var cardNumberEl = modal.querySelector('#checkout-card-number');
+if (cardNumberEl) {
+  var CARD_NUMBER_MAX_DIGITS = 16;
+
+  function formatCardNumberDisplay(digits) {
+    return digits.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  // Reformats a raw string into grouped digits and works out where the caret
+  // should land, given how many digits preceded it before reformatting.
+  function reformatCardNumber(rawValue, digitsBeforeCaret) {
+    var digits = rawValue.replace(/\D/g, '').slice(0, CARD_NUMBER_MAX_DIGITS);
+    var formatted = formatCardNumberDisplay(digits);
+    var caretDigits = Math.min(digitsBeforeCaret, digits.length);
+    var spacesBeforeCaret = caretDigits > 0 ? Math.floor((caretDigits - 1) / 4) : 0;
+    var caretPos = Math.min(caretDigits + spacesBeforeCaret, formatted.length);
+    return { formatted: formatted, caretPos: caretPos };
+  }
+
+  cardNumberEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    // Block new digits once at the 16-digit cap, unless replacing a selection.
+    var hasSelection = cardNumberEl.selectionStart !== cardNumberEl.selectionEnd;
+    var digitsOnly = cardNumberEl.value.replace(/\D/g, '');
+    if (!hasSelection && digitsOnly.length >= CARD_NUMBER_MAX_DIGITS) {
+      e.preventDefault();
+    }
+  });
+
+  cardNumberEl.addEventListener('input', function () {
+    var caret = cardNumberEl.selectionStart;
+    var digitsBeforeCaret = cardNumberEl.value.slice(0, caret).replace(/\D/g, '').length;
+    var result = reformatCardNumber(cardNumberEl.value, digitsBeforeCaret);
+    cardNumberEl.value = result.formatted;
+    cardNumberEl.setSelectionRange(result.caretPos, result.caretPos);
+  });
+
+  cardNumberEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var pastedDigits = pasted.replace(/\D/g, '');
+
+    var start = cardNumberEl.selectionStart;
+    var end = cardNumberEl.selectionEnd;
+    var existingDigits = cardNumberEl.value.replace(/\D/g, '');
+    var digitsBeforeStart = cardNumberEl.value.slice(0, start).replace(/\D/g, '').length;
+    var digitsBeforeEnd = cardNumberEl.value.slice(0, end).replace(/\D/g, '').length;
+    var digitsAfterEnd = existingDigits.slice(digitsBeforeEnd);
+
+    var merged = (existingDigits.slice(0, digitsBeforeStart) + pastedDigits + digitsAfterEnd).slice(0, CARD_NUMBER_MAX_DIGITS);
+    var caretDigits = Math.min(digitsBeforeStart + pastedDigits.length, CARD_NUMBER_MAX_DIGITS);
+
+    var result = reformatCardNumber(merged, caretDigits);
+    cardNumberEl.value = result.formatted;
+    cardNumberEl.setSelectionRange(result.caretPos, result.caretPos);
+  });
+}
+
+var zipEl = modal.querySelector('#checkout-zip');
+if (zipEl) {
+  var zipPattern = /^[A-Za-z0-9\s-]$/;
+
+  zipEl.addEventListener('keydown', function (e) {
+    var allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+    if (!zipPattern.test(e.key)) e.preventDefault();
+  });
+
+  zipEl.addEventListener('input', function () {
+    var cleaned = zipEl.value.replace(/[^A-Za-z0-9\s-]/g, '');
+    if (zipEl.value !== cleaned) zipEl.value = cleaned;
+  });
+
+  zipEl.addEventListener('paste', function (e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var cleaned = pasted.replace(/[^A-Za-z0-9\s-]/g, '');
+    var start = zipEl.selectionStart;
+    var end = zipEl.selectionEnd;
+    zipEl.value = zipEl.value.slice(0, start) + cleaned + zipEl.value.slice(end);
+  });
+}
+
+// ---------- Auto-fill postal/ZIP code when a city is selected ----------
+// Nigeria: postal codes are assigned per state (not per city) by NIPOST,
+// so this is a direct lookup, no network call needed.
+// US / Canada: looked up live via Zippopotam.us (free, no API key).
+// UK: left blank for manual entry — UK postcodes are too hyper-local
+// (street-level) for a reliable city-based lookup.
+var US_STATE_ABBR = {
+  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+  'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+  'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+  'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+  'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+  'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+  'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+  'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+  'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+};
+
+var CANADA_PROVINCE_ABBR = {
+  'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB', 'New Brunswick': 'NB',
+  'Newfoundland and Labrador': 'NL', 'Nova Scotia': 'NS', 'Ontario': 'ON',
+  'Prince Edward Island': 'PE', 'Quebec': 'QC', 'Saskatchewan': 'SK',
+  'Northwest Territories': 'NT', 'Nunavut': 'NU', 'Yukon': 'YT'
+};
+
+var NIGERIA_STATE_ZIP = {
+  'Abia': '440001', 'Adamawa': '640001', 'Akwa Ibom': '520001', 'Anambra': '420001',
+  'Bauchi': '740001', 'Bayelsa': '561001', 'Benue': '970001', 'Borno': '600001',
+  'Cross River': '540001', 'Delta': '320001', 'Ebonyi': '840001', 'Edo': '300001',
+  'Ekiti': '360001', 'Enugu': '400001', 'Gombe': '760001', 'Imo': '460001',
+  'Jigawa': '720001', 'Kaduna': '800001', 'Kano': '700001', 'Katsina': '820001',
+  'Kebbi': '860001', 'Kogi': '260001', 'Kwara': '240001', 'Lagos': '100001',
+  'Nasarawa': '962001', 'Niger': '920001', 'Ogun': '110001', 'Ondo': '340001',
+  'Osun': '230001', 'Oyo': '200001', 'Plateau': '930001', 'Rivers': '500001',
+  'Sokoto': '840001', 'Taraba': '660001', 'Yobe': '620001', 'Zamfara': '880001',
+  'Abuja (FCT)': '900001'
+};
+
+function fetchZipForCity(country, state, city) {
+  var url = null;
+
+  if (country === 'United States') {
+    var stateAbbr = US_STATE_ABBR[state];
+    if (stateAbbr) {
+      url = 'https://api.zippopotam.us/us/' + stateAbbr.toLowerCase() + '/' + encodeURIComponent(city);
+    }
+  } else if (country === 'Canada') {
+    var provinceAbbr = CANADA_PROVINCE_ABBR[state];
+    if (provinceAbbr) {
+      url = 'https://api.zippopotam.us/ca/' + provinceAbbr.toLowerCase() + '/' + encodeURIComponent(city);
+    }
+  }
+
+  if (!url) return Promise.resolve(null);
+
+  return fetch(url)
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (data) {
+      if (data && data.places && data.places.length) {
+        return data.places[0]['post code'] || null;
+      }
+      return null;
+    })
+    .catch(function () { return null; });
+}
+
+function autoFillZip(city) {
+  if (!zipEl) return;
+  var country = countryEl ? countryEl.value : '';
+  var state = stateEl ? stateEl.value : '';
+
+  if (country === 'Nigeria') {
+    var code = NIGERIA_STATE_ZIP[state];
+    if (code) zipEl.value = code;
+    return;
+  }
+
+  if (!city) return;
+
+  fetchZipForCity(country, state, city).then(function (code) {
+    if (code) zipEl.value = code;
+    // UK, or no match found: leave the field for manual entry.
+  });
+}
+
 
   function lockPageScroll() {
     scrollLockY = window.scrollY || window.pageYOffset || 0;

@@ -7,6 +7,40 @@
 var currentPage = 1;
 var productsPerPage = 9; // Default for desktop
 
+// ---- Shared body scroll lock (works reliably on mobile/iOS, unlike overflow:hidden alone) ----
+// Reference-counted so multiple overlays (filter panel, product modal, etc.)
+// can lock/unlock independently without one closing early and re-enabling scroll
+// while another overlay is still open.
+var __scrollLockCount = 0;
+var __scrollLockY = 0;
+
+function lockBodyScroll() {
+  if (__scrollLockCount === 0) {
+    __scrollLockY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + __scrollLockY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  __scrollLockCount++;
+}
+
+function unlockBodyScroll() {
+  if (__scrollLockCount === 0) return;
+  __scrollLockCount--;
+  if (__scrollLockCount === 0) {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, __scrollLockY);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   calculateProductsPerPage();
   renderProductGrid(currentPage);
@@ -308,28 +342,6 @@ function initShopFilterPanel() {
   var closeBtn = document.querySelector('[data-filter-close]');
   if (!trigger || !panel || !overlay) return;
 
-  var lockedScrollY = 0;
-
-  function lockBodyScroll() {
-    lockedScrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.position = 'fixed';
-    document.body.style.top = '-' + lockedScrollY + 'px';
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function unlockBodyScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
-    window.scrollTo(0, lockedScrollY);
-  }
-
   function openPanel() {
     panel.classList.add('is-open');
     overlay.classList.add('is-visible');
@@ -448,13 +460,13 @@ function initProductModal() {
     modal.querySelector('[data-qty-value]').textContent = qty;
     modal.classList.add('is-open');
     overlay.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
   }
 
   function closeModal() {
     modal.classList.remove('is-open');
     overlay.classList.remove('is-open');
-    document.body.style.overflow = '';
+    unlockBodyScroll();
   }
 
   // option pill toggles

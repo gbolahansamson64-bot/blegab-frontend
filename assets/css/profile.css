@@ -1,0 +1,652 @@
+/* =========================================================
+   BLEGAB LUXURY WIGS — PROFILE PAGE
+   Loads after base.css and header.css. Uses the same design
+   tokens as the rest of the site (see base.css :root) so it
+   stays visually consistent with zero new colors introduced.
+   ========================================================= */
+
+/* -----------------------------
+   Light / dark theme
+   ----------------------------- */
+:root[data-theme="light"] {
+  --color-bg-dark: var(--color-bg-light);
+  --color-bg-dark-alt: var(--color-white);
+  --color-white: #201d17;
+  --color-text-muted: var(--color-text-muted-light);
+  --color-border-dark: var(--color-border-light);
+}
+
+:root[data-theme="light"] body {
+  color: var(--color-white);
+}
+
+:root[data-theme="light"] .profile-card {
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-theme="light"] .field input,
+:root[data-theme="light"] .field select {
+  background-color: var(--color-off-white);
+}
+
+.profile-page {
+  min-height: 60vh;
+  padding-block: var(--space-lg) var(--space-2xl);
+}
+
+.profile-page__container {
+  max-width: 1040px;
+}
+
+/* -----------------------------
+   Toolbar
+   ----------------------------- */
+.profile-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 1024px) {
+  .profile-toolbar {
+    margin-top: var(--space-xl);
+  }
+}
+
+.profile-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.profile-back-btn:hover {
+  color: var(--color-gold);
+  transform: translateX(-2px);
+}
+
+.profile-back-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.profile-toolbar__shop {
+  padding: 10px 20px;
+}
+
+/* Theme toggle — sun / moon swap */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-dark);
+  color: var(--color-white);
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  background-color: rgba(212, 175, 55, 0.08);
+}
+
+.theme-toggle__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.theme-toggle__icon--moon {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-toggle__icon--sun {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-toggle__icon--moon {
+  display: block;
+}
+
+/* -----------------------------
+   Heading
+   ----------------------------- */
+.profile-heading {
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.profile-heading__title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: var(--color-white);
+  margin-top: 8px;
+}
+
+.profile-heading__subtitle {
+  margin-top: 10px;
+  max-width: 52ch;
+  font-size: 14.5px;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+/* -----------------------------
+   Card + layout grid
+   A near-invisible border and a soft ambient shadow, so the
+   card reads as one continuous dark surface rather than a
+   boxed panel — the gold hairline on top is the only hard edge.
+   ----------------------------- */
+.profile-card {
+  position: relative;
+  background-color: var(--color-bg-dark-alt);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28px;
+  padding: var(--space-2xl) var(--space-xl);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+}
+
+/* Gold hairline across the top edge — the one signature accent */
+.profile-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-gold) 20%, var(--color-gold-light) 50%, var(--color-gold) 80%, transparent);
+  opacity: 0.9;
+}
+
+.profile-card__grid {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: var(--space-2xl);
+}
+
+@media (max-width: 1023.98px) {
+  .profile-card {
+    padding: var(--space-xl) var(--space-lg);
+  }
+  .profile-card__grid {
+    grid-template-columns: 190px 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .profile-card {
+    padding: var(--space-lg) var(--space-md);
+    border-radius: 20px;
+  }
+  .profile-card__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+/* -----------------------------
+   Avatar uploader
+   ----------------------------- */
+.profile-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding-top: var(--space-xs);
+}
+
+@media (max-width: 767.98px) {
+  .profile-avatar-col {
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-dark);
+  }
+}
+
+.avatar-uploader {
+  position: relative;
+  width: 190px;
+  height: 190px;
+}
+
+@media (max-width: 767.98px) {
+  .avatar-uploader {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.avatar-uploader__dropzone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  box-shadow: 0 0 0 6px transparent;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+}
+
+.avatar-uploader__dropzone:hover,
+.avatar-uploader__dropzone:focus-visible {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.1);
+  outline: none;
+}
+
+/* Placeholder file icon, centered inside the circle until an image is set */
+.avatar-uploader__placeholder-icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 56px;
+  height: 56px;
+  color: var(--color-border-dark);
+}
+
+.avatar-uploader__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-uploader__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: rgba(0, 0, 0, 0.15);
+  color: var(--color-white);
+  opacity: 1;
+  transition: background-color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.avatar-uploader__plus-icon {
+  width: 22px;
+  height: 22px;
+  padding: 10px;
+  box-sizing: content-box;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  color: var(--color-white);
+}
+
+.avatar-uploader__overlay-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-white);
+}
+
+.avatar-uploader__dropzone:hover .avatar-uploader__overlay,
+.avatar-uploader__dropzone:focus-visible .avatar-uploader__overlay {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.avatar-uploader.has-image .avatar-uploader__overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.avatar-uploader.has-image .avatar-uploader__dropzone:hover .avatar-uploader__overlay,
+.avatar-uploader.has-image .avatar-uploader__dropzone:focus-visible .avatar-uploader__overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.avatar-uploader__actions {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: flex;
+  gap: 6px;
+}
+
+.avatar-uploader__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  border: 2px solid var(--color-bg-dark-alt);
+  box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.4);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.avatar-uploader__action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.avatar-uploader__action-btn:hover {
+  background-color: var(--color-gold-light);
+  transform: translateY(-1px);
+}
+
+.avatar-uploader__action-btn--delete {
+  background-color: #e57373;
+  color: var(--color-white);
+}
+
+.avatar-uploader__action-btn--delete:hover {
+  background-color: #ff8a80;
+}
+
+.avatar-uploader__hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 190px;
+}
+
+.avatar-uploader__hint.is-error {
+  color: #ff8a80;
+}
+
+/* -----------------------------
+   Form fields
+   Generous vertical rhythm between groups (space-lg/xl) so the
+   form reads as calm, well-spaced sections, not a dense grid.
+   Email and phone are standalone .field blocks (no field-row
+   wrapper), so they always take the full width of the column —
+   this is what gives email its own long bar, and gives the
+   phone row enough room for the country select AND the full
+   number input to show at once.
+   ----------------------------- */
+.profile-fields-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.field-row {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.field-row--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.field-row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 767.98px) {
+  .field-row,
+  .field-row--2,
+  .field-row--3 {
+    gap: var(--space-md);
+  }
+  .field-row--3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field-row--3 .field:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .field-row--2,
+  .field-row--3 {
+    grid-template-columns: 1fr;
+  }
+  .field-row--3 .field:last-child {
+    grid-column: auto;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background-color: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  border-radius: 10px;
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.field input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.65;
+}
+
+.field input:hover,
+.field select:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
+}
+
+.field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b9b4ab' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 13px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.field select:disabled,
+.field input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Phone: country select + number, side by side. The select keeps a
+   comfortable fixed width for the country name, and the number
+   input takes up the rest of the row — so the whole number is
+   always fully visible, not squeezed behind a tiny chip. */
+.phone-field {
+  display: flex;
+  gap: 10px;
+}
+
+.field .phone-field select {
+  flex: 0 0 136px;
+  width: auto;
+  padding-right: 32px;
+  background-position: right 12px center;
+}
+
+.phone-field .select-wrap {
+  flex: 0 0 50%;
+  width: auto;
+}
+
+@media (max-width: 479.98px) {
+  .phone-field .select-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+.phone-number-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.field .phone-number-wrap input {
+  width: 100%;
+}
+
+.phone-code-prefix {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-gold);
+  pointer-events: none;
+}
+
+.phone-number-wrap input.has-prefix {
+  padding-left: 56px;
+}
+
+@media (max-width: 479.98px) {
+  .phone-field {
+    flex-direction: column;
+  }
+  .field .phone-field select {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* Section divider — used ahead of the address group */
+.field-divider {
+  padding-top: var(--space-xs);
+  margin-top: var(--space-xs);
+  border-top: 1px solid var(--color-border-dark);
+}
+
+.field-divider .eyebrow-text {
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.field-checkbox input {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-gold);
+  flex-shrink: 0;
+}
+
+/* Validation error state */
+.field.has-error input,
+.field.has-error select {
+  border-color: #e57373;
+}
+
+.field.has-error input:focus,
+.field.has-error select:focus {
+  box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.18);
+}
+
+.field-error {
+  font-size: 12px;
+  color: #ff8a80;
+}
+
+/* -----------------------------
+   Footer / save
+   ----------------------------- */
+.profile-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border-dark);
+}
+
+@media (max-width: 479.98px) {
+  .profile-card__footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--space-xs);
+  }
+  .profile-save-status {
+    text-align: center;
+  }
+}
+
+.profile-save-status {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-gold);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.profile-save-status.is-visible {
+  opacity: 1;
+}
+
+.profile-save-btn {
+  min-width: 170px;
+}
+
+.profile-save-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.profile-save-btn:disabled:hover {
+  background-color: var(--color-btn-gold);
+}
+
+.profile-fields-full {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
