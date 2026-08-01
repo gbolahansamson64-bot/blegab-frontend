@@ -1016,6 +1016,16 @@ function autoFillZip(city) {
       var radio = option.querySelector('input[type="radio"]');
       if (radio) radio.checked = true;
       selectedMethod = option.dataset.paymentMethod;
+
+      if (selectedMethod !== 'card') {
+        ['card-name', 'card-number', 'card-expiry', 'card-cvv'].forEach(function (key) {
+          var errorEl = modal.querySelector('[data-field-error="' + key + '"]');
+          if (errorEl) errorEl.classList.remove('is-visible');
+        });
+        modal.querySelectorAll('.checkout-payment-panel .checkout-field--invalid').forEach(function (wrapper) {
+          wrapper.classList.remove('checkout-field--invalid');
+        });
+      }
     });
   });
 
@@ -1035,6 +1045,7 @@ function autoFillZip(city) {
       if (!validateShippingFields()) return;
       goToStep(2);
     } else {
+      if (!validatePaymentFields()) return;
       // No real payment backend yet — placeholder confirmation.
       closeModal();
       showOrderConfirmation();
@@ -1100,6 +1111,62 @@ function autoFillZip(city) {
 
     return allFilled;
   }
+
+  function validatePaymentFields() {
+    // Redirect-style methods (Google Pay, Cash App, Apple Pay, Afterpay,
+    // Klarna) have no fields to fill — selecting one is enough, and a
+    // method is always selected by default ('card').
+    if (selectedMethod !== 'card') return true;
+
+    var fields = [
+      { input: modal.querySelector('#checkout-card-name'), key: 'card-name', message: 'Name on card is required.' },
+      { input: modal.querySelector('#checkout-card-number'), key: 'card-number', message: 'Card number is required.' },
+      { input: modal.querySelector('#checkout-expiry'), key: 'card-expiry', message: 'Expiry date is required.' },
+      { input: modal.querySelector('#checkout-cvv'), key: 'card-cvv', message: 'CVV is required.' }
+    ];
+
+    var allFilled = true;
+    var firstInvalidInput = null;
+
+    fields.forEach(function (field) {
+      var errorEl = modal.querySelector('[data-field-error="' + field.key + '"]');
+      var wrapper = field.input ? field.input.closest('.checkout-field') : null;
+      var isEmpty = !field.input || field.input.value.trim() === '';
+
+      if (isEmpty) {
+        allFilled = false;
+        if (!firstInvalidInput) firstInvalidInput = field.input;
+        if (errorEl) {
+          errorEl.textContent = field.message;
+          errorEl.classList.add('is-visible');
+        }
+        if (wrapper) wrapper.classList.add('checkout-field--invalid');
+      } else {
+        if (errorEl) errorEl.classList.remove('is-visible');
+        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
+      }
+    });
+
+    if (!allFilled && firstInvalidInput) {
+      firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalidInput.focus({ preventScroll: true });
+    }
+
+    return allFilled;
+  }
+
+  ['checkout-card-name', 'checkout-card-number', 'checkout-expiry', 'checkout-cvv'].forEach(function (id) {
+    var input = modal.querySelector('#' + id);
+    if (!input) return;
+    input.addEventListener('input', function () {
+      var wrapper = input.closest('.checkout-field');
+      var errorEl = wrapper ? wrapper.querySelector('.checkout-field-error') : null;
+      if (input.value.trim() !== '') {
+        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
+        if (errorEl) errorEl.classList.remove('is-visible');
+      }
+    });
+  });
 
   function goToStep(step) {
     currentStep = step;

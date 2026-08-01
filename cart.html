@@ -454,21 +454,25 @@
             <div class="checkout-section checkout-payment-panel" data-payment-panel="card">
               <h3>Card Details</h3>
               <div class="checkout-field">
-                <label>Name on Card</label>
-                <input type="text" id="checkout-card-name" autocomplete="cc-name" placeholder="Enter name as shown on card" />
+                <label>Name on Card <span class="checkout-field__required">*</span></label>
+                <span class="checkout-field-error" data-field-error="card-name"></span>
+                <input type="text" id="checkout-card-name" autocomplete="cc-name" placeholder="Enter name as shown on card" required />
               </div>
               <div class="checkout-field">
-                <label>Card Number</label>
-                <input type="text" id="checkout-card-number" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" />
+                <label>Card Number <span class="checkout-field__required">*</span></label>
+                <span class="checkout-field-error" data-field-error="card-number"></span>
+                <input type="text" id="checkout-card-number" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required />
               </div>
               <div class="checkout-field-row">
                 <div class="checkout-field">
-                  <label>Expiry Date</label>
-                  <input type="text" id="checkout-expiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" />
+                  <label>Expiry Date <span class="checkout-field__required">*</span></label>
+                  <span class="checkout-field-error" data-field-error="card-expiry"></span>
+                  <input type="text" id="checkout-expiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" required />
                 </div>
                 <div class="checkout-field">
-                  <label>CVV</label>
-                  <input type="text" id="checkout-cvv" inputmode="numeric" autocomplete="cc-csc" maxlength="3" placeholder="123" />
+                  <label>CVV <span class="checkout-field__required">*</span></label>
+                  <span class="checkout-field-error" data-field-error="card-cvv"></span>
+                  <input type="text" id="checkout-cvv" inputmode="numeric" autocomplete="cc-csc" maxlength="3" placeholder="123" required />
                 </div>
               </div>
             </div>
