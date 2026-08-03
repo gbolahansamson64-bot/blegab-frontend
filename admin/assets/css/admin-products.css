@@ -840,6 +840,11 @@
     right: -150px;
     left: auto;
     width: min(260px, calc(100vw - 32px));
+  }
+
+  [data-prd-filter-toggle] {
+    width: 150px !important;
+    justify-content: center;
   }}
 
 @media (max-width: 380px) {
