@@ -265,7 +265,7 @@ function renderTransactionHistory() {
 
   list.innerHTML = visible.map(function (txn) {
     var status = STX_STATUS_MAP[txn.status] || { label: txn.status, className: 'admin-status--pending' };
-    var amountClass = txn.status === 'refunded' ? 'stx-history-amount stx-history-amount--refunded' : 'stx-history-amount';
+    var amountClass = 'stx-history-amount stx-history-amount--' + txn.status;
     var amountPrefix = txn.status === 'refunded' ? '-' : '';
 
     return '' +

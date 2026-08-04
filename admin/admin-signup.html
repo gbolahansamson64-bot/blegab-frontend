@@ -12,7 +12,7 @@
 
   <link rel="stylesheet" href="assets/css/admin-base.css" />
   <link rel="stylesheet" href="assets/css/admin-auth.css" />
-  <link rel="icon" type="image/webp" href="assets/images/favicon.webp" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon/farviconimg.png" />
 </head>
 <body class="admin-body admin-auth-body">
 
@@ -91,6 +91,26 @@
   <label class="admin-auth-label" for="admin-signup-code">Create Admin Access Code</label>
   <input class="admin-auth-input" type="password" id="admin-signup-code" name="accessCode" autocomplete="off" inputmode="numeric" pattern="[0-9]*" maxlength="8" data-access-code-input required />
   <span class="admin-auth-hint">Set your own 8-digit numeric code — you'll enter it again every time you sign in.</span>
+</div>
+
+
+<div class="admin-auth-field">
+  <label class="admin-auth-label" for="admin-master-secret">
+    Master Admin Secret
+  </label>
+
+  <input
+    class="admin-auth-input"
+    type="password"
+    id="admin-master-secret"
+    name="masterSecret"
+    autocomplete="off"
+    required
+  />
+
+  <span class="admin-auth-hint">
+    Enter the master admin secret provided by the system owner.
+  </span>
 </div>
 
 <button type="submit" class="admin-auth-submit" data-submit-btn>

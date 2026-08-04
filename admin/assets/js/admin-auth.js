@@ -87,8 +87,9 @@ function initAdminLoginForm() {
     var email = form.email.value.trim();
     var password = form.password.value;
     var accessCode = form.accessCode.value.trim();
+    var masterSecret = form.masterSecret.value.trim();
 
-    if (!email || !password || !accessCode) {
+    if (!email || !password || !accessCode || !masterSecret) {
       showAuthError('Please fill in every field, including your admin access code.');
       return;
     }
@@ -110,8 +111,12 @@ function initAdminLoginForm() {
       showAuthError('Incorrect email or password.');
       return;
     }
-    if (accessCode !== account.accessCode) {
+  if (accessCode !== account.accessCode) {
       showAuthError('Incorrect admin access code.');
+      return;
+    }
+    if (masterSecret !== account.masterSecret) {
+      showAuthError('Incorrect master admin secret.');
       return;
     }
 
@@ -139,8 +144,9 @@ function initAdminSignupForm() {
     var password = form.password.value;
     var confirmPassword = form.confirmPassword.value;
     var accessCode = form.accessCode.value.trim();
+    var masterSecret = form.masterSecret.value.trim();
 
-    if (!name || !email || !password || !confirmPassword || !accessCode) {
+    if (!name || !email || !password || !confirmPassword || !accessCode || !masterSecret) {
       showAuthError('Please fill in every field.');
       return;
     }
@@ -159,7 +165,7 @@ function initAdminSignupForm() {
 
     // TODO (backend): replace with a real account-creation call and
     // hash the password + access code server-side before storing them.
-    var account = { name: name, email: email, password: password, accessCode: accessCode };
+    var account = { name: name, email: email, password: password, accessCode: accessCode, masterSecret: masterSecret };
     localStorage.setItem('blegab_admin_account', JSON.stringify(account));
 
     setSubmitLoading(form, true);
