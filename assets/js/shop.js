@@ -307,9 +307,29 @@ function initNewsletterForm() {
       return;
     }
 
-    // Success - replace with real API call later
-    alert('Thanks for subscribing!');
+fetch("https://api.web3forms.com/submit", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    access_key: "4407d68a-d02b-4013-8f28-eea7c04a15b7",
+    email: email,
+    subject: "New Newsletter Subscriber",
+    message: "New subscriber: " + email
+  })
+})
+.then(function(response) {
+  if (response.ok) {
+    alert("Thanks for subscribing!");
     form.reset();
+  } else {
+    alert("Something went wrong. Try again.");
+  }
+})
+.catch(function() {
+  alert("Network error. Try again.");
+});
   });
 
   // Clear error on input

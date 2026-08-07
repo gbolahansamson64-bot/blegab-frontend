@@ -24,42 +24,40 @@ function initContactForm() {
   const errorEl = form.querySelector("[data-contact-error]");
   const successEl = form.querySelector("[data-contact-success]");
   const submitBtn = form.querySelector("[data-contact-submit]");
-  const spinner = form.querySelector("[data-contact-spinner]");
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     errorEl.classList.remove("is-visible");
     successEl.classList.remove("is-visible");
 
-    const firstName = document.getElementById("contact-first-name").value.trim();
-    const email = document.getElementById("contact-email").value.trim();
-    const subject = document.getElementById("contact-subject").value.trim();
-    const message = document.getElementById("contact-message").value.trim();
-
-    if (!firstName || !email || !subject || !message) {
-      errorEl.textContent = "Please fill in all required fields.";
-      errorEl.classList.add("is-visible");
-      return;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      errorEl.textContent = "Please enter a valid email address.";
-      errorEl.classList.add("is-visible");
-      return;
-    }
-
-    // simulate send — replace with real endpoint call
     submitBtn.disabled = true;
-    spinner.hidden = false;
 
-    setTimeout(() => {
-      spinner.hidden = true;
-      submitBtn.disabled = false;
-      successEl.textContent = "Message sent! Our team will get back to you within 24 hours.";
-      successEl.classList.add("is-visible");
-      form.reset();
-    }, 1200);
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        successEl.textContent = "Message sent successfully! We'll get back to you soon.";
+        successEl.classList.add("is-visible");
+        form.reset();
+      } else {
+        errorEl.textContent = result.message || "Failed to send message.";
+        errorEl.classList.add("is-visible");
+      }
+
+    } catch (error) {
+      errorEl.textContent = "Something went wrong. Please try again.";
+      errorEl.classList.add("is-visible");
+    }
+
+    submitBtn.disabled = false;
   });
 }
 

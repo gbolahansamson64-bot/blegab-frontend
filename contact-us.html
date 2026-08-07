@@ -113,11 +113,17 @@
       <div class="contact-form-panel">
         <h2>Send Us A Message</h2>
 
-        <form id="contact-form" novalidate>
+        <form
+  id="contact-form"
+  action="https://api.web3forms.com/submit"
+  method="POST" >
+
+  <input type="hidden" name="access_key" value="4407d68a-d02b-4013-8f28-eea7c04a15b7">
+
           <div class="form-row">
             <div class="form-field">
               <label for="contact-first-name" class="visually-hidden">First Name</label>
-              <input type="text" id="contact-first-name" name="firstName" placeholder="First Name" required>
+              <input type="text" id="contact-first-name" name="name" placeholder="First Name" required>
             </div>
             <div class="form-field">
               <label for="contact-last-name" class="visually-hidden">Last Name</label>
