@@ -19,38 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
    shape (id, name, image, status, email, phone, country, state)
    and call renderCustomers(window.BLEGAB_ADMIN_CUSTOMERS).
    ----------------------------- */
-window.BLEGAB_ADMIN_CUSTOMERS = [
-  {
-    id: 'CUS-1001',
-    name: 'Sarah Johnson',
-    image: 'assets/images/admin/customers/sarah-johnson.webp',
-    status: 'online',
-    email: 'sarah.johnson@email.com',
-    phone: '+1 (555) 234-5678',
-    country: 'United States',
-    state: 'Illinois'
-  },
-  {
-    id: 'CUS-1002',
-    name: 'Amanda Brown',
-    image: 'assets/images/admin/customers/amanda-brown.webp',
-    status: 'offline',
-    email: 'amanda.brown@email.com',
-    phone: '+1 (555) 876-5432',
-    country: 'Canada',
-    state: 'Quebec'
-  },
-  {
-    id: 'CUS-1003',
-    name: 'Jessica Williams',
-    image: 'assets/images/admin/customers/jessica-williams.webp',
-    status: 'online',
-    email: 'jessica.w@email.com',
-    phone: '+1 (555) 345-6789',
-    country: 'United Kingdom',
-    state: 'England'
-  }
-];
+window.BLEGAB_ADMIN_CUSTOMERS = [];
 
 /* -----------------------------
    Status labels
@@ -61,7 +30,7 @@ var CUSTOMER_STATUS_LABELS = {
 };
 
 /* -----------------------------
-   Country name -> short code (same list as admin-orders.js)
+   Country name -> short code
    ----------------------------- */
 var CUSTOMER_COUNTRY_CODES = {
   'United States': 'USA',
@@ -78,10 +47,47 @@ function cusShortCountry(country) {
 }
 
 /* -----------------------------
+   Load customers from backend
+   ----------------------------- */
+async function fetchCustomers() {
+
+  try {
+
+    const response = await fetch(
+      "http://localhost:5000/api/admin/customers",
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load customers");
+    }
+
+    allCustomers = data.customers || [];
+
+    renderCustomers(allCustomers);
+
+  } catch (error) {
+
+    console.error(error);
+
+    renderCustomers([]);
+
+  }
+
+}
+
+/* -----------------------------
    Render customers list
    ----------------------------- */
 function initCustomersPage() {
-  renderCustomers(window.BLEGAB_ADMIN_CUSTOMERS);
+
+  fetchCustomers();
+
 }
 
 window.addEventListener('resize', function () {
@@ -89,6 +95,7 @@ window.addEventListener('resize', function () {
   renderCustomers(currentCustomers);
 });
 
+var allCustomers = [];
 var currentCustomers = [];
 var selectedCustomerIds = new Set();
 var cusCurrentPage = 1;
@@ -236,22 +243,61 @@ function setAllSelected(select) {
 
 function applyCustomersFilter(status) {
   if (!status || status === 'all') {
-    renderCustomers(window.BLEGAB_ADMIN_CUSTOMERS);
+    renderCustomers(allCustomers);
   } else {
-    renderCustomers(window.BLEGAB_ADMIN_CUSTOMERS.filter(function (c) { return c.status === status; }));
+    renderCustomers(allCustomers.filter(function (c) { return c.status === status; }));
   }
 }
 
-function deleteCustomerById(id) {
-  window.BLEGAB_ADMIN_CUSTOMERS = window.BLEGAB_ADMIN_CUSTOMERS.filter(function (c) { return c.id !== id; });
-  selectedCustomerIds.delete(id);
-  var toggleBtn = document.querySelector('[data-customers-filter-toggle]');
-  applyCustomersFilter(toggleBtn ? toggleBtn.dataset.customersFilterValue : 'all');
+async function deleteCustomerById(id) {
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:5000/api/admin/customers/${id}`,
+            {
+                method: "DELETE",
+                credentials: "include"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to delete customer");
+        }
+
+        allCustomers = allCustomers.filter(function (c) {
+            return c._id !== id;
+        });
+
+        selectedCustomerIds.delete(id);
+
+        var toggleBtn = document.querySelector(
+            "[data-customers-filter-toggle]"
+        );
+
+        applyCustomersFilter(
+            toggleBtn
+                ? toggleBtn.dataset.customersFilterValue
+                : "all"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
 }
 
 function deleteSelectedCustomers() {
   if (selectedCustomerIds.size === 0) return;
-  window.BLEGAB_ADMIN_CUSTOMERS = window.BLEGAB_ADMIN_CUSTOMERS.filter(function (c) { return !selectedCustomerIds.has(c.id); });
+  allCustomers = allCustomers.filter(function (c) {
+    return !selectedCustomerIds.has(c.id);
+});
   selectedCustomerIds.clear();
   var toggleBtn = document.querySelector('[data-customers-filter-toggle]');
   applyCustomersFilter(toggleBtn ? toggleBtn.dataset.customersFilterValue : 'all');
@@ -344,7 +390,9 @@ function initCustomerModal() {
       if (pdfVal === 'all') {
         downloadCustomersPdf(currentCustomers, 'customers-export', 'Customers Report');
       } else {
-        var pdfCustomer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === pdfVal; });
+        var pdfCustomer = allCustomers.find(function (c) {
+        return c.id === pdfVal;
+        });
         if (pdfCustomer) downloadCustomerPdf(pdfCustomer);
       }
       closeAllDownloadMenus();
@@ -357,7 +405,9 @@ function initCustomerModal() {
       if (docVal === 'all') {
         downloadDocFile('customers-export', customersTableHtml(currentCustomers, 'Customers Report'));
       } else {
-        var docCustomer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === docVal; });
+        var docCustomer = allCustomers.find(function (c) {
+        return c.id === docVal;
+       });
         if (docCustomer) downloadDocFile('customer-' + docCustomer.id, customerDetailHtml(docCustomer));
       }
       closeAllDownloadMenus();
@@ -370,7 +420,9 @@ function initCustomerModal() {
       if (csvVal === 'all') {
         downloadCustomersCsv(currentCustomers, 'customers-export');
       } else {
-        var csvCustomer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === csvVal; });
+        var csvCustomer = allCustomers.find(function (c) {
+         return c.id === csvVal;
+        });
         if (csvCustomer) downloadCustomerCsv(csvCustomer);
       }
       closeAllDownloadMenus();
@@ -379,7 +431,9 @@ function initCustomerModal() {
 
     if (row) {
       var customerId = row.dataset.customerId;
-      var customer = window.BLEGAB_ADMIN_CUSTOMERS.find(function (c) { return c.id === customerId; });
+      var customer = allCustomers.find(function (c) {
+      return c.id === customerId;
+      });
       if (customer) openCustomerModal(customer);
       return;
     }

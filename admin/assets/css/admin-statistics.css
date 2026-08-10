@@ -439,13 +439,6 @@
   color: #e57373;
 }
 
-.stx-history-amount--paid {
-  color: #6fcf78;
-}
-.stx-history-amount--pending {
-  color: var(--color-gold);
-}
-
 .stx-history-footer {
   display: flex;
   justify-content: center;

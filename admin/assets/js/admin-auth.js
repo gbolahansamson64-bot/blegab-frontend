@@ -1,26 +1,64 @@
-// assets/js/admin-auth.js
 /* =========================================================
-   ADMIN LOGIN / SIGNUP PAGE LOGIC
-   Frontend-only mock — validates the form, then calls
-   window.BLEGAB_ADMIN_AUTH.signIn() (defined in admin.js) and
-   redirects to admin.html. Swap the checks marked below for
-   real API calls once the backend exists.
-   ========================================================= */
+   ADMIN AUTHENTICATION
+   Handles:
+   - Login
+   - Register
+   - Forgot Password
+   - Verify Reset Code
+   - Reset Password
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Already signed in? Skip straight past the auth page.
-  if (window.BLEGAB_ADMIN_AUTH && window.BLEGAB_ADMIN_AUTH.getUser()) {
-    window.location.href = 'admin.html';
-    return;
-  }
+   Communicates with the Express backend API.
+========================================================= */
 
-  initPasswordToggles();
-  initAdminLoginForm();
-  initAdminSignupForm();
-  initAdminForgotForm();
-  initAdminVerifyForm();
-  initAdminResetForm();
-  initPasswordChecklistDropdowns();
+const API_BASE = "http://localhost:5000";
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    try {
+
+        const response = await fetch(`${API_BASE}/api/admin/me`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            window.location.href = "admin.html";
+            return;
+        }
+
+    } catch (error) {
+        // Not logged in, stay on authentication pages.
+    }
+
+    initPasswordToggles();
+    initAdminLoginForm();
+    initAdminSignupForm();
+    initAdminForgotForm();
+    initAdminVerifyForm();
+    initAdminResetForm();
+    initPasswordChecklistDropdowns();
+
+    const params = new URLSearchParams(window.location.search);
+
+if (params.get("reset") === "success") {
+
+    const errorBox = document.querySelector("[data-auth-error]");
+
+    if (errorBox) {
+
+        errorBox.hidden = false;
+
+        errorBox.textContent =
+            "Password reset successfully. Please sign in with your new credentials.";
+
+        errorBox.style.color = "#16a34a";
+        errorBox.style.background = "#dcfce7";
+        errorBox.style.border = "1px solid #86efac";
+
+    }
+
+}
+
 });
 
 /* -----------------------------
@@ -87,9 +125,8 @@ function initAdminLoginForm() {
     var email = form.email.value.trim();
     var password = form.password.value;
     var accessCode = form.accessCode.value.trim();
-    var masterSecret = form.masterSecret.value.trim();
 
-    if (!email || !password || !accessCode || !masterSecret) {
+    if (!email || !password || !accessCode) {
       showAuthError('Please fill in every field, including your admin access code.');
       return;
     }
@@ -98,33 +135,40 @@ function initAdminLoginForm() {
       return;
     }
 
-    // TODO (backend): replace this whole block with a real API call —
-    // this mock just checks against the one account signup stored locally.
-    var account = null;
-    try { account = JSON.parse(localStorage.getItem('blegab_admin_account')); } catch (err) {}
-
-    if (!account) {
-      showAuthError('No admin account found — please sign up first.');
-      return;
-    }
-    if (email !== account.email || password !== account.password) {
-      showAuthError('Incorrect email or password.');
-      return;
-    }
-  if (accessCode !== account.accessCode) {
-      showAuthError('Incorrect admin access code.');
-      return;
-    }
-    if (masterSecret !== account.masterSecret) {
-      showAuthError('Incorrect master admin secret.');
-      return;
-    }
-
     setSubmitLoading(form, true);
-    setTimeout(function () {
-      window.BLEGAB_ADMIN_AUTH.signIn({ name: account.name, email: account.email });
-      window.location.href = 'admin.html';
-    }, 2000);
+
+   fetch(`${API_BASE}/api/admin/login`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        email,
+        password,
+        accessCode
+    })
+   })
+    .then(res => res.json())
+    .then(data => {
+
+    setSubmitLoading(form,false);
+
+    if(!data.success){
+        showAuthError(data.message);
+        return;
+    }
+
+    window.location.href="admin.html";
+
+})
+.catch(err=>{
+
+    setSubmitLoading(form,false);
+
+    showAuthError("Something went wrong.");
+
+});
   });
 }
 
@@ -163,16 +207,57 @@ function initAdminSignupForm() {
       return;
     }
 
-    // TODO (backend): replace with a real account-creation call and
-    // hash the password + access code server-side before storing them.
-    var account = { name: name, email: email, password: password, accessCode: accessCode, masterSecret: masterSecret };
-    localStorage.setItem('blegab_admin_account', JSON.stringify(account));
-
     setSubmitLoading(form, true);
-    setTimeout(function () {
-      window.BLEGAB_ADMIN_AUTH.signIn({ name: name, email: email });
-      window.location.href = 'admin.html';
-    }, 2000);
+
+fetch(`${API_BASE}/api/admin/register`, {
+
+    method: "POST",
+
+    headers: {
+
+        "Content-Type": "application/json"
+
+    },
+
+    credentials: "include",
+
+    body: JSON.stringify({
+
+        name,
+
+        email,
+
+        password,
+
+        accessCode,
+        
+        masterSecret
+
+    })
+
+})
+.then(async (res)=>{
+
+    const data = await res.json();
+
+    if(!res.ok){
+
+        setSubmitLoading(form,false);
+
+        return showAuthError(data.message);
+
+    }
+
+    window.location.href="admin.html";
+
+})
+.catch(()=>{
+
+    setSubmitLoading(form,false);
+
+    showAuthError("Unable to register.");
+
+});
   });
 }
 
@@ -205,23 +290,54 @@ function initAdminForgotForm() {
       return;
     }
 
-    // TODO (backend): replace with a real call that emails a one-time
-    // verification code — this mock just confirms the account exists
-    // locally. The actual 6-digit code is generated and verified by
-    // the backend, not checked here.
-    var account = null;
-    try { account = JSON.parse(localStorage.getItem('blegab_admin_account')); } catch (err) {}
+    setSubmitLoading(form, true);
 
-    if (!account || account.email !== email) {
-      showAuthError('No admin account found for that email.');
-      return;
+fetch(`${API_BASE}/api/admin/forgot-password`, {
+
+    method: "POST",
+
+    credentials: "include",
+
+    headers: {
+
+        "Content-Type":"application/json"
+
+    },
+
+    body: JSON.stringify({
+
+        email,
+
+        type: typeInput.value
+
+    })
+
+})
+.then(async(res)=>{
+
+    const data = await res.json();
+
+    if(!res.ok){
+
+        setSubmitLoading(form,false);
+
+        return showAuthError(data.message);
+
     }
 
-    setSubmitLoading(form, true);
-    setTimeout(function () {
-      var query = '?type=' + encodeURIComponent(typeInput.value) + '&email=' + encodeURIComponent(email);
-      window.location.href = 'admin-verify-code.html' + query;
-    }, 2000);
+    window.location.href=
+        "admin-verify-code.html?type="
+        +typeInput.value+
+        "&email="+encodeURIComponent(email);
+
+})
+.catch(()=>{
+
+    setSubmitLoading(form,false);
+
+    showAuthError("Unable to send code.");
+
+});
   });
 }
 
@@ -251,14 +367,59 @@ function initAdminVerifyForm() {
       return;
     }
 
-    // TODO (backend): send { email, type, code } to the server here and
-    // only proceed on a successful response. This mock accepts any
-    // correctly-formatted 6-digit code since the backend isn't wired up yet.
+    setSubmitLoading(form,true);
 
-    setSubmitLoading(form, true);
-    setTimeout(function () {
-      window.location.href = 'admin-reset-password.html?type=' + encodeURIComponent(type);
-    }, 1500);
+fetch(`${API_BASE}/api/admin/verify-reset-code`,{
+
+    method:"POST",
+
+    credentials:"include",
+
+    headers:{
+
+        "Content-Type":"application/json"
+
+    },
+
+    body:JSON.stringify({
+
+        email,
+
+        type,
+
+        code:enteredCode
+
+    })
+
+})
+.then(async(res)=>{
+
+    const data=await res.json();
+
+    if(!res.ok){
+
+        setSubmitLoading(form,false);
+
+        return showAuthError(data.message);
+
+    }
+
+    window.location.href =
+     "admin-reset-password.html?type="
+     + type
+     + "&email="
+     + encodeURIComponent(email)
+     + "&code="
+     + encodeURIComponent(enteredCode);
+
+    })
+.catch(()=>{
+
+    setSubmitLoading(form,false);
+
+    showAuthError("Verification failed.");
+
+});
   });
 }
 
@@ -340,46 +501,109 @@ function initAdminResetForm() {
     e.preventDefault();
     hideAuthError();
 
-    // TODO (backend): this should verify a real recovery token/session
-    // before allowing the credential update, not just edit local storage.
-    var account = null;
-    try { account = JSON.parse(localStorage.getItem('blegab_admin_account')); } catch (err) {}
-    if (!account) {
-      showAuthError('No admin account found on this device.');
-      return;
-    }
-
-    if (type === 'code') {
-      var newCode = form.newAccessCode.value.trim();
-      var confirmCode = form.confirmAccessCode.value.trim();
-      if (!isValidAccessCode(newCode)) {
-        showAuthError('Access code must be exactly 8 digits (numbers only).');
-        return;
-      }
-      if (newCode !== confirmCode) {
-        showAuthError('Access codes do not match.');
-        return;
-      }
-      account.accessCode = newCode;
-    } else {
-      var newPassword = form.newPassword.value;
-      var confirmPassword = form.confirmNewPassword.value;
-      if (!isStrongAdminPassword(newPassword)) {
-        showAuthError('Password does not meet the requirements below.');
-        return;
-      }
-      if (newPassword !== confirmPassword) {
-        showAuthError('Passwords do not match.');
-        return;
-      }
-      account.password = newPassword;
-    }
-
-    localStorage.setItem('blegab_admin_account', JSON.stringify(account));
 
     setSubmitLoading(form, true);
-    setTimeout(function () {
-      window.location.href = 'admin-login.html';
-    }, 2000);
+
+const params = new URLSearchParams(window.location.search);
+
+const email = params.get("email");
+const code = params.get("code");
+
+if (!email || !code) {
+    setSubmitLoading(form, false);
+    return showAuthError("Invalid or expired reset link.");
+}
+
+const body = {
+    email,
+    type,
+    code
+};
+
+if (type === "password") {
+
+    const newPassword = form.newPassword.value;
+    const confirmNewPassword = form.confirmNewPassword.value;
+
+    if (!newPassword || !confirmNewPassword) {
+        setSubmitLoading(form, false);
+        return showAuthError("Please fill in all password fields.");
+    }
+
+    if (!isStrongAdminPassword(newPassword)) {
+        setSubmitLoading(form, false);
+        return showAuthError("Password does not meet the requirements.");
+    }
+
+    if (newPassword !== confirmNewPassword) {
+        setSubmitLoading(form, false);
+        return showAuthError("Passwords do not match.");
+    }
+
+    body.newPassword = newPassword;
+
+} else {
+
+    const newAccessCode = form.newAccessCode.value.trim();
+    const confirmAccessCode = form.confirmAccessCode.value.trim();
+
+    if (!newAccessCode || !confirmAccessCode) {
+        setSubmitLoading(form, false);
+        return showAuthError("Please fill in all access code fields.");
+    }
+
+    if (!isValidAccessCode(newAccessCode)) {
+        setSubmitLoading(form, false);
+        return showAuthError("Access code must be exactly 8 digits.");
+    }
+
+    if (newAccessCode !== confirmAccessCode) {
+        setSubmitLoading(form, false);
+        return showAuthError("Access codes do not match.");
+    }
+
+    body.newAccessCode = newAccessCode;
+
+}
+
+fetch(`${API_BASE}/api/admin/reset-password`, {
+
+    method: "POST",
+
+    credentials: "include",
+
+    headers: {
+
+        "Content-Type":"application/json"
+
+    },
+
+    body: JSON.stringify(body)
+
+})
+.then(async(res)=>{
+
+    const data = await res.json();
+
+    if(!res.ok){
+
+        setSubmitLoading(form,false);
+
+        return showAuthError(data.message);
+
+    }
+
+    setSubmitLoading(form, false);
+
+    window.location.href = "admin-login.html?reset=success";
+
+})
+.catch(()=>{
+
+    setSubmitLoading(form,false);
+
+    showAuthError("Unable to reset credentials.");
+
+});
   });
 }

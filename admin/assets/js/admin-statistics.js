@@ -11,15 +11,63 @@
    globals — admin.js is loaded before this file.
    ========================================================= */
 
-document.addEventListener('DOMContentLoaded', function () {
+   let statisticsData = null;
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+  await loadStatistics();
+
   initStxDatePicker();
+
   renderStxStatCards();
+
   initChartGranularityTabs();
+
   renderBreakdownChart();
+
   initTransactionHistory();
+
   initDownloadPanel();
+
   initQuickExportScroll();
+
 });
+
+async function loadStatistics() {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/admin/statistics"
+    );
+
+    console.log("STATISTICS RESPONSE STATUS:", response.status);
+
+    const data = await response.json();
+
+    console.log("========== STATISTICS DATA ==========");
+    console.log(data);
+    console.log("EARNINGS:", data.earnings);
+    console.log("CHART:", data.chart);
+    console.log("DAILY:", data.chart?.daily);
+    console.log("WEEKLY:", data.chart?.weekly);
+    console.log("MONTHLY:", data.chart?.monthly);
+    console.log("BREAKDOWN:", data.breakdown);
+    console.log("TRANSACTIONS:", data.transactions);
+    console.log("=====================================");
+
+    if (!data.success) {
+      throw new Error("Failed to load statistics.");
+    }
+
+    statisticsData = data;
+
+    window.BLEGAB_ADMIN_STATISTICS = data;
+
+  } catch (error) {
+    console.error("STATISTICS LOAD ERROR:", error);
+
+    alert("Unable to load statistics.");
+  }
+}
 
 /* -----------------------------
    "As of" date picker in the page head
@@ -50,7 +98,7 @@ function initStxDatePicker() {
    Stat cards (Today / Week / Month / Year)
    ----------------------------- */
 function renderStxStatCards() {
-  var data = window.BLEGAB_ADMIN_STATISTICS;
+  var data = statisticsData;
   if (!data || !data.earnings) return;
 
   Object.keys(data.earnings).forEach(function (key) {
@@ -90,8 +138,15 @@ function initChartGranularityTabs() {
 }
 
 function renderRevenueChart(granularity) {
+
+  console.log("========== RENDER REVENUE CHART ==========");
+console.log("GRANULARITY:", granularity);
+console.log("STATISTICS DATA:", statisticsData);
+console.log("CHART DATA:", statisticsData?.chart);
+console.log("SELECTED SERIES:", statisticsData?.chart?.[granularity]);
+console.log("CHART.JS:", typeof Chart);
   var canvas = document.querySelector('[data-revenue-chart]');
-  var data = window.BLEGAB_ADMIN_STATISTICS;
+  var data = statisticsData;
   if (!canvas || !data || !data.chart || typeof Chart === 'undefined') return;
 
   var series = data.chart[granularity] || data.chart.daily;
@@ -168,7 +223,7 @@ function renderBreakdownChart() {
   var canvas = document.querySelector('[data-breakdown-chart]');
   var legendList = document.querySelector('[data-breakdown-legend]');
   var totalEl = document.querySelector('[data-breakdown-total]');
-  var data = window.BLEGAB_ADMIN_STATISTICS;
+  var data = statisticsData;
   if (!canvas || !data || !data.breakdown) return;
 
   var breakdown = data.breakdown;
@@ -257,7 +312,7 @@ function renderTransactionHistory() {
   var list = document.querySelector('[data-stx-history-list]');
   var countEl = document.querySelector('[data-stx-history-count]');
   var loadMoreBtn = document.querySelector('[data-stx-load-more]');
-  var data = window.BLEGAB_ADMIN_STATISTICS;
+  var data = statisticsData;
   if (!list || !data || !data.transactions) return;
 
   var all = data.transactions;
@@ -265,7 +320,7 @@ function renderTransactionHistory() {
 
   list.innerHTML = visible.map(function (txn) {
     var status = STX_STATUS_MAP[txn.status] || { label: txn.status, className: 'admin-status--pending' };
-    var amountClass = 'stx-history-amount stx-history-amount--' + txn.status;
+    var amountClass = txn.status === 'refunded' ? 'stx-history-amount stx-history-amount--refunded' : 'stx-history-amount';
     var amountPrefix = txn.status === 'refunded' ? '-' : '';
 
     return '' +
@@ -365,7 +420,7 @@ function initDownloadPanel() {
        .then(blob => downloadBlob(blob, 'statement.' + format));
    Left as local generation for now so the button is fully usable. */
 function generateStatement(range, format, fromDate, toDate) {
-  var data = window.BLEGAB_ADMIN_STATISTICS;
+  var data = statisticsData;
   if (!data) return;
 
   var rangeLabels = { today: 'Today', week: 'This Week', month: 'This Month', year: 'This Year', custom: 'Custom Range' };

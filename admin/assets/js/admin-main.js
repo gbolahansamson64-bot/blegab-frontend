@@ -4,10 +4,12 @@
    Runs directly on page load — the header lives right in the
    page's HTML, no fetching or injecting.
    ========================================================= */
+   
 
 document.addEventListener('DOMContentLoaded', function () {
   initMobileNav();
   initNavDropdowns();
+  initDesktopDropdowns();
   initAnnouncementBar();
   initMobileSearch();
   initSearch();
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
   initHeaderScroll();
   initHeaderProductModal();
 });
+
+const API_URL = "http://localhost:5000/api";
 
 
 
@@ -26,225 +30,729 @@ document.addEventListener('DOMContentLoaded', function () {
      BLEGAB_AUTH.signOut()                      // on logout
    and the header will update itself everywhere automatically.
    ----------------------------- */
-window.BLEGAB_AUTH = {
-  getUser: function () {
+const BLEGAB_AUTH = {
+
+    user: null,
+
+    async getUser() {
+
+        try {
+
+            const response = await  fetch(`${API_URL}/auth/me`,
+                {
+                    method: "GET",
+                    credentials: "include"
+                }
+            );
+
+            if (!response.ok) {
+
+                this.user = null;
+
+                return null;
+
+            }
+
+            const data = await response.json();
+
+            this.user = data.user;
+
+            return data.user;
+
+        } catch (error) {
+
+            console.error(error);
+
+            this.user = null;
+
+            return null;
+
+        }
+
+    },
+
+    async logout() {
+
     try {
-      return JSON.parse(localStorage.getItem('blegab_user'));
-    } catch (e) {
-      return null;
+
+        await fetch(`${API_URL}/auth/logout`, {
+
+            method: "POST",
+
+            credentials: "include"
+
+        });
+
+        await window.BLEGAB_CART.renderBadge();
+
+        await window.BLEGAB_CART.renderDrawer();
+
+        await window.BLEGAB_WISHLIST.renderBadge();
+
+    } catch (error) {
+
+        console.error(error);
+
     }
-  },
-  signIn: function (user) {
-    localStorage.setItem('blegab_user', JSON.stringify(user));
-    renderAccountState();
-  },
-  signOut: function () {
-    localStorage.removeItem('blegab_user');
-    renderAccountState();
-  }
+
+    window.location.href = "login.html";
+
+}
+
 };
 
 
 
 window.BLEGAB_CART = {
-  getItems: function () {
-    try { return JSON.parse(localStorage.getItem('blegab_cart')) || []; }
-    catch (e) { return []; }
-  },
 
-  saveItems: function (items) {
-    localStorage.setItem('blegab_cart', JSON.stringify(items));
-    this.renderBadge();
-    this.renderDrawer();
-    if (typeof window.BLEGAB_RENDER_CART_PAGE === 'function') window.BLEGAB_RENDER_CART_PAGE();
-  },
+    async getItems() {
 
-  addItem: function (productId, qty) {
-    var items = this.getItems();
-    var existing = items.find(i => i.id === productId);
-    if (existing) existing.qty += qty; // already ordered — just bump the qty, no duplicate row
-    else items.push({ id: productId, qty: qty });
-    this.saveItems(items);
-  },
-  setQty: function (productId, qty) {
-    var items = this.getItems();
-    var item = items.find(i => i.id === productId);
-    if (!item) return;
-    if (qty < 1) {
-      items = items.filter(i => i.id !== productId);
-    } else {
-      item.qty = qty;
-    }
-    this.saveItems(items);
-  },
-  removeItem: function (productId) {
-    var items = this.getItems().filter(i => i.id !== productId);
-    this.saveItems(items);
-  },
-  getCount: function () {
-    return this.getItems().reduce((sum, i) => sum + i.qty, 0);
-  },
-  renderBadge: function () {
-    document.querySelectorAll('[data-cart-count]').forEach(el => {
-      el.textContent = this.getCount();
-    });
-  },
-  renderDrawer: function () {
-    var body = document.querySelector('.cart-drawer__body');
+        try {
+
+            const response = await fetch(`${API_URL}/cart`, {
+                credentials: "include"
+            });
+
+            if (!response.ok) return [];
+
+            const data = await response.json();
+
+            return data.cart.items || [];
+
+        } catch (error) {
+
+            console.error(error);
+
+            return [];
+
+        }
+
+    },
+
+    async addItem(productId, quantity = 1) {
+
+        try {
+
+            const response = await fetch(`${API_URL}/cart/add`, {
+
+                method: "POST",
+
+                credentials: "include",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    productId,
+                    quantity
+                })
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            await this.renderBadge();
+
+            await this.renderDrawer();
+
+            if (typeof window.BLEGAB_RENDER_CART_PAGE === "function") {
+
+                window.BLEGAB_RENDER_CART_PAGE();
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async setQty(productId, quantity) {
+
+        try {
+
+            const response = await fetch(`${API_URL}/cart/update/${productId}`, {
+
+                method: "PUT",
+
+                credentials: "include",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+                    quantity
+                })
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                alert(data.message);
+
+                return;
+
+            }
+
+            await this.renderBadge();
+
+            await this.renderDrawer();
+
+            if (typeof window.BLEGAB_RENDER_CART_PAGE === "function") {
+
+                window.BLEGAB_RENDER_CART_PAGE();
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async removeItem(productId) {
+
+        try {
+
+            await fetch(`${API_URL}/cart/remove/${productId}`, {
+
+                method: "DELETE",
+
+                credentials: "include"
+
+            });
+
+            await this.renderBadge();
+
+            await this.renderDrawer();
+
+            if (typeof window.BLEGAB_RENDER_CART_PAGE === "function") {
+
+                window.BLEGAB_RENDER_CART_PAGE();
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async clearCart() {
+
+        try {
+
+            await fetch(`${API_URL}/cart/clear`, {
+
+                method: "DELETE",
+
+                credentials: "include"
+
+            });
+
+            await this.renderBadge();
+
+            await this.renderDrawer();
+
+            if (typeof window.BLEGAB_RENDER_CART_PAGE === "function") {
+
+                window.BLEGAB_RENDER_CART_PAGE();
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async renderBadge() {
+
+        try {
+
+            const response = await fetch(`${API_URL}/cart/count`, {
+
+                credentials: "include"
+
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            document
+                .querySelectorAll("[data-cart-count]")
+                .forEach(element => {
+
+                    element.textContent = data.count;
+
+                });
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async renderDrawer() {
+
+    const body = document.querySelector(".cart-drawer__body");
+
     if (!body) return;
 
-    var items = this.getItems();
-    var products = window.BLEGAB_SHOP_PRODUCTS || [];
+    try {
 
-    if (items.length === 0) {
-      body.innerHTML = '<p class="cart-drawer__empty">Your cart is empty</p>';
-      return;
+        const items = await this.getItems();
+
+        if (!items.length) {
+
+            body.innerHTML =
+                `<p class="cart-drawer__empty">
+                    Your cart is empty
+                </p>`;
+
+            return;
+
+        }
+
+        body.innerHTML = items.map(item => {
+
+            const product = item.product;
+
+            if (!product) return "";
+
+            return `
+
+<div class="cart-drawer__item">
+
+<a href="#" class="cart-drawer__item-image-link"
+data-open-product="${product._id}">
+
+<img
+src="${product.images[0]}"
+alt="${product.name}"
+class="cart-drawer__item-image">
+
+</a>
+
+<div class="cart-drawer__item-info">
+
+<a href="#"
+class="cart-drawer__item-name"
+data-open-product="${product._id}">
+
+${product.name}
+
+</a>
+
+<span class="cart-drawer__item-price">
+
+$${Number(product.price).toFixed(2)}
+
+</span>
+
+<div class="cart-drawer__item-qty">
+
+<button
+class="cart-drawer__qty-btn"
+data-cart-decrease="${product._id}">
+
+−
+
+</button>
+
+<span class="cart-drawer__qty-value">
+
+${item.quantity}
+
+</span>
+
+<button
+class="cart-drawer__qty-btn"
+data-cart-increase="${product._id}">
+
++
+
+</button>
+
+</div>
+
+</div>
+
+<div class="cart-drawer__item-actions">
+
+<button
+class="cart-drawer__item-delete"
+data-cart-remove="${product._id}">
+
+✕
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+        }).join("");
+
     }
 
-body.innerHTML = items.map(function (item) {
-var product = products.find(function (p) { return p.id === item.id; });
-if (!product) {
-  console.warn('Cart drawer item has no matching product:', item.id);
-  return '';
+    catch (error) {
+
+        console.error(error);
+
+    }
+
 }
 
-      return '' +
-        '<div class="cart-drawer__item">' +
-        '<a href="#" class="cart-drawer__item-image-link" data-open-product="' + item.id + '">' +
-  '<img src="' + product.image + '" alt="' + product.name + '" class="cart-drawer__item-image" />' +
-'</a>' +
-          '<div class="cart-drawer__item-info">' +
-            '<a href="#" class="cart-drawer__item-name" data-open-product="' + item.id + '">' + product.name + '</a>' +
-            '<span class="cart-drawer__item-price">$' + Number(product.price).toFixed(2) + '</span>' +
-            '<div class="cart-drawer__item-qty">' +
-              '<button type="button" class="cart-drawer__qty-btn" data-cart-decrease="' + item.id + '" aria-label="Decrease quantity">&minus;</button>' +
-              '<span class="cart-drawer__qty-value">' + item.qty + '</span>' +
-              '<button type="button" class="cart-drawer__qty-btn" data-cart-increase="' + item.id + '" aria-label="Increase quantity">+</button>' +
-            '</div>' +
-          '</div>' +
-'<div class="cart-drawer__item-actions">' +
-  '<button type="button" class="cart-drawer__item-delete" data-cart-remove="' + item.id + '" aria-label="Remove item">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-      '<path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>' +
-    '</svg>' +
-  '</button>' +
-  '<button type="button" class="cart-drawer__item-add" data-cart-add="' + item.id + '" aria-label="Add one more">' +
-    '<span class="cart-drawer__item-add-text">View</span>' +
-    '<span class="btn-icon-wrap">' +
-      '<svg class="btn-icon btn-icon--bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-        '<path d="M6 8h12l-1.2 11H7.2z" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-linecap="round"/>' +
-      '</svg>' +
-      '<svg class="btn-icon btn-icon--arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-        '<path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</svg>' +
-    '</span>' +
-  '</button>' +
-'</div>' +
-        '</div>';
-    }).join('');
-  }
 };
 
 window.BLEGAB_WISHLIST = {
-  getItems: function () {
-    try { return JSON.parse(localStorage.getItem('blegab_wishlist')) || []; }
-    catch (e) { return []; }
-  },
-  saveItems: function (items) {
-    localStorage.setItem('blegab_wishlist', JSON.stringify(items));
-  },
-  has: function (productId) {
-    return this.getItems().indexOf(productId) !== -1;
-  },
-  toggle: function (productId) {
-    var items = this.getItems();
-    var index = items.indexOf(productId);
-    if (index === -1) {
-      items.push(productId);
-    } else {
-      items.splice(index, 1);
+
+    async getItems() {
+
+        try {
+
+            const response = await fetch(`${API_URL}/wishlist`, {
+
+                credentials: "include"
+
+            });
+
+            if (!response.ok) return [];
+
+            const data = await response.json();
+
+            return data.wishlist.products || [];
+
+        } catch (error) {
+
+            console.error(error);
+
+            return [];
+
+        }
+
+    },
+
+    async toggle(productId) {
+
+        try {
+
+            const response = await fetch(`${API_URL}/wishlist/toggle`, {
+
+                method: "POST",
+
+                credentials: "include",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    productId
+
+                })
+
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                alert(data.message);
+
+                return false;
+
+            }
+
+            await this.renderBadge();
+
+            return data.wishlisted;
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            return false;
+
+        }
+
+    },
+
+    async has(productId) {
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/wishlist/check/${productId}`,
+                {
+                    credentials: "include"
+                }
+            );
+
+            if (!response.ok) return false;
+
+            const data = await response.json();
+
+            return data.wishlisted;
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            return false;
+
+        }
+
+    },
+
+    async clear() {
+
+        try {
+
+            await fetch(`${API_URL}/wishlist/clear`, {
+
+                method: "DELETE",
+
+                credentials: "include"
+
+            });
+
+            await this.renderBadge();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
+    },
+
+    async renderBadge() {
+
+        try {
+
+            const response = await fetch(`${API_URL}/wishlist/count`, {
+
+                credentials: "include"
+
+            });
+
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            document
+                .querySelectorAll("[data-wishlist-count]")
+                .forEach(element => {
+
+                    element.textContent = data.count;
+
+                });
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+        }
+
     }
-    this.saveItems(items);
-    return index === -1; // true = just added, false = just removed
-  }
+
 };
 
 // Delegated clicks for qty +/- and remove — works even though items are added to the DOM after page load
-document.addEventListener('click', function (event) {
-  var decreaseBtn = event.target.closest('[data-cart-decrease]');
-  var increaseBtn = event.target.closest('[data-cart-increase]');
-  var removeBtn = event.target.closest('[data-cart-remove]');
-  var resetBtn = event.target.closest('[data-cart-reset]');
-  var viewBtn = event.target.closest('[data-cart-add]');
+document.addEventListener("click", async function (event) {
 
-  if (decreaseBtn) {
-    var id = decreaseBtn.dataset.cartDecrease;
-    var item = window.BLEGAB_CART.getItems().find(i => i.id === id);
-    if (item) window.BLEGAB_CART.setQty(id, item.qty - 1);
-    return;
-  }
+    const decreaseBtn = event.target.closest("[data-cart-decrease]");
+    const increaseBtn = event.target.closest("[data-cart-increase]");
+    const removeBtn = event.target.closest("[data-cart-remove]");
+    const resetBtn = event.target.closest("[data-cart-reset]");
+    const viewBtn = event.target.closest("[data-cart-add]");
 
-  if (increaseBtn) {
-    var id2 = increaseBtn.dataset.cartIncrease;
-    var item2 = window.BLEGAB_CART.getItems().find(i => i.id === id2);
-    if (item2) window.BLEGAB_CART.setQty(id2, item2.qty + 1);
-    return;
-  }
+    if (decreaseBtn) {
 
-  if (resetBtn) {
-    window.BLEGAB_CART.setQty(resetBtn.dataset.cartReset, 1);
-    return;
-  }
+        const id = decreaseBtn.dataset.cartDecrease;
 
-  if (removeBtn) {
-    window.BLEGAB_CART.removeItem(removeBtn.dataset.cartRemove);
-    return;
-  }
+        const items = await window.BLEGAB_CART.getItems();
 
-  if (viewBtn) {
-    window.location.href = 'cart.html';
-    return;
-  }
+        const item = items.find(i => i.product._id === id);
+
+        if (item) {
+
+            await window.BLEGAB_CART.setQty(id, item.quantity - 1);
+
+        }
+
+        return;
+
+    }
+
+    if (increaseBtn) {
+
+        const id = increaseBtn.dataset.cartIncrease;
+
+        const items = await window.BLEGAB_CART.getItems();
+
+        const item = items.find(i => i.product._id === id);
+
+        if (item) {
+
+            await window.BLEGAB_CART.setQty(id, item.quantity + 1);
+
+        }
+
+        return;
+
+    }
+
+    if (resetBtn) {
+
+        await window.BLEGAB_CART.setQty(
+            resetBtn.dataset.cartReset,
+            1
+        );
+
+        return;
+
+    }
+
+    if (removeBtn) {
+
+        await window.BLEGAB_CART.removeItem(
+            removeBtn.dataset.cartRemove
+        );
+
+        return;
+
+    }
+
+    if (viewBtn) {
+
+        window.location.href = "cart.html";
+
+    }
+
 });
 
-document.addEventListener('change', function (event) {
-  var qtyInput = event.target.closest('[data-cart-qty-input]');
-  if (!qtyInput) return;
-  var id = qtyInput.dataset.cartQtyInput;
-  var newQty = parseInt(qtyInput.value, 10);
-  if (isNaN(newQty) || newQty < 1) {
-    newQty = 1;
-  }
-  qtyInput.value = formatQtyDisplay(newQty);
-  window.BLEGAB_CART.setQty(id, newQty);
+document.addEventListener("change", async function (event) {
+
+    const qtyInput = event.target.closest("[data-cart-qty-input]");
+
+    if (!qtyInput) return;
+
+    const id = qtyInput.dataset.cartQtyInput;
+
+    let newQty = parseInt(qtyInput.value);
+
+    if (isNaN(newQty) || newQty < 1) {
+
+        newQty = 1;
+
+        qtyInput.value = 1;
+
+    }
+
+    await window.BLEGAB_CART.setQty(id, newQty);
+
 });
+
+// window.BLEGAB_CART.renderBadge();
+// window.BLEGAB_CART.renderDrawer();
+
+
+
+async function renderAccountState() {
+
+    const user = await BLEGAB_AUTH.getUser();
+    await window.BLEGAB_CART.renderBadge();
+    await window.BLEGAB_CART.renderDrawer();
+    await window.BLEGAB_WISHLIST.renderBadge();
+    const header = document.querySelector(".site-header");
+
+    if (header) {
+
+        header.classList.toggle("is-signed-in", !!user);
+
+    }
+
+    document
+        .querySelectorAll("[data-account-guest]")
+        .forEach(function (element) {
+
+            element.hidden = !!user;
+
+        });
+
+    document
+        .querySelectorAll("[data-account-signed-in]")
+        .forEach(function (element) {
+
+            element.hidden = !user;
+
+        });
+
+    document
+        .querySelectorAll("[data-account-user]")
+        .forEach(function (element) {
+
+            element.textContent = user
+                ? "Hi, " + user.name
+                : "";
+
+        });
+
+}
 
 window.BLEGAB_CART.renderBadge();
 window.BLEGAB_CART.renderDrawer();
+window.BLEGAB_WISHLIST.renderBadge();
 
+document.addEventListener("click", function (event) {
 
+    if (event.target.closest("[data-account-signout]")) {
 
-function renderAccountState() {
-  var user = window.BLEGAB_AUTH.getUser();
-  var header = document.querySelector('.site-header');
-  if (header) header.classList.toggle('is-signed-in', !!user);
+        BLEGAB_AUTH.logout();
 
-  document.querySelectorAll('[data-account-guest]').forEach(function (el) {
-    el.hidden = !!user;
-  });
-  document.querySelectorAll('[data-account-signed-in]').forEach(function (el) {
-    el.hidden = !user;
-  });
-  document.querySelectorAll('[data-account-user]').forEach(function (el) {
-    el.textContent = user ? 'Hi, ' + user.name : '';
-  });
-}
+    }
 
-document.addEventListener('click', function (event) {
-  if (event.target.closest('[data-account-signout]')) {
-    window.BLEGAB_AUTH.signOut();
-  }
 });
 
 document.addEventListener('DOMContentLoaded', renderAccountState);
@@ -470,12 +978,17 @@ function setupSearchWidget(input, form, resultsBox) {
 }
 
 function findProductMatches(query) {
-  var normalized = query.trim().toLowerCase();
-  if (normalized === '' || !window.BLEGAB_PRODUCTS) return [];
 
-  return window.BLEGAB_PRODUCTS.filter(function (product) {
-    return product.name.toLowerCase().indexOf(normalized) !== -1;
-  });
+    const normalized = query.trim().toLowerCase();
+
+    if (!normalized) return [];
+
+    const products = window.BLEGAB_SHOP_PRODUCTS || [];
+
+    return products.filter(product =>
+        product.name.toLowerCase().includes(normalized)
+    );
+
 }
 
 function renderSearchResults(query, resultsBox) {
@@ -498,7 +1011,8 @@ function renderSearchResults(query, resultsBox) {
   } else {
     matches.forEach(function (product) {
       var link = document.createElement('a');
-      link.href = product.url;
+      link.href = "#";
+      link.dataset.openProduct = product._id;
       link.className = 'search-results__item';
       link.textContent = product.name;
       resultsBox.appendChild(link);
@@ -676,7 +1190,9 @@ function initHeaderProductModal() {
     var trigger = e.target.closest('[data-open-product]');
     if (trigger) {
       e.preventDefault();
-      var product = window.BLEGAB_SHOP_PRODUCTS.find(function (p) { return p.id === trigger.dataset.openProduct; });
+     var product = window.BLEGAB_SHOP_PRODUCTS.find(function (p) {
+      return p._id === trigger.dataset.openProduct;
+    });
       if (product) openModal(product);
     }
     if (e.target.closest('[data-product-modal-close]') || e.target === overlay) {
@@ -687,7 +1203,8 @@ function initHeaderProductModal() {
   function openModal(product) {
     modal.querySelector('[data-modal-name]').textContent = product.name;
     modal.querySelector('[data-modal-price]').textContent = '$' + Number(product.price).toFixed(2);
-    modal.querySelector('[data-modal-main-image]').src = product.image;
+    modal.querySelector('[data-modal-main-image]').src =
+    product.images?.[0] || "assets/images/placeholder.png";
     modal.querySelector('[data-modal-main-image]').alt = product.name;
 
     var badge = modal.querySelector('[data-modal-badge]');
@@ -696,7 +1213,7 @@ function initHeaderProductModal() {
       if (product.badge) badge.textContent = product.badge;
     }
 
-    modal.dataset.activeProduct = product.id;
+    modal.dataset.activeProduct = product._id;
     qty = 1;
     modal.querySelector('[data-qty-value]').textContent = qty;
     modal.classList.add('is-open');
@@ -741,8 +1258,12 @@ function initHeaderProductModal() {
 
   var addToCartBtn = modal.querySelector('[data-modal-add-to-cart]');
   if (addToCartBtn && window.BLEGAB_CART) {
-    addToCartBtn.addEventListener('click', function () {
-      window.BLEGAB_CART.addItem(modal.dataset.activeProduct, qty);
+    addToCartBtn.addEventListener('click', async function () {
+     await window.BLEGAB_CART.addItem(
+       modal.dataset.activeProduct,
+       qty
+     );
+
       closeModal();
     });
   }
@@ -754,17 +1275,17 @@ function initHeaderProductModal() {
   });
 }
 
-document.addEventListener('change', function (event) {
-  var qtyInput = event.target.closest('[data-cart-qty-input]');
-  if (!qtyInput) return;
-  var id = qtyInput.dataset.cartQtyInput;
-  var newQty = parseInt(qtyInput.value, 10);
-  if (isNaN(newQty) || newQty < 1) {
-    newQty = 1;
-    qtyInput.value = 1;
-  }
-  window.BLEGAB_CART.setQty(id, newQty);
-});
+// document.addEventListener('change', function (event) {
+//   var qtyInput = event.target.closest('[data-cart-qty-input]');
+//   if (!qtyInput) return;
+//   var id = qtyInput.dataset.cartQtyInput;
+//   var newQty = parseInt(qtyInput.value, 10);
+//   if (isNaN(newQty) || newQty < 1) {
+//     newQty = 1;
+//     qtyInput.value = 1;
+//   }
+//   window.BLEGAB_CART.setQty(id, newQty);
+// });
 
 function formatQtyDisplay(num) {
   if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';

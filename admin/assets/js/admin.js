@@ -4,17 +4,75 @@
    overview page from window.BLEGAB_ADMIN_* (admin-data.js).
    ========================================================= */
 
-document.addEventListener('DOMContentLoaded', function () {
-  initAdminSidebar();
-  initSettingsSubmenu();
-  renderStatCards();
-  renderLowStock();
-  renderRecentOrders();
-  initAddProductShortcut();
-  initNotifications();
-  initThemeToggle();
-  initViewStatsLinks();
-  renderAdminAuthState();
+   async function checkAdminAuth() {
+
+    try {
+
+        const res = await fetch("http://localhost:5000/api/admin/me", {
+            credentials: "include"
+        });
+
+        return res.ok;
+
+    } catch (err) {
+
+        return false;
+
+    }
+
+}
+
+async function loadDashboard() {
+
+    try {
+
+        const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+            credentials: "include"
+        });
+
+        if (!res.ok) throw new Error();
+
+        const data = await res.json();
+
+        renderStatCards(data.overview);
+
+        renderLowStock(data.lowStockProducts);
+
+        renderRecentOrders(data.recentOrders);
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const loggedIn = await checkAdminAuth();
+
+    if (!loggedIn) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    initAdminSidebar();
+
+    initSettingsSubmenu();
+
+    initAddProductShortcut();
+
+    await initNotifications();
+
+    initThemeToggle();
+
+    initViewStatsLinks();
+
+    await loadDashboard();
+
+    await renderAdminAuthState();
+
 });
 
 /* -----------------------------
@@ -145,8 +203,8 @@ function initAccordionToggle(toggleSelector, submenuSelector) {
    for whatever date is picked in the calendar. Swap the order
    source for a real API response later; the math stays the same.
    ----------------------------- */
-function renderStatCards() {
-  var data = window.BLEGAB_ADMIN_OVERVIEW;
+function renderStatCards(data) {
+
   if (!data) return;
 
 var initialDate = data.defaultDate || formatLocalISODate(new Date());
@@ -159,11 +217,30 @@ var initialDate = data.defaultDate || formatLocalISODate(new Date());
   }
   updateDateLabel(initialDate);
 
-  setStat('sales-today', formatAdminMoney(rolloverPeriodIfExpired('today')));
-  setStat('sales-week', formatAdminMoney(rolloverPeriodIfExpired('week')));
-  setStat('sales-month', formatAdminMoney(rolloverPeriodIfExpired('month')));
-  setStat('orders-total', data.stats.ordersTotal);
-  setStat('orders-pending', data.stats.ordersPending);
+  setStat(
+  "sales-today",
+  formatAdminMoney(data.stats.salesToday)
+);
+
+setStat(
+  "sales-week",
+  formatAdminMoney(data.stats.salesWeek)
+);
+
+setStat(
+  "sales-month",
+  formatAdminMoney(data.stats.salesMonth)
+);
+
+setStat(
+  "orders-total",
+  data.stats.ordersTotal
+);
+
+setStat(
+  "orders-pending",
+  data.stats.ordersPending
+);
 }
 
 // Local-timezone equivalent of toISOString().slice(0,10) — avoids the
@@ -208,66 +285,6 @@ function setStat(key, value) {
    whenever a real sale completes, and today/week/month all update
    together automatically.
    ----------------------------- */
-var STAT_PERIODS = {
-  today: { key: 'blegab_admin_period_today', durationMs: function () { return 24 * 60 * 60 * 1000; } },
-  week:  { key: 'blegab_admin_period_week',  durationMs: function () { return 7 * 24 * 60 * 60 * 1000; } },
-  month: { key: 'blegab_admin_period_month', durationMs: function (start) { return daysInMonth(start) * 24 * 60 * 60 * 1000; } }
-};
-
-function daysInMonth(date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function loadPeriod(periodKey) {
-  var raw = localStorage.getItem(STAT_PERIODS[periodKey].key);
-  if (raw) {
-    try { return JSON.parse(raw); } catch (e) {}
-  }
-  var fresh = { start: new Date().toISOString(), value: 0 };
-  localStorage.setItem(STAT_PERIODS[periodKey].key, JSON.stringify(fresh));
-  return fresh;
-}
-
-function savePeriod(periodKey, period) {
-  localStorage.setItem(STAT_PERIODS[periodKey].key, JSON.stringify(period));
-}
-
-// Stand-in for a real backend call, e.g.:
-//   fetch('/api/admin/stats/archive', { method: 'POST', body: JSON.stringify({ period, total, periodStart, periodEnd }) })
-// Meanwhile it's saved into localStorage so the Statistics page has
-// something real to read, and nothing is lost before a backend exists.
-function archiveStatToBackend(periodKey, total, periodStart, periodEnd) {
-  var history = [];
-  try { history = JSON.parse(localStorage.getItem('blegab_admin_stats_archive')) || []; } catch (e) {}
-  history.push({ period: periodKey, total: total, start: periodStart, end: periodEnd });
-  localStorage.setItem('blegab_admin_stats_archive', JSON.stringify(history));
-}
-
-function rolloverPeriodIfExpired(periodKey) {
-  var conf = STAT_PERIODS[periodKey];
-  var period = loadPeriod(periodKey);
-  var startDate = new Date(period.start);
-  var elapsed = Date.now() - startDate.getTime();
-
-  if (elapsed >= conf.durationMs(startDate)) {
-    archiveStatToBackend(periodKey, period.value, period.start, new Date().toISOString());
-    period = { start: new Date().toISOString(), value: 0 };
-    savePeriod(periodKey, period);
-  }
-
-  return period.value;
-}
-
-window.BLEGAB_ADMIN_STATS = {
-  addSale: function (amount) {
-    ['today', 'week', 'month'].forEach(function (key) {
-      var period = loadPeriod(key);
-      period.value += amount;
-      savePeriod(key, period);
-    });
-    renderStatCards();
-  }
-};
 
 /* -----------------------------
    Keep the 3 "View Stats" links pointed at whatever date is
@@ -279,7 +296,7 @@ function initViewStatsLinks() {
   if (!links.length) return;
 
   function updateLinks() {
-    var date = (input && input.value) || (window.BLEGAB_ADMIN_OVERVIEW && window.BLEGAB_ADMIN_OVERVIEW.defaultDate) || '';
+    var date = input?.value || "";
     links.forEach(function (link) {
       link.href = 'admin-statistics.html?period=' + link.dataset.viewStats + (date ? '&date=' + date : '');
     });
@@ -292,23 +309,27 @@ function initViewStatsLinks() {
 /* -----------------------------
    Low stock list
    ----------------------------- */
-function renderLowStock() {
-  var list = document.querySelector('[data-low-stock-list]');
-  var items = window.BLEGAB_ADMIN_LOW_STOCK;
-  if (!list || !items) return;
+function renderLowStock(items) {
 
-  list.innerHTML = items.map(function (item) {
-    return '' +
-      '<li class="admin-stock-row">' +
-        '<span class="admin-stock-row__dot" aria-hidden="true"></span>' +
-        '<img src="' + item.image + '" alt="' + item.name + '" class="admin-stock-row__image" />' +
-        '<div class="admin-stock-row__info">' +
-          '<p class="admin-stock-row__name">' + item.name + '</p>' +
-          '<p class="admin-stock-row__meta">' + item.meta + '</p>' +
-        '</div>' +
-        '<span class="admin-stock-row__left">' + item.left + ' left</span>' +
-      '</li>';
-  }).join('');
+    var list = document.querySelector("[data-low-stock-list]");
+
+    if (!list) return;
+
+    items = items || [];
+
+    list.innerHTML = items.map(function (item) {
+        return '' +
+            '<li class="admin-stock-row">' +
+                '<span class="admin-stock-row__dot" aria-hidden="true"></span>' +
+                '<img src="' + item.image + '" alt="' + item.name + '" class="admin-stock-row__image" />' +
+                '<div class="admin-stock-row__info">' +
+                    '<p class="admin-stock-row__name">' + item.name + '</p>' +
+                    '<p class="admin-stock-row__meta">' + item.meta + '</p>' +
+                '</div>' +
+                '<span class="admin-stock-row__left">' + item.left + ' left</span>' +
+            '</li>';
+    }).join('');
+
 }
 
 /* -----------------------------
@@ -322,10 +343,13 @@ var ORDER_STATUS_LABELS = {
   cancelled: 'Cancelled'
 };
 
-function renderRecentOrders() {
-  var body = document.querySelector('[data-recent-orders-list]');
-  var orders = window.BLEGAB_ADMIN_RECENT_ORDERS;
-  if (!body || !orders) return;
+function renderRecentOrders(orders) {
+
+    var body = document.querySelector("[data-recent-orders-list]");
+
+    if (!body) return;
+
+    orders = orders || [];
 
   body.innerHTML = orders.map(function (order) {
     var statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
@@ -373,258 +397,1117 @@ function initAddProductShortcut() {
    ----------------------------- */
 
 // Set to false later to retire the default greeting notification.
-var SHOW_DEFAULT_GREETING = true;
+/* -----------------------------
+   Notifications
+   ----------------------------- */
 
-var adminNotifications = (window.BLEGAB_ADMIN_NOTIFICATIONS || []).slice();
+var SHOW_DEFAULT_GREETING = false;
+var adminNotifications = [];
+
+
+/* -----------------------------
+   Greeting
+   ----------------------------- */
 
 function getAdminGreeting() {
   var hour = new Date().getHours();
-  if (hour < 12) return 'Good morning, Admin!';
-  if (hour < 18) return 'Good afternoon, Admin!';
+
+  if (hour < 12) {
+    return 'Good morning, Admin!';
+  }
+
+  if (hour < 18) {
+    return 'Good afternoon, Admin!';
+  }
+
   return 'Good evening, Admin!';
 }
 
-function initNotifications() {
-  var menu = document.querySelector('[data-notif-menu]');
-  var toggle = document.querySelector('[data-notif-toggle]');
-  var dropdown = document.querySelector('[data-notif-dropdown]');
-  var overlay = document.querySelector('[data-notif-overlay]');
-  var clearAllBtn = document.querySelector('[data-notif-clear-all]');
-  if (!menu || !toggle || !dropdown) return;
-
-  renderNotifications();
-
-  function openDropdown() {
-    dropdown.classList.add('is-open');
-    toggle.setAttribute('aria-expanded', 'true');
-    if (overlay) overlay.classList.add('is-visible');
-  }
-
-  function closeDropdown() {
-    dropdown.classList.remove('is-open');
-    toggle.setAttribute('aria-expanded', 'false');
-    if (overlay) overlay.classList.remove('is-visible');
-  }
-
-  toggle.addEventListener('click', function (e) {
-    e.stopPropagation();
-    dropdown.classList.contains('is-open') ? closeDropdown() : openDropdown();
-  });
-
-  // The overlay sits above everything else and swallows the click
-  // entirely — so whatever's underneath (another button, a link,
-  // etc.) never receives it. This one click ONLY closes the dropdown.
-  if (overlay) {
-    overlay.addEventListener('click', function (e) {
-      e.preventDefault();
-      closeDropdown();
-    });
-  }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeDropdown();
-  });
-
-  if (clearAllBtn) {
-    clearAllBtn.addEventListener('click', function () {
-      adminNotifications = [];
-      renderNotifications();
-    });
-  }
-
-dropdown.addEventListener('click', function (e) {
-    var closeBtn = e.target.closest('[data-notif-dismiss]');
-    if (closeBtn) {
-      e.stopPropagation(); // keep the dropdown open — only remove this one item
-      adminNotifications = adminNotifications.filter(function (n) {
-        return n.id !== closeBtn.dataset.notifDismiss;
-      });
-      renderNotifications();
-      return;
-    }
-
-    var openTarget = e.target.closest('[data-notif-open]');
-    if (openTarget) {
-      openNotifModal(openTarget.dataset.notifOpen);
-    }
-  });
-
-  initNotifModal();
-  initNotifDropdownSwipe(dropdown, closeDropdown);
-
-  // openNotifModal() closes the dropdown behind it directly, so make
-  // sure the overlay comes down too in that case.
-  document.addEventListener('click', function (e) {
-    var openTarget = e.target.closest('[data-notif-open]');
-    if (openTarget && overlay) overlay.classList.remove('is-visible');
-  });
-}
 
 /* -----------------------------
-   Swipe-to-close the notification dropdown — drag it left OR
-   right past the threshold to dismiss it, snaps back otherwise.
+   Load notifications
    ----------------------------- */
-function initNotifDropdownSwipe(dropdown, closeFn) {
+
+async function loadAdminNotifications() {
+
+  try {
+
+    const res = await fetch(
+      "http://localhost:5000/api/admin/notifications",
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to load notifications");
+    }
+
+    const data = await res.json();
+
+    if (
+      data.success &&
+      Array.isArray(data.notifications)
+    ) {
+
+      adminNotifications = data.notifications;
+
+    } else {
+
+      adminNotifications = [];
+
+    }
+
+    renderNotifications();
+
+    await loadUnreadNotificationCount();
+
+  } catch (error) {
+
+    console.error(
+      "LOAD ADMIN NOTIFICATIONS ERROR:",
+      error
+    );
+
+    adminNotifications = [];
+
+    renderNotifications();
+
+  }
+
+}
+
+
+/* -----------------------------
+   Load unread count
+   ----------------------------- */
+
+async function loadUnreadNotificationCount() {
+
+  try {
+
+    const res = await fetch(
+      "http://localhost:5000/api/admin/notifications/unread-count",
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to load unread count");
+    }
+
+    const data = await res.json();
+
+    const countEl =
+      document.querySelector("[data-notif-count]");
+
+    if (!countEl) return;
+
+    const count =
+      Number(data.count) || 0;
+
+    countEl.textContent = count;
+
+    countEl.hidden = count === 0;
+
+  } catch (error) {
+
+    console.error(
+      "LOAD UNREAD NOTIFICATION COUNT ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* -----------------------------
+   Initialize notifications
+   ----------------------------- */
+
+async function initNotifications() {
+
+  const menu =
+    document.querySelector("[data-notif-menu]");
+
+  const toggle =
+    document.querySelector("[data-notif-toggle]");
+
+  const dropdown =
+    document.querySelector("[data-notif-dropdown]");
+
+  const overlay =
+    document.querySelector("[data-notif-overlay]");
+
+  const clearAllBtn =
+    document.querySelector("[data-notif-clear-all]");
+
+
+  if (!menu || !toggle || !dropdown) {
+    return;
+  }
+
+
+  /* Load notifications */
+
+  await loadAdminNotifications();
+
+
+  /* -----------------------------
+     Open dropdown
+     ----------------------------- */
+
+  function openDropdown() {
+
+    dropdown.classList.add("is-open");
+
+    toggle.setAttribute(
+      "aria-expanded",
+      "true"
+    );
+
+    if (overlay) {
+      overlay.classList.add("is-visible");
+    }
+
+  }
+
+
+  /* -----------------------------
+     Close dropdown
+     ----------------------------- */
+
+  function closeDropdown() {
+
+    dropdown.classList.remove("is-open");
+
+    toggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    if (overlay) {
+      overlay.classList.remove("is-visible");
+    }
+
+  }
+
+
+  /* -----------------------------
+     Notification bell
+     ----------------------------- */
+
+  toggle.addEventListener(
+    "click",
+    function (e) {
+
+      e.stopPropagation();
+
+      if (
+        dropdown.classList.contains("is-open")
+      ) {
+
+        closeDropdown();
+
+      } else {
+
+        openDropdown();
+
+      }
+
+    }
+  );
+
+
+  /* -----------------------------
+     Overlay
+     ----------------------------- */
+
+  if (overlay) {
+
+    overlay.addEventListener(
+      "click",
+      function (e) {
+
+        e.preventDefault();
+
+        closeDropdown();
+
+      }
+    );
+
+  }
+
+
+  /* -----------------------------
+     Escape
+     ----------------------------- */
+
+  document.addEventListener(
+    "keydown",
+    function (e) {
+
+      if (e.key === "Escape") {
+
+        closeDropdown();
+
+      }
+
+    }
+  );
+
+
+  /* -----------------------------
+     Clear all
+     ----------------------------- */
+
+  if (clearAllBtn) {
+
+    clearAllBtn.addEventListener(
+      "click",
+      async function () {
+
+        try {
+
+          const res = await fetch(
+            "http://localhost:5000/api/admin/notifications",
+            {
+              method: "DELETE",
+              credentials: "include"
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(
+              "Failed to clear notifications"
+            );
+          }
+
+          adminNotifications = [];
+
+          renderNotifications();
+
+          await loadUnreadNotificationCount();
+
+        } catch (error) {
+
+          console.error(
+            "CLEAR NOTIFICATIONS ERROR:",
+            error
+          );
+
+          alert(
+            "Unable to clear notifications."
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* -----------------------------
+     Notification item clicks
+     ----------------------------- */
+
+  dropdown.addEventListener(
+    "click",
+    async function (e) {
+
+
+      /* -----------------------------
+         Dismiss notification
+         ----------------------------- */
+
+      const closeBtn =
+        e.target.closest(
+          "[data-notif-dismiss]"
+        );
+
+
+      if (closeBtn) {
+
+        e.stopPropagation();
+
+        const notificationId =
+          closeBtn.dataset.notifDismiss;
+
+
+        /* Greeting is frontend-only */
+
+        if (notificationId === "greeting") {
+
+          adminNotifications =
+            adminNotifications.filter(
+              function (notification) {
+
+                return notification.id !== "greeting";
+
+              }
+            );
+
+          renderNotifications();
+
+          return;
+
+        }
+
+
+        await dismissAdminNotification(
+          notificationId
+        );
+
+        return;
+
+      }
+
+
+      /* -----------------------------
+         Open notification
+         ----------------------------- */
+
+      const openTarget =
+        e.target.closest(
+          "[data-notif-open]"
+        );
+
+
+      if (openTarget) {
+
+        const notificationId =
+          openTarget.dataset.notifOpen;
+
+
+        await markNotificationAsRead(
+          notificationId
+        );
+
+
+        openNotifModal(
+          notificationId
+        );
+
+      }
+
+    }
+  );
+
+
+  /* -----------------------------
+     Notification modal
+     ----------------------------- */
+
+  initNotifModal();
+
+
+  /* -----------------------------
+     Mobile swipe
+     ----------------------------- */
+
+  initNotifDropdownSwipe(
+    dropdown,
+    closeDropdown
+  );
+
+
+  /* -----------------------------
+     Remove dropdown overlay
+     when modal opens
+     ----------------------------- */
+
+  document.addEventListener(
+    "click",
+    function (e) {
+
+      const openTarget =
+        e.target.closest(
+          "[data-notif-open]"
+        );
+
+      if (
+        openTarget &&
+        overlay
+      ) {
+
+        overlay.classList.remove(
+          "is-visible"
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* -----------------------------
+   Mark notification as read
+   ----------------------------- */
+
+async function markNotificationAsRead(id) {
+
+  if (id === "greeting") {
+    return;
+  }
+
+
+  try {
+
+    const res = await fetch(
+      "http://localhost:5000/api/admin/notifications/" +
+      id +
+      "/read",
+      {
+        method: "PATCH",
+        credentials: "include"
+      }
+    );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        "Failed to mark notification as read"
+      );
+
+    }
+
+
+    /* Update local state */
+
+    const notification =
+      adminNotifications.find(
+        function (notification) {
+
+          return notification.id === id;
+
+        }
+      );
+
+
+    if (notification) {
+
+      notification.read = true;
+
+    }
+
+
+    renderNotifications();
+
+    await loadUnreadNotificationCount();
+
+
+  } catch (error) {
+
+    console.error(
+      "MARK NOTIFICATION READ ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* -----------------------------
+   Dismiss notification
+   ----------------------------- */
+
+async function dismissAdminNotification(id) {
+
+  try {
+
+    const res = await fetch(
+      "http://localhost:5000/api/admin/notifications/" +
+      id,
+      {
+        method: "DELETE",
+        credentials: "include"
+      }
+    );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        "Failed to dismiss notification"
+      );
+
+    }
+
+
+    adminNotifications =
+      adminNotifications.filter(
+        function (notification) {
+
+          return notification.id !== id;
+
+        }
+      );
+
+
+    renderNotifications();
+
+    await loadUnreadNotificationCount();
+
+
+  } catch (error) {
+
+    console.error(
+      "DISMISS ADMIN NOTIFICATION ERROR:",
+      error
+    );
+
+  }
+
+}
+
+
+/* -----------------------------
+   Swipe-to-close
+   ----------------------------- */
+
+function initNotifDropdownSwipe(
+  dropdown,
+  closeFn
+) {
+
   if (!dropdown) return;
+
 
   var touchStartX = 0;
   var touchStartY = 0;
   var touchCurrentX = 0;
+
   var isDragging = false;
   var gestureDirection = null;
+
   var directionLockThreshold = 10;
   var swipeThreshold = 80;
 
-  dropdown.addEventListener('touchstart', function (event) {
-    if (event.target.closest('button')) return;
 
-    touchStartX = event.touches[0].clientX;
-    touchStartY = event.touches[0].clientY;
-    touchCurrentX = touchStartX;
-    isDragging = true;
-    gestureDirection = null;
-  }, { passive: true });
+  dropdown.addEventListener(
+    "touchstart",
+    function (event) {
 
-  dropdown.addEventListener('touchmove', function (event) {
-    if (!isDragging) return;
+      if (
+        event.target.closest("button")
+      ) {
+        return;
+      }
 
-    touchCurrentX = event.touches[0].clientX;
-    var touchCurrentY = event.touches[0].clientY;
-    var deltaX = touchCurrentX - touchStartX;
-    var deltaY = touchCurrentY - touchStartY;
 
-    if (gestureDirection === null) {
-      if (Math.abs(deltaX) > directionLockThreshold || Math.abs(deltaY) > directionLockThreshold) {
-        gestureDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
-        if (gestureDirection === 'horizontal') {
-          dropdown.classList.add('is-dragging');
+      touchStartX =
+        event.touches[0].clientX;
+
+      touchStartY =
+        event.touches[0].clientY;
+
+      touchCurrentX =
+        touchStartX;
+
+      isDragging = true;
+
+      gestureDirection = null;
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  dropdown.addEventListener(
+    "touchmove",
+    function (event) {
+
+      if (!isDragging) return;
+
+
+      touchCurrentX =
+        event.touches[0].clientX;
+
+      var touchCurrentY =
+        event.touches[0].clientY;
+
+
+      var deltaX =
+        touchCurrentX -
+        touchStartX;
+
+      var deltaY =
+        touchCurrentY -
+        touchStartY;
+
+
+      if (
+        gestureDirection === null
+      ) {
+
+        if (
+          Math.abs(deltaX) >
+            directionLockThreshold ||
+          Math.abs(deltaY) >
+            directionLockThreshold
+        ) {
+
+          gestureDirection =
+            Math.abs(deltaX) >
+            Math.abs(deltaY)
+              ? "horizontal"
+              : "vertical";
+
+
+          if (
+            gestureDirection ===
+            "horizontal"
+          ) {
+
+            dropdown.classList.add(
+              "is-dragging"
+            );
+
+          }
+
         }
-      }
-    }
 
-    if (gestureDirection !== 'horizontal') return;
-
-    dropdown.style.transform = 'translateX(' + deltaX + 'px)';
-    dropdown.style.opacity = String(Math.max(1 - Math.abs(deltaX) / 200, 0.3));
-  }, { passive: true });
-
-  dropdown.addEventListener('touchend', function () {
-    if (!isDragging) return;
-    isDragging = false;
-
-    if (gestureDirection === 'horizontal') {
-      dropdown.classList.remove('is-dragging');
-
-      var deltaX = touchCurrentX - touchStartX;
-      if (Math.abs(deltaX) > swipeThreshold) {
-        closeFn();
       }
 
-      dropdown.style.transform = '';
-      dropdown.style.opacity = '';
-    }
 
-    gestureDirection = null;
-  });
+      if (
+        gestureDirection !==
+        "horizontal"
+      ) {
+        return;
+      }
+
+
+      dropdown.style.transform =
+        "translateX(" +
+        deltaX +
+        "px)";
+
+
+      dropdown.style.opacity =
+        String(
+          Math.max(
+            1 -
+              Math.abs(deltaX) /
+                200,
+            0.3
+          )
+        );
+
+    },
+    {
+      passive: true
+    }
+  );
+
+
+  dropdown.addEventListener(
+    "touchend",
+    function () {
+
+      if (!isDragging) return;
+
+      isDragging = false;
+
+
+      if (
+        gestureDirection ===
+        "horizontal"
+      ) {
+
+        dropdown.classList.remove(
+          "is-dragging"
+        );
+
+
+        var deltaX =
+          touchCurrentX -
+          touchStartX;
+
+
+        if (
+          Math.abs(deltaX) >
+          swipeThreshold
+        ) {
+
+          closeFn();
+
+        }
+
+
+        dropdown.style.transform = "";
+
+        dropdown.style.opacity = "";
+
+      }
+
+
+      gestureDirection = null;
+
+    }
+  );
+
 }
+
 
 /* -----------------------------
-   Notification detail modal
+   Notification modal
    ----------------------------- */
+
 function initNotifModal() {
-  var overlay = document.querySelector('[data-notif-modal-overlay]');
-  var modal = document.querySelector('[data-notif-modal]');
-  var closeBtn = document.querySelector('[data-notif-modal-close]');
-  if (!overlay || !modal) return;
+
+  var overlay =
+    document.querySelector(
+      "[data-notif-modal-overlay]"
+    );
+
+  var modal =
+    document.querySelector(
+      "[data-notif-modal]"
+    );
+
+  var closeBtn =
+    document.querySelector(
+      "[data-notif-modal-close]"
+    );
+
+
+  if (!overlay || !modal) {
+    return;
+  }
+
 
   function close() {
-    modal.classList.remove('is-open');
-    overlay.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
+
+    modal.classList.remove(
+      "is-open"
+    );
+
+    overlay.classList.remove(
+      "is-open"
+    );
+
+    modal.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
   }
 
-  overlay.addEventListener('click', close);
-  if (closeBtn) closeBtn.addEventListener('click', close);
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') close();
-  });
+
+  overlay.addEventListener(
+    "click",
+    close
+  );
+
+
+  if (closeBtn) {
+
+    closeBtn.addEventListener(
+      "click",
+      close
+    );
+
+  }
+
+
+  document.addEventListener(
+    "keydown",
+    function (e) {
+
+      if (e.key === "Escape") {
+        close();
+      }
+
+    }
+  );
+
 }
+
+
+/* -----------------------------
+   Open notification modal
+   ----------------------------- */
 
 function openNotifModal(id) {
-  var overlay = document.querySelector('[data-notif-modal-overlay]');
-  var modal = document.querySelector('[data-notif-modal]');
-  if (!overlay || !modal) return;
 
-  var all = adminNotifications.slice();
-  if (SHOW_DEFAULT_GREETING) {
-    all.unshift({
-      id: 'greeting',
-      title: getAdminGreeting(),
-      message: "Here's what's happening with your store today.",
-      time: 'Just now'
-    });
+  var overlay =
+    document.querySelector(
+      "[data-notif-modal-overlay]"
+    );
+
+  var modal =
+    document.querySelector(
+      "[data-notif-modal]"
+    );
+
+
+  if (!overlay || !modal) {
+    return;
   }
 
-  var notif = all.find(function (n) { return n.id === id; });
-  if (!notif) return;
 
-  modal.querySelector('[data-notif-modal-title]').textContent = notif.title;
-  modal.querySelector('[data-notif-modal-message]').textContent = notif.message;
-  modal.querySelector('[data-notif-modal-time]').textContent = notif.time;
+  var all =
+    adminNotifications.slice();
 
-  // Close the dropdown behind it
-  var dropdown = document.querySelector('[data-notif-dropdown]');
-  var toggle = document.querySelector('[data-notif-toggle]');
-  if (dropdown) dropdown.classList.remove('is-open');
-  if (toggle) toggle.setAttribute('aria-expanded', 'false');
 
-  modal.classList.add('is-open');
-  overlay.classList.add('is-open');
-  modal.setAttribute('aria-hidden', 'false');
+  if (SHOW_DEFAULT_GREETING) {
+
+    all.unshift({
+
+      id: "greeting",
+
+      title: getAdminGreeting(),
+
+      message:
+        "Here's what's happening with your store today.",
+
+      time: "Just now",
+
+      read: true
+
+    });
+
+  }
+
+
+  var notif =
+    all.find(
+      function (notification) {
+
+        return notification.id === id;
+
+      }
+    );
+
+
+  if (!notif) {
+    return;
+  }
+
+
+  modal.querySelector(
+    "[data-notif-modal-title]"
+  ).textContent =
+    notif.title || "";
+
+
+  modal.querySelector(
+    "[data-notif-modal-message]"
+  ).textContent =
+    notif.message || "";
+
+
+  modal.querySelector(
+    "[data-notif-modal-time]"
+  ).textContent =
+    notif.time || "";
+
+
+  var dropdown =
+    document.querySelector(
+      "[data-notif-dropdown]"
+    );
+
+  var toggle =
+    document.querySelector(
+      "[data-notif-toggle]"
+    );
+
+
+  if (dropdown) {
+    dropdown.classList.remove(
+      "is-open"
+    );
+  }
+
+
+  if (toggle) {
+
+    toggle.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+  }
+
+
+  modal.classList.add(
+    "is-open"
+  );
+
+  overlay.classList.add(
+    "is-open"
+  );
+
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
 }
 
-function renderNotifications() {
-  var list = document.querySelector('[data-notif-list]');
-  var emptyEl = document.querySelector('[data-notif-empty]');
-  var countEl = document.querySelector('[data-notif-count]');
-  if (!list) return;
 
-  var items = adminNotifications.slice();
-  if (SHOW_DEFAULT_GREETING) {
-    items.unshift({
-      id: 'greeting',
-      title: getAdminGreeting(),
-      message: "Here's what's happening with your store today.",
-      time: 'Just now'
-    });
+/* -----------------------------
+   Render notifications
+   ----------------------------- */
+
+function renderNotifications() {
+
+  var list =
+    document.querySelector(
+      "[data-notif-list]"
+    );
+
+  var emptyEl =
+    document.querySelector(
+      "[data-notif-empty]"
+    );
+
+
+  if (!list) {
+    return;
   }
+
+
+  var items =
+    adminNotifications.slice();
+
+
+  if (SHOW_DEFAULT_GREETING) {
+
+    items.unshift({
+
+      id: "greeting",
+
+      title: getAdminGreeting(),
+
+      message:
+        "Here's what's happening with your store today.",
+
+      time: "Just now",
+
+      read: true
+
+    });
+
+  }
+
+
+  /* Empty state */
 
   if (items.length === 0) {
-    list.innerHTML = '';
-    if (emptyEl) emptyEl.hidden = false;
+
+    list.innerHTML = "";
+
+    if (emptyEl) {
+      emptyEl.hidden = false;
+    }
+
   } else {
-    if (emptyEl) emptyEl.hidden = true;
-    list.innerHTML = items.map(function (n) {
- return '' +
-        '<li class="admin-notif-item">' +
-          '<div class="admin-notif-item__body" data-notif-open="' + n.id + '">' +
-            '<p class="admin-notif-item__title">' + n.title + '</p>' +
-            '<p class="admin-notif-item__message">' + n.message + '</p>' +
-            '<span class="admin-notif-item__time">' + n.time + '</span>' +
-          '</div>' +
-          '<button type="button" class="admin-notif-item__close" data-notif-dismiss="' + n.id + '" aria-label="Dismiss notification">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-              '<path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>' +
-            '</svg>' +
-          '</button>' +
-        '</li>';
-    }).join('');
+
+    if (emptyEl) {
+      emptyEl.hidden = true;
+    }
+
+
+    list.innerHTML =
+      items.map(
+        function (n) {
+
+          return (
+            '<li class="admin-notif-item' +
+            (n.read
+              ? " is-read"
+              : " is-unread") +
+            '">' +
+
+              '<div ' +
+                'class="admin-notif-item__body" ' +
+                'data-notif-open="' +
+                n.id +
+                '">' +
+
+                '<p class="admin-notif-item__title">' +
+                  escapeNotificationHTML(
+                    n.title
+                  ) +
+                '</p>' +
+
+                '<p class="admin-notif-item__message">' +
+                  escapeNotificationHTML(
+                    n.message
+                  ) +
+                '</p>' +
+
+                '<span class="admin-notif-item__time">' +
+                  escapeNotificationHTML(
+                    n.time
+                  ) +
+                '</span>' +
+
+              '</div>' +
+
+              '<button ' +
+                'type="button" ' +
+                'class="admin-notif-item__close" ' +
+                'data-notif-dismiss="' +
+                n.id +
+                '" ' +
+                'aria-label="Dismiss notification">' +
+
+                '<svg viewBox="0 0 24 24" ' +
+                  'fill="none" ' +
+                  'stroke="currentColor" ' +
+                  'stroke-width="2" ' +
+                  'aria-hidden="true">' +
+
+                  '<path ' +
+                    'd="M6 6l12 12M18 6L6 18" ' +
+                    'stroke-linecap="round"/>' +
+
+                '</svg>' +
+
+              '</button>' +
+
+            '</li>'
+          );
+
+        }
+      ).join("");
+
   }
 
-  if (countEl) {
-    countEl.textContent = items.length;
-    countEl.hidden = items.length === 0;
-  }
+}
+
+
+/* -----------------------------
+   Escape notification HTML
+   ----------------------------- */
+
+function escapeNotificationHTML(value) {
+
+  var div =
+    document.createElement("div");
+
+  div.textContent =
+    value == null
+      ? ""
+      : String(value);
+
+  return div.innerHTML;
+
 }
 
 /* -----------------------------
@@ -659,24 +1542,62 @@ function initThemeToggle() {
    automatically — Sign In/Sign Up flip to Sign Out.
    ----------------------------- */
 window.BLEGAB_ADMIN_AUTH = {
-  getUser: function () {
-    try { return JSON.parse(localStorage.getItem('blegab_admin_user')); }
-    catch (e) { return null; }
+
+  async getUser() {
+
+    try {
+
+      const res = await fetch("http://localhost:5000/api/admin/me", {
+        credentials: "include"
+      });
+
+      if (!res.ok) return null;
+
+      const data = await res.json();
+
+      return data.admin;
+
+    } catch (err) {
+
+      return null;
+
+    }
+
   },
-  signIn: function (user) {
-    localStorage.setItem('blegab_admin_user', JSON.stringify(user));
-    renderAdminAuthState();
-  },
-  signOut: function () {
-    localStorage.removeItem('blegab_admin_user');
-    renderAdminAuthState();
-  }
+
+
+
+  async signOut() {
+
+    try {
+
+        const res = await fetch(
+            "http://localhost:5000/api/admin/logout",
+            {
+                method: "POST",
+                credentials: "include"
+            }
+        );
+
+        return res.ok;
+
+    } catch (err) {
+
+        return false;
+
+    }
+
+}
+
 };
 
-function renderAdminAuthState() {
-  var submenu = document.querySelector('[data-admin-auth-submenu]');
-  if (!submenu) return;
-  var user = window.BLEGAB_ADMIN_AUTH.getUser();
+async function renderAdminAuthState() {
+
+    var submenu = document.querySelector('[data-admin-auth-submenu]');
+
+    if (!submenu) return;
+
+    var user = await window.BLEGAB_ADMIN_AUTH.getUser();
 
   if (user) {
     submenu.innerHTML =
@@ -716,10 +1637,18 @@ function renderAdminAuthState() {
   }
 }
 
-document.addEventListener('click', function (e) {
-  var signOutBtn = e.target.closest('[data-admin-signout]');
-  if (signOutBtn) {
-    window.BLEGAB_ADMIN_AUTH.signOut();
-    window.location.href = 'admin-login.html';
-  }
+document.addEventListener("click", async function (e) {
+
+    var signOutBtn = e.target.closest("[data-admin-signout]");
+
+    if (!signOutBtn) return;
+
+    var success = await window.BLEGAB_ADMIN_AUTH.signOut();
+
+    if (success) {
+        window.location.href = "admin-login.html";
+    } else {
+        alert("Unable to log out. Please try again.");
+    }
+
 });
