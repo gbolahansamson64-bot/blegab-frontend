@@ -230,6 +230,17 @@
   position: relative;
 }
 
+/* `.account-dropdown__item` / `.nav-dropdown__link` set their own
+   `display` above, which beats the browser's built-in `[hidden]`
+   rule (normal author CSS always wins over normal user-agent CSS,
+   regardless of specificity). Without this, Sign Out/Profile/My
+   Orders show up even while `hidden` is set — e.g. Sign In and
+   Sign Out both visible for a guest. */
+.account-dropdown [hidden],
+.nav-dropdown--account [hidden] {
+  display: none !important;
+}
+
 .account-dropdown {
   position: absolute;
   top: calc(100% + 12px);

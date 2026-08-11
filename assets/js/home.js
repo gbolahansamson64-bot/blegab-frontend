@@ -5,10 +5,12 @@
    Load order: main.js -> header-loader.js -> home.js
    ============================================================= */
 
+   const API_URL = "http://localhost:5000/api";
+
 document.addEventListener('DOMContentLoaded', function () {
   initHeroDots();
   initCounters();
-  initCollections();
+  initCollections()
   initBrandEssence();
   initTestimonials();
   initCollectionsScrollHint();
@@ -119,50 +121,178 @@ function animateCount(el) {
      url    - where "Order Now" and the card link go
    ========================================================= */
 
-window.BLEGAB_COLLECTIONS = [
-  { id: 'body-wave',      name: 'Body Wave Wigs',      price: 320, image: 'assets/images/collections/bodywavehomeproductimage.webp',      alt: 'Body Wave Wig',      url: 'shop.html?category=body-wave' },
-  { id: 'bone-straight',  name: 'Bone Straight Wigs',  price: 300, image: 'assets/images/collections/bonestraighthomeproductimage.webp',  alt: 'Bone Straight Wig',  url: 'shop.html?category=bone-straight' },
-  { id: 'deep-wave',      name: 'Deep Wave Wigs',      price: 320, image: 'assets/images/collections/deepwavehomeproductimage.webp',      alt: 'Deep Wave Wig',      url: 'shop.html?category=deep-wave' },
-  { id: 'highlight',      name: 'Highlight Wigs',      price: 350, image: 'assets/images/collections/highlighthomeproductimage.webp',      alt: 'Highlight Wig',      url: 'shop.html?category=highlight' },
-  { id: 'custom-colored', name: 'Custom Colored Wigs', price: 380, image: 'assets/images/collections/customcoloredhomeproductimage.webp', alt: 'Custom Colored Wig', url: 'shop.html?category=custom-colored' },
-  { id: 'bob',            name: 'Bob Wigs',            price: 280, image: 'assets/images/collections/bobhomeproductimage.webp',           alt: 'Bob Wig',            url: 'shop.html?category=bob' }
-];
+// window.BLEGAB_COLLECTIONS = [
+//   { id: 'body-wave',      name: 'Body Wave Wigs',      price: 320, image: 'assets/images/collections/bodywavehomeproductimage.webp',      alt: 'Body Wave Wig',      url: 'shop.html?category=body-wave' },
+//   { id: 'bone-straight',  name: 'Bone Straight Wigs',  price: 300, image: 'assets/images/collections/bonestraighthomeproductimage.webp',  alt: 'Bone Straight Wig',  url: 'shop.html?category=bone-straight' },
+//   { id: 'deep-wave',      name: 'Deep Wave Wigs',      price: 320, image: 'assets/images/collections/deepwavehomeproductimage.webp',      alt: 'Deep Wave Wig',      url: 'shop.html?category=deep-wave' },
+//   { id: 'highlight',      name: 'Highlight Wigs',      price: 350, image: 'assets/images/collections/highlighthomeproductimage.webp',      alt: 'Highlight Wig',      url: 'shop.html?category=highlight' },
+//   { id: 'custom-colored', name: 'Custom Colored Wigs', price: 380, image: 'assets/images/collections/customcoloredhomeproductimage.webp', alt: 'Custom Colored Wig', url: 'shop.html?category=custom-colored' },
+//   { id: 'bob',            name: 'Bob Wigs',            price: 280, image: 'assets/images/collections/bobhomeproductimage.webp',           alt: 'Bob Wig',            url: 'shop.html?category=bob' }
+// ];
+
+async function loadCollections() {
+
+    try {
+
+        const response = await fetch(
+            API_URL + "/products?limit=6"
+        );
+
+        const data = await response.json();
+
+        if (!data.success) return;
+
+        window.BLEGAB_COLLECTIONS = data.products;
+
+        initCollections();
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
 
 
 /* -----------------------------
    Collections grid — renders cards from window.BLEGAB_COLLECTIONS
    ----------------------------- */
-function initCollections() {
-  var grid = document.querySelector('[data-collections-grid]');
-  if (!grid || !window.BLEGAB_COLLECTIONS) return;
 
-  grid.innerHTML = '';
+async function initCollections() {
 
-  window.BLEGAB_COLLECTIONS.forEach(function (item) {
-    var li = document.createElement('li');
-    li.className = 'collection-card';
-    li.innerHTML =
-      '<a href="' + item.url + '" class="collection-card__link">' +
-        '<span class="collection-card__image-wrap">' +
-          '<img src="' + item.image + '" alt="' + item.alt + '" class="collection-card__image" loading="lazy" />' +
-        '</span>' +
-        '<h3 class="collection-card__name">' + item.name + '</h3>' +
-        '<p class="collection-card__price">From $' + Number(item.price).toFixed(2) + '</p>' +
-      '</a>' +
-      '<a href="' + item.url + '" class="btn btn-primary btn--card">' +
-        '<span class="btn-icon-wrap">' +
-          '<svg class="btn-icon btn-icon--bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-            '<path d="M6 8h12l-1.2 11H7.2z" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-linecap="round"/>' +
-          '</svg>' +
-          '<svg class="btn-icon btn-icon--arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-            '<path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '</svg>' +
-        '</span>' +
-        '<span class="btn-text">Order Now</span>' +
-      '</a>';
-    grid.appendChild(li);
-  });
+    const grid = document.querySelector("[data-collections-grid]");
+
+    if (!grid) return;
+
+    grid.innerHTML = `
+        <p class="collections__loading">
+            Loading collections...
+        </p>
+    `;
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/products?limit=6`
+            // Later change to:
+            // `${API_URL}/products?badge=Featured&limit=6`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
+
+        grid.innerHTML = "";
+
+        data.products.forEach(function (product) {
+
+            const image = product.images?.length
+                ? product.images[0]
+                : "assets/images/no-image.webp";
+
+            const badge = product.badge
+                ? `<span class="collection-card__badge">${product.badge}</span>`
+                : "";
+
+            const li = document.createElement("li");
+
+            li.className = "collection-card";
+
+            li.innerHTML = `
+
+<a href="product.html?slug=${product.slug}" class="collection-card__link">
+
+    <span class="collection-card__image-wrap">
+
+        ${badge}
+
+        <img
+            src="${image}"
+            alt="${product.name}"
+            class="collection-card__image"
+            loading="lazy"
+        >
+
+    </span>
+
+    <h3 class="collection-card__name">
+        ${product.name}
+    </h3>
+
+    <p class="collection-card__price">
+        $${Number(product.price).toFixed(2)}
+    </p>
+
+</a>
+
+<a
+    href="product.html?slug=${product.slug}"
+    class="btn btn-primary btn--card"
+>
+
+    <span class="btn-icon-wrap">
+
+        <svg
+            class="btn-icon btn-icon--bag"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+            <path
+                d="M6 8h12l-1.2 11H7.2z"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+            <path
+                d="M9 8V6a3 3 0 0 1 6 0v2"
+                stroke-linecap="round"
+            />
+        </svg>
+
+        <svg
+            class="btn-icon btn-icon--arrow"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+            <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </svg>
+
+    </span>
+
+    <span class="btn-text">
+        Order Now
+    </span>
+
+</a>
+
+`;
+
+            grid.appendChild(li);
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        grid.innerHTML = `
+            <p class="collections__loading">
+                Unable to load products.
+            </p>
+        `;
+
+    }
+
 }
 
 /* -----------------------------

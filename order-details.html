@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order Details</title>
+
+    <!-- Use the same CSS files your my-orders.html uses -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+
+    <!-- Orders page styles -->
+    <link rel="stylesheet" href="assets/css/orders.css">
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header id="site-header"></header>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="order-details-page">
+
+        <div class="order-details-container">
+
+
+            <!-- Back -->
+            <a
+                href="my-orders.html"
+                class="order-details__back"
+            >
+                ← Back to My Orders
+            </a>
+
+
+            <!-- Loading -->
+            <div
+                id="order-details-loading"
+                class="order-details__loading"
+            >
+                Loading order details...
+            </div>
+
+
+            <!-- Error -->
+            <div
+                id="order-details-error"
+                class="order-details__error"
+                style="display: none;"
+            >
+
+                <h2>Unable to Load Order</h2>
+
+                <p id="order-details-error-message"></p>
+
+                <a
+                    href="my-orders.html"
+                    class="btn btn-primary"
+                >
+                    Back to My Orders
+                </a>
+
+            </div>
+
+
+            <!-- Order -->
+            <div
+                id="order-details-content"
+                style="display: none;"
+            >
+
+
+                <!-- =================================================
+                     ORDER HEADER
+                ================================================== -->
+
+                <section class="order-details__header">
+
+                    <div>
+
+                        <p class="order-details__eyebrow">
+                            Order Details
+                        </p>
+
+                        <h1 id="order-id">
+                            Order
+                        </h1>
+
+                        <p id="order-date">
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="order-statuses"
+                        class="order-statuses"
+                    >
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ORDER ITEMS
+                ================================================== -->
+
+                <section class="order-details__section">
+
+                    <h2>Items Ordered</h2>
+
+                    <div
+                        id="order-items"
+                        class="order-details__items"
+                    >
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     ORDER SUMMARY
+                ================================================== -->
+
+                <section class="order-details__section">
+
+                    <h2>Order Summary</h2>
+
+
+                    <div class="order-summary">
+
+                        <div class="order-summary__row">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <span id="order-subtotal">
+                                $0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="order-summary__row">
+
+                            <span>
+                                Shipping
+                            </span>
+
+                            <span id="order-shipping">
+                                $0.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="order-summary__row">
+
+                            <span>
+                                Tax
+                            </span>
+
+                            <span id="order-tax">
+                                $0.00
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="order-summary__row order-summary__row--total"
+                        >
+
+                            <strong>
+                                Total
+                            </strong>
+
+                            <strong id="order-total">
+                                $0.00
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     SHIPPING INFORMATION
+                ================================================== -->
+
+                <section class="order-details__section">
+
+                    <h2>Shipping Information</h2>
+
+
+                    <div
+                        id="shipping-address"
+                        class="shipping-address"
+                    >
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                     PAYMENT INFORMATION
+                ================================================== -->
+
+                <section class="order-details__section">
+
+                    <h2>Payment Information</h2>
+
+
+                    <div class="payment-information">
+
+                        <p>
+
+                            <strong>
+                                Payment Method:
+                            </strong>
+
+                            <span id="payment-method">
+                            </span>
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Payment Status:
+                            </strong>
+
+                            <span id="payment-status">
+                            </span>
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Order Status:
+                            </strong>
+
+                            <span id="order-status">
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer id="site-footer"></footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <!-- IMPORTANT:
+         Use the same header/footer scripts
+         that your existing pages use.
+    -->
+
+
+    <script src="/assets/js/header.js"></script>
+    <script src="/assets/js/order-details.js"></script>
+
+
+</body>
+
+</html>

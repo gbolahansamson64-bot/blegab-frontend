@@ -9,8 +9,10 @@
    everything else (header state, icon, dropdown) already reacts
    to BLEGAB_AUTH automatically.
    ========================================================= */
+const API_URL = "http://localhost:5000/api";
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+  await loadCurrentUser();
   initPasswordToggles();
   initPasswordChecklists();
   initSignupForm();
@@ -19,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
   initForgotPasswordForm();
   initVerifyCodeForm();
   initResetPasswordForm();
-  initVerifyCodeRestriction();
 });
 
 /* -----------------------------
@@ -40,122 +41,185 @@ function initPasswordToggles() {
   });
 }
 
+/* -----------------------------
+   Live password requirement checklist
+   ----------------------------- */
+function initPasswordChecklists() {
+  var allowedPattern = /^[^\s]*$/;
+  var symbolPattern = /[^A-Za-z0-9]/;
 
-function initVerifyCodeRestriction() {
-  var codeInput = document.getElementById('verify-code');
-  if (!codeInput) return;
+  document.querySelectorAll('[data-pw-checklist]').forEach(function (checklist) {
+    var fieldId = checklist.dataset.pwChecklist;
+    var input = document.getElementById(fieldId);
+    if (!input) return;
 
-  var invalidEl = document.querySelector('[data-code-invalid]');
+    var invalidEl = checklist.querySelector('[data-pw-invalid]');
 
-  codeInput.addEventListener('input', function () {
-    var value = codeInput.value;
+    input.addEventListener('focus', function () {
+      checklist.classList.add('is-active');
+    });
 
-    var badChar = null;
-    for (var i = 0; i < value.length; i++) {
-      if (!/[0-9]/.test(value[i])) {
-        badChar = value[i];
-        break;
+    input.addEventListener('blur', function () {
+      checklist.classList.remove('is-active');
+    });
+
+    input.addEventListener('input', function () {
+      var value = input.value;
+
+      var badChar = null;
+      for (var i = 0; i < value.length; i++) {
+        if (!allowedPattern.test(value[i])) {
+          badChar = value[i];
+          break;
+        }
       }
-    }
 
-    if (badChar && invalidEl) {
-      invalidEl.textContent = 'Invalid "' + badChar + '" — only numbers are allowed. Please enter the code sent to your email.';
-      invalidEl.classList.add('is-visible');
-    } else if (invalidEl) {
-      invalidEl.textContent = '';
-      invalidEl.classList.remove('is-visible');
-    }
+      if (badChar) {
+        invalidEl.textContent = badChar === ' ' ? 'No space allowed' : 'Invalid "' + badChar + '"';
+        invalidEl.classList.add('is-visible');
+      } else {
+        invalidEl.textContent = '';
+        invalidEl.classList.remove('is-visible');
+      }
 
-    var cleaned = value.replace(/[^0-9]/g, '').slice(0, 4);
-    if (cleaned !== value) codeInput.value = cleaned;
+      var cleaned = value.split('').filter(function (ch) {
+        return allowedPattern.test(ch);
+      }).join('');
+      if (cleaned !== value) {
+        input.value = cleaned;
+        value = cleaned;
+      }
+
+      setCheck(checklist, 'uppercase', /[A-Z]/.test(value));
+      setCheck(checklist, 'lowercase', /[a-z]/.test(value));
+      setCheck(checklist, 'number', /[0-9]/.test(value));
+      setCheck(checklist, 'length', value.length >= 8);
+      setCheck(checklist, 'symbol', symbolPattern.test(value));
+    });
   });
+
+  function setCheck(checklist, key, isValid) {
+    var item = checklist.querySelector('[data-check="' + key + '"]');
+    if (item) item.classList.toggle('is-valid', isValid);
+  }
+}
+
+function isPasswordFullyValid(value) {
+  return /[A-Z]/.test(value) &&
+         /[a-z]/.test(value) &&
+         /[0-9]/.test(value) &&
+         /[^A-Za-z0-9]/.test(value) &&
+         value.length >= 8 &&
+         /^[^\s]+$/.test(value);
 }
 
 /* -----------------------------
    Signup form (signup.html)
    ----------------------------- */
 function initSignupForm() {
-  var form = document.getElementById('signup-form');
+  var form = document.getElementById("signup-form");
   if (!form) return;
 
-  var errorEl = form.querySelector('[data-auth-error]');
-  var submitBtn = form.querySelector('.auth__submit');
-  var checkboxLabel = form.querySelector('.auth__checkbox');
-  var checkbox = checkboxLabel.querySelector('input');
+  var errorEl = form.querySelector("[data-auth-error]");
+  var submitBtn = form.querySelector(".auth__submit");
+  var checkboxLabel = form.querySelector(".auth__checkbox");
+  var checkbox = checkboxLabel.querySelector("input");
 
   var requiredFields = [
-    form.querySelector('#signup-first-name'),
-    form.querySelector('#signup-email'),
-    form.querySelector('#signup-password'),
-    form.querySelector('#signup-confirm-password')
+    form.querySelector("#signup-first-name"),
+    form.querySelector("#signup-email"),
+    form.querySelector("#signup-password"),
+    form.querySelector("#signup-confirm-password"),
   ];
 
   function isFormComplete() {
     var filled = requiredFields.every(function (input) {
-      return input.value.trim() !== '';
+      return input.value.trim() !== "";
     });
+
     return filled && checkbox.checked;
   }
 
   function updateSubmitState() {
-    submitBtn.classList.toggle('is-disabled', !isFormComplete());
+    submitBtn.classList.toggle("is-disabled", !isFormComplete());
   }
 
   function showFieldError(input, message) {
-    var wrapper = input.closest('.auth__field');
+    var wrapper = input.closest(".auth__field");
     if (!wrapper) return;
-    wrapper.classList.add('auth__field--invalid');
 
-    var errorSpan = wrapper.querySelector('.auth__field-error');
+    wrapper.classList.add("auth__field--invalid");
+
+    var errorSpan = wrapper.querySelector(".auth__field-error");
+
     if (!errorSpan) {
-      errorSpan = document.createElement('span');
-      errorSpan.className = 'auth__field-error';
+      errorSpan = document.createElement("span");
+      errorSpan.className = "auth__field-error";
       wrapper.appendChild(errorSpan);
     }
+
     errorSpan.textContent = message;
-    errorSpan.classList.add('is-visible');
+    errorSpan.classList.add("is-visible");
   }
 
   function clearFieldError(input) {
-    var wrapper = input.closest('.auth__field');
+    var wrapper = input.closest(".auth__field");
+
     if (!wrapper) return;
-    wrapper.classList.remove('auth__field--invalid');
-    var errorSpan = wrapper.querySelector('.auth__field-error');
-    if (errorSpan) errorSpan.classList.remove('is-visible');
+
+    wrapper.classList.remove("auth__field--invalid");
+
+    var errorSpan = wrapper.querySelector(".auth__field-error");
+
+    if (errorSpan) {
+      errorSpan.classList.remove("is-visible");
+    }
   }
 
   requiredFields.forEach(function (input) {
-    input.addEventListener('input', function () {
+    input.addEventListener("input", function () {
       clearFieldError(input);
       updateSubmitState();
     });
   });
 
-  checkbox.addEventListener('change', function () {
-    checkboxLabel.classList.remove('auth__checkbox--invalid');
+  checkbox.addEventListener("change", function () {
+    checkboxLabel.classList.remove("auth__checkbox--invalid");
     updateSubmitState();
   });
 
-  updateSubmitState(); // dim the button right away since the form starts empty
+  updateSubmitState();
 
-  form.addEventListener('submit', function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    hideError(errorEl);
 
     var firstInvalid = null;
 
     requiredFields.forEach(function (input) {
-      if (input.value.trim() === '') {
-        showFieldError(input, 'This field is required.');
-        if (!firstInvalid) firstInvalid = input;
+      if (input.value.trim() === "") {
+        showFieldError(input, "This field is required.");
+
+        if (!firstInvalid) {
+          firstInvalid = input;
+        }
       } else {
         clearFieldError(input);
       }
     });
 
     if (!checkbox.checked) {
-      checkboxLabel.classList.add('auth__checkbox--invalid');
-      showError(errorEl, 'Please agree to the Terms of Service and Privacy Policy to continue.');
-      if (!firstInvalid) firstInvalid = checkbox;
+      checkboxLabel.classList.add("auth__checkbox--invalid");
+
+      showError(
+        errorEl,
+        "Please agree to the Terms of Service and Privacy Policy."
+      );
+
+      if (!firstInvalid) {
+        firstInvalid = checkbox;
+      }
     }
 
     if (firstInvalid) {
@@ -163,153 +227,322 @@ function initSignupForm() {
       return;
     }
 
-    var firstName = form.querySelector('#signup-first-name').value.trim();
-    var lastName = form.querySelector('#signup-last-name').value.trim();
-    var password = form.querySelector('#signup-password').value;
-    var confirmPassword = form.querySelector('#signup-confirm-password').value;
+    var firstName = form.querySelector("#signup-first-name").value.trim();
+    var lastName = form.querySelector("#signup-last-name").value.trim();
+    var email = form.querySelector("#signup-email").value.trim();
+    var password = form.querySelector("#signup-password").value;
+    var confirmPassword =
+      form.querySelector("#signup-confirm-password").value;
 
-if (!isPasswordFullyValid(password) || !isPasswordFullyValid(confirmPassword)) {
-  showError(errorEl, 'Please meet all password requirements below.');
-  return;
-}
+    if (password.length < 8) {
+      showError(errorEl, "Password must be at least 8 characters.");
+      return;
+    }
 
-    hideError(errorEl);
+    if (password !== confirmPassword) {
+      showError(errorEl, "Passwords do not match.");
+      return;
+    }
 
-    var name = (firstName + ' ' + lastName).trim() || 'there';
-    window.BLEGAB_AUTH.signIn({ name: name });
-    window.location.href = 'index.html';
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating Account...";
+
+    try {
+      const response = await fetch(API_URL + "/auth/register", {
+
+    method: "POST",
+
+    credentials: "include",
+
+    headers: {
+
+        "Content-Type": "application/json"
+
+    },
+
+    body: JSON.stringify({
+
+        firstName,
+
+        lastName,
+
+        email,
+
+        password
+
+    })
+
+});
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showError(errorEl, data.message || "Registration failed.");
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create Account";
+
+        return;
+      }
+
+      // Save User
+      await loadCurrentUser();
+
+      window.location.href = "index.html";
+
+    } catch (error) {
+      console.error(error);
+
+      showError(
+        errorEl,
+        "Unable to connect to the server."
+      );
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Create Account";
+    }
   });
 }
 
 /* -----------------------------
    Login form (login.html)
-   ----------------------------- */
+----------------------------- */
 function initLoginForm() {
-  var form = document.getElementById('login-form');
+  var form = document.getElementById("login-form");
   if (!form) return;
 
-  var errorEl = form.querySelector('[data-auth-error]');
-  var submitBtn = form.querySelector('.auth__submit');
+  var errorEl = form.querySelector("[data-auth-error]");
+  var submitBtn = form.querySelector(".auth__submit");
 
   var requiredFields = [
-    form.querySelector('#login-email'),
-    form.querySelector('#login-password')
+    form.querySelector("#login-email"),
+    form.querySelector("#login-password"),
   ];
 
-function isFormComplete() {
-  var filled = requiredFields.every(function (input) {
-    return input.value.trim() !== '';
-  });
-  var passwordInput = document.getElementById('login-password');
-  var passwordValid = passwordInput && isPasswordFullyValid(passwordInput.value);
-  return filled && passwordValid;
-}
+  function isFormComplete() {
+    return requiredFields.every(function (input) {
+      return input.value.trim() !== "";
+    });
+  }
 
   function updateSubmitState() {
-    submitBtn.classList.toggle('is-disabled', !isFormComplete());
+    submitBtn.classList.toggle("is-disabled", !isFormComplete());
   }
 
   function showFieldError(input, message) {
-    var wrapper = input.closest('.auth__field');
+    var wrapper = input.closest(".auth__field");
     if (!wrapper) return;
-    wrapper.classList.add('auth__field--invalid');
 
-    var errorSpan = wrapper.querySelector('.auth__field-error');
+    wrapper.classList.add("auth__field--invalid");
+
+    var errorSpan = wrapper.querySelector(".auth__field-error");
+
     if (!errorSpan) {
-      errorSpan = document.createElement('span');
-      errorSpan.className = 'auth__field-error';
+      errorSpan = document.createElement("span");
+      errorSpan.className = "auth__field-error";
       wrapper.appendChild(errorSpan);
     }
+
     errorSpan.textContent = message;
-    errorSpan.classList.add('is-visible');
+    errorSpan.classList.add("is-visible");
   }
 
   function clearFieldError(input) {
-    var wrapper = input.closest('.auth__field');
+    var wrapper = input.closest(".auth__field");
     if (!wrapper) return;
-    wrapper.classList.remove('auth__field--invalid');
-    var errorSpan = wrapper.querySelector('.auth__field-error');
-    if (errorSpan) errorSpan.classList.remove('is-visible');
+
+    wrapper.classList.remove("auth__field--invalid");
+
+    var errorSpan = wrapper.querySelector(".auth__field-error");
+
+    if (errorSpan) {
+      errorSpan.classList.remove("is-visible");
+    }
   }
 
   requiredFields.forEach(function (input) {
-    input.addEventListener('input', function () {
+    input.addEventListener("input", function () {
       clearFieldError(input);
       updateSubmitState();
     });
   });
 
-  updateSubmitState(); // dim the button right away since the form starts empty
+  updateSubmitState();
 
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-  var firstInvalid = null;
+    var firstInvalid = null;
 
-  requiredFields.forEach(function (input) {
-    if (input.value.trim() === '') {
-      showFieldError(input, 'This field is required.');
-      if (!firstInvalid) firstInvalid = input;
-    } else {
-      clearFieldError(input);
+    requiredFields.forEach(function (input) {
+      if (input.value.trim() === "") {
+        showFieldError(input, "This field is required.");
+
+        if (!firstInvalid) {
+          firstInvalid = input;
+        }
+      } else {
+        clearFieldError(input);
+      }
+    });
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    hideError(errorEl);
+
+    var email = form.querySelector("#login-email").value.trim();
+    var password = form.querySelector("#login-password").value;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Signing In...";
+
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+
+  method: "POST",
+
+  credentials: "include",
+
+  headers: {
+    "Content-Type": "application/json",
+  },
+
+  body: JSON.stringify({
+
+    email,
+    password
+
+  })
+
+});
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showError(errorEl, data.message || "Login failed.");
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Sign In";
+        return;
+      }
+
+      // Save User
+      await loadCurrentUser();
+
+      window.location.href = "index.html";
+
+    } catch (error) {
+
+      console.error(error);
+
+      showError(
+        errorEl,
+        "Unable to connect to the server."
+      );
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign In";
     }
   });
-
-  if (firstInvalid) {
-    firstInvalid.focus();
-    return;
-  }
-
-  var passwordValue = form.querySelector('#login-password').value;
-
-  if (!isPasswordFullyValid(passwordValue)) {
-    showError(errorEl, 'Please meet all password requirements above.');
-    return;
-  }
-
-  hideError(errorEl);
-
-  var email = form.querySelector('#login-email').value.trim();
-  var name = email.split('@')[0] || 'there';
-
-  window.BLEGAB_AUTH.signIn({ name: name });
-  window.location.href = 'index.html';
-});
 }
 
 /* -----------------------------
    Forgot password form (forgot-password.html)
    ----------------------------- */
 function initForgotPasswordForm() {
-  var form = document.getElementById('forgot-password-form');
-  if (!form) return;
 
-  var errorEl = form.querySelector('[data-auth-error]');
-  var emailInput = form.querySelector('#forgot-password-email');
+    var form = document.getElementById("forgot-password-form");
 
-  // If the person got here via "Edit email" on verify-code.html,
-  // bring back whatever they'd already typed.
-  var prefillEmail = new URLSearchParams(window.location.search).get('email');
-  if (prefillEmail && emailInput) emailInput.value = prefillEmail;
+    if (!form) return;
 
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
+    var errorEl = form.querySelector("[data-auth-error]");
 
-    var email = emailInput.value.trim();
+    var emailInput = form.querySelector("#forgot-password-email");
 
-    var emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
-    if (!emailPattern.test(email)) {
-      showError(errorEl, 'Please enter a valid email address.');
-      return;
+    var prefillEmail =
+        new URLSearchParams(window.location.search)
+        .get("email");
+
+    if (prefillEmail && emailInput) {
+        emailInput.value = prefillEmail;
     }
 
-    hideError(errorEl);
+    form.addEventListener("submit", function (event) {
 
-    // NOTE: no backend yet — swap this for a real "send reset code" API
-    // call once ready. For now, hand the email to verify-code.html via
-    // the URL so it can show which address the code was sent to.
-    window.location.href = 'verify-code.html?email=' + encodeURIComponent(email);
-  });
+        event.preventDefault();
+
+        var email = emailInput.value.trim();
+
+        var emailPattern =
+            /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+
+        if (!emailPattern.test(email)) {
+
+            showError(
+                errorEl,
+                "Please enter a valid email address."
+            );
+
+            return;
+        }
+
+        hideError(errorEl);
+
+        fetch(API_URL + "/auth/forgot-password", {
+
+            method: "POST",
+
+            credentials: "include",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                email: email
+            })
+
+        })
+
+        .then(function(response){
+
+            return response.json();
+
+        })
+
+        .then(function(data){
+
+            if(
+                data.message ===
+                "Password reset code sent successfully"
+            ){
+
+                window.location.href =
+                    "verify-code.html?email=" +
+                    encodeURIComponent(email);
+
+            }else{
+
+                showError(errorEl, data.message);
+
+            }
+
+        })
+
+        .catch(function(){
+
+            showError(
+                errorEl,
+                "Something went wrong. Please try again."
+            );
+
+        });
+
+    });
+
 }
 
 /* -----------------------------
@@ -341,33 +574,83 @@ function initVerifyCodeForm() {
     if (submitText) submitText.textContent = isLoading ? 'Verifying...' : 'Continue';
   }
 
-  form.addEventListener('submit', function (event) {
+  form.addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
-    var code = form.querySelector('#verify-code').value.trim();
+    var code = form.querySelector("#verify-code").value.trim();
 
-    if (code === '') {
-      showError(errorEl, 'Please enter the code we sent you.');
-      return;
-    }
+    if (code === "") {
 
-      if (!/^\d{4}$/.test(code)) {
-      showError(errorEl, 'Please enter the 4-digit code we sent you.');
-      return;
+        showError(errorEl, "Please enter the code we sent you.");
+
+        return;
+
     }
 
     hideError(errorEl);
+
     setLoading(true);
 
-    // NOTE: no backend yet — swap this block for a real "verify reset
-    // code" API call once ready. Resolve on a valid code and move on to
-    // reset-password.html; reject (call setLoading(false) + showError)
-    // on an invalid/expired one. The setTimeout below just simulates
-    // the round-trip so the spinner has something to show.
-    setTimeout(function () {
-      window.location.href = 'reset-password.html' + (email ? '?email=' + encodeURIComponent(email) : '');
-    }, 900);
-  });
+    try {
+
+        const response = await fetch(
+
+           API_URL + "/auth/verify-reset-code",
+
+            {
+
+                method: "POST",
+
+                credentials: "include",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    email: email,
+
+                    otp: code
+
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(data.message);
+
+        }
+
+        window.location.href =
+
+            "reset-password.html?email=" +
+
+            encodeURIComponent(email);
+
+    }
+
+    catch (error) {
+
+        showError(errorEl, error.message);
+
+    }
+
+    finally {
+
+        setLoading(false);
+
+    }
+
+});
 }
 
 function showSuccess(el, message) {
@@ -404,80 +687,88 @@ function hideSuccess(el) {
         server, verify it there, create/find the user, and issue
         a real session — don't trust localStorage for that part.
    ----------------------------- */
-var GOOGLE_CLIENT_ID = '1096587723395-peq7ihlpo1453ekg6epnbpqst8pcaeoo.apps.googleusercontent.com';
 
 function initGoogleButtons() {
-  var buttons = document.querySelectorAll('[data-google-auth]');
-  if (!buttons.length) return;
 
-  if (GOOGLE_CLIENT_ID.indexOf('PASTE_YOUR') === 0) {
-    // No client ID configured yet — tell the developer plainly instead
-    // of silently faking a sign-in.
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        console.warn('Google Sign-In is not configured yet. Set GOOGLE_CLIENT_ID in auth.js.');
-        alert('Google Sign-In isn\'t set up yet. Please use email sign in/up for now.');
-      });
+    var buttons = document.querySelectorAll("[data-google-auth]");
+
+    if (!buttons.length) return;
+
+    buttons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            window.location.assign(
+                API_URL + "/auth/google"
+            );
+
+        });
+
     });
-    return;
-  }
 
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-    // The Google script (loaded in <head>) hasn't finished loading yet
-    // or failed to load (e.g. blocked network) — fail loudly, not silently.
-    buttons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        alert('Could not reach Google right now. Please check your connection and try again.');
-      });
-    });
-    return;
-  }
-
-  var tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: GOOGLE_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-    callback: function (tokenResponse) {
-      if (!tokenResponse || tokenResponse.error) {
-        alert('Google sign-in was cancelled or failed. Please try again.');
-        return;
-      }
-      fetchGoogleProfile(tokenResponse.access_token);
-    }
-  });
-
-  buttons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      // This is what actually opens Google's real account picker /
-      // consent popup — nothing is faked from here on.
-      tokenClient.requestAccessToken();
-    });
-  });
 }
 
-function fetchGoogleProfile(accessToken) {
-  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-    headers: { Authorization: 'Bearer ' + accessToken }
-  })
-    .then(function (res) {
-      if (!res.ok) throw new Error('Failed to fetch Google profile');
-      return res.json();
-    })
-    .then(function (profile) {
-      // profile.name / profile.email / profile.picture come straight
-      // from Google — this is a real signed-in Google account, not a
-      // placeholder. Swap this localStorage call for a real backend
-      // session once the API exists.
-      window.BLEGAB_AUTH.signIn({
-        name: profile.name || (profile.email ? profile.email.split('@')[0] : 'there'),
-        email: profile.email,
-        picture: profile.picture,
-        provider: 'google'
-      });
-      window.location.href = 'index.html';
-    })
-    .catch(function () {
-      alert('Something went wrong finishing Google sign-in. Please try again.');
-    });
+async function loadCurrentUser() {
+
+    try {
+
+        const response = await fetch(
+
+            API_URL + "/auth/me",
+
+            {
+
+                credentials: "include"
+
+            }
+
+        );
+
+        if (!response.ok) {
+
+            return null;
+
+        }
+
+        const data = await response.json();
+
+        localStorage.setItem(
+
+            "user",
+
+            JSON.stringify(data.user)
+
+        );
+
+        if (window.BLEGAB_AUTH) {
+
+            window.BLEGAB_AUTH.signIn({
+
+                name:
+                    data.user.firstName +
+                    " " +
+                    data.user.lastName,
+
+                email: data.user.email,
+
+                picture: data.user.avatar || ""
+
+            });
+
+        }
+
+        return data.user;
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        return null;
+
+    }
+
 }
 
 function showError(el, message) {
@@ -512,21 +803,21 @@ function initResetPasswordForm() {
     if (submitText) submitText.textContent = isLoading ? 'Resetting...' : 'Reset Password';
   }
 
-if (messageEl) {
+ if (messageEl) {
   var params = new URLSearchParams(window.location.search);
   var email = params.get('email');
   messageEl.textContent = email
     ? "Create a new password for " + email + "."
     : "Create a new password for your account.";
-}
+ }
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     var newPassword = form.querySelector('#reset-new-password').value;
     var confirmPassword = form.querySelector('#reset-confirm-password').value;
-if (!isPasswordFullyValid(newPassword) || !isPasswordFullyValid(confirmPassword)) {
-  showError(errorEl, 'Please meet all password requirements below.');
-  return;
-}
+    if (newPassword.length < 8) {
+      showError(errorEl, "Password must be at least 8 characters.");
+      return;
+    }
     if (newPassword !== confirmPassword) {
       showError(errorEl, "Those passwords don't match.");
       return;
@@ -534,12 +825,72 @@ if (!isPasswordFullyValid(newPassword) || !isPasswordFullyValid(confirmPassword)
     hideError(errorEl);
     setLoading(true);
 
-    // NOTE: no backend yet — swap this for a real "set new password"
-    // API call once ready. For now, show the confirmation modal.
-    setTimeout(function () {
-      setLoading(false);
-      if (modal) modal.hidden = false;
-    }, 900);
+fetch(API_URL + "/auth/reset-password", {
+
+  method: "POST",
+
+  credentials:"include",
+
+  headers: {
+    "Content-Type": "application/json"
+  },
+
+  body: JSON.stringify({
+
+    email: email,
+
+    password: newPassword
+
+  })
+
+})
+
+.then(function (response) {
+
+  return response.json().then(function (data) {
+
+    return {
+      ok: response.ok,
+      data: data
+    };
+
+  });
+
+})
+
+.then(function (result) {
+
+  setLoading(false);
+
+  if (!result.ok) {
+
+    showError(errorEl, result.data.message);
+
+    return;
+
+  }
+
+  if (modal) {
+
+    modal.hidden = false;
+
+  }
+
+})
+
+.catch(function () {
+
+  setLoading(false);
+
+  showError(
+
+    errorEl,
+
+    "Something went wrong. Please try again."
+
+  );
+
+});
   });
   if (modalContinueBtn) {
     modalContinueBtn.addEventListener('click', function () {
@@ -555,77 +906,4 @@ if (!isPasswordFullyValid(newPassword) || !isPasswordFullyValid(confirmPassword)
       }
     });
   }
-}
-
-/* -----------------------------
-   Live password requirement checklist
-   ----------------------------- */
-function initPasswordChecklists() {
-  var allowedPattern = /^[^\s]*$/;
-  var symbolPattern = /[^A-Za-z0-9]/;
-
-  document.querySelectorAll('[data-pw-checklist]').forEach(function (checklist) {
-    var fieldId = checklist.dataset.pwChecklist;
-    var input = document.getElementById(fieldId);
-    if (!input) return;
-
-    var invalidEl = checklist.querySelector('[data-pw-invalid]');
-
-    input.addEventListener('focus', function () {
-      checklist.classList.add('is-active');
-    });
-
-    input.addEventListener('blur', function () {
-      checklist.classList.remove('is-active');
-    });
-
-    input.addEventListener('input', function () {
-      var value = input.value;
-
-      var badChar = null;
-      for (var i = 0; i < value.length; i++) {
-        if (!allowedPattern.test(value[i])) {
-          badChar = value[i];
-          break;
-        }
-      }
-
-if (badChar) {
-  invalidEl.textContent = badChar === ' ' ? 'No space allowed' : 'Invalid "' + badChar + '"';
-  invalidEl.classList.add('is-visible');
-} else {
-  invalidEl.textContent = '';
-  invalidEl.classList.remove('is-visible');
-}
-
-      var cleaned = value.split('').filter(function (ch) {
-        return allowedPattern.test(ch);
-      }).join('');
-      if (cleaned !== value) {
-        input.value = cleaned;
-        value = cleaned;
-      }
-
-      setCheck(checklist, 'uppercase', /[A-Z]/.test(value));
-      setCheck(checklist, 'lowercase', /[a-z]/.test(value));
-      setCheck(checklist, 'number', /[0-9]/.test(value));
-      setCheck(checklist, 'length', value.length >= 8);
-      setCheck(checklist, 'symbol', symbolPattern.test(value));
-    });
-  });
-
-  function setCheck(checklist, key, isValid) {
-    var item = checklist.querySelector('[data-check="' + key + '"]');
-    if (item) item.classList.toggle('is-valid', isValid);
-  }
-
-}
-
-function isPasswordFullyValid(value) {
-  return /[A-Z]/.test(value) &&
-         /[a-z]/.test(value) &&
-         /[0-9]/.test(value) &&
-         /[^A-Za-z0-9]/.test(value) &&
-         value.length >= 8 &&
-         /^[^\s]+$/.test(value);
 }

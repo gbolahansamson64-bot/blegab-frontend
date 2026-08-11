@@ -140,14 +140,16 @@
     </button>
 
     <div class="account-dropdown" data-account-dropdown>
-      <a href="login.html" class="account-dropdown__item" data-account-guest>
+      <a href="login.html" class="account-dropdown__item" data-account-guest id="account-login-link">
         <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 12H3" stroke-linecap="round"/>
         </svg>
         Sign In
       </a>
-      <a href="signup.html" class="account-dropdown__item" data-account-guest>
+
+      <a href="signup.html" class="account-dropdown__item" data-account-guest id="account-link">
         <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -158,14 +160,40 @@
 
       <p class="account-dropdown__greeting" data-account-user data-account-signed-in hidden></p>
 
-      <button type="button" class="account-dropdown__item account-dropdown__item--logout" data-account-signout data-account-signed-in hidden>
-        <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M21 12H9" stroke-linecap="round"/>
-        </svg>
-        Sign Out
-      </button>
+      <a
+  href="my-orders.html"
+  class="account-dropdown__item"
+  data-account-signed-in
+  hidden
+>
+  <svg
+    class="account-dropdown__icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <path
+      d="M6 2h12v20H6z"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M9 6h6"
+      stroke-linecap="round"
+    />
+    <path
+      d="M9 10h6"
+      stroke-linecap="round"
+    />
+    <path
+      d="M9 14h4"
+      stroke-linecap="round"
+    />
+  </svg>
+
+  My Orders
+</a>
 
       <a href="profile.html" class="account-dropdown__item account-dropdown__item--profile" data-account-signed-in hidden>
         <span class="profile-btn__icon-circle">
@@ -176,6 +204,15 @@
         </span>
         Profile
       </a>
+
+      <button type="button" class="account-dropdown__item account-dropdown__item--logout" data-account-signout data-account-signed-in hidden>
+        <svg class="account-dropdown__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 12H9" stroke-linecap="round"/>
+        </svg>
+        Sign Out
+      </button>
     </div>
   </div>
 
@@ -209,13 +246,23 @@
         </button>
       </div>
 
-      <div class="cart-drawer__body">
-        <p class="cart-drawer__empty">Your cart is empty</p>
+      <div class="cart-drawer__body" data-cart-body>
+       <p class="cart-drawer__empty">Your cart is empty</p>
       </div>
 
       <div class="cart-drawer__footer">
-        <a href="cart.html" class="btn btn-primary cart-drawer__cta">View Cart</a>
-      </div>
+
+
+    <a
+        href="cart.html"
+        class="btn btn-primary cart-drawer__cta"
+    >
+
+        View Cart
+
+    </a>
+
+</div>
     </aside>
 
     <!-- Primary navigation -->
@@ -241,7 +288,7 @@
               <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
-          <ul class="nav-dropdown">
+          <ul class="nav-dropdown" id="shop-dropdown">
             <li><a href="shop.html" class="nav-dropdown__link">All Wigs</a></li>
             <li><a href="shop.html?filter=new-arrivals" class="nav-dropdown__link">New Arrivals</a></li>
             <li><a href="shop.html?filter=best-sellers" class="nav-dropdown__link">Best Sellers</a></li>
@@ -249,40 +296,37 @@
         </li>
 
         <li class="nav-item has-dropdown">
-          <a href="shop.html" class="nav-link">
+          <a href="collections.html" class="nav-link">
             Collections
             <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
-          <ul class="nav-dropdown">
-            <li><a href="shop.html" class="nav-dropdown__link">Body Wave Wigs</a></li>
-            <li><a href="shop.html" class="nav-dropdown__link">Deep Wave Wigs</a></li>
-            <li><a href="shop.html" class="nav-dropdown__link">Highlight Wigs</a></li>
-            <li><a href="shop.html" class="nav-dropdown__link">Bob Wigs</a></li>
+          <ul class="nav-dropdown" id="collections-dropdown">
+            <li><a href="shop.html">Loading...</a></li>
           </ul>
         </li>
 
         <li class="nav-item has-dropdown">
-          <a href="shop.html" class="nav-link">
+          <a href="lace-wigs.html" class="nav-link">
             Lace Wigs
             <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </a>
           <ul class="nav-dropdown">
-            <li><a href="shop.html" class="nav-dropdown__link">Lace Front</a></li>
-            <li><a href="shop.html" class="nav-dropdown__link">Full Lace</a></li>
-            <li><a href="shop.html" class="nav-dropdown__link">HD Lace</a></li>
+            <li><a href="lace-front.html" class="nav-dropdown__link">Lace Front</a></li>
+            <li><a href="full-lace.html" class="nav-dropdown__link">Full Lace</a></li>
+            <li><a href="hd-lace.html" class="nav-dropdown__link">HD Lace</a></li>
           </ul>
         </li>
 
         <li class="nav-item">
-          <a href="shop.html" class="nav-link">Custom Wigs</a>
+          <a href="custom.html" class="nav-link">Custom Wigs</a>
         </li>
 
         <li class="nav-item">
-          <a href="shop.html" class="nav-link">Bone Straight</a>
+          <a href="bone-straight.html" class="nav-link">Bone Straight</a>
         </li>
 
         <li class="nav-item">
@@ -311,19 +355,6 @@
             </svg>
           </a>
           <ul class="nav-dropdown nav-dropdown--account">
-
-
-          <li data-account-guest>
-            <a href="login.html" class="nav-dropdown__link nav-dropdown__link--signup">
-              <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
-              </svg>
-              Sign In
-            </a>
-          </li>
-
-
             <li data-account-guest>
               <a href="signup.html" class="nav-dropdown__link nav-dropdown__link--signup">
                 <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -338,14 +369,15 @@
               <p class="nav-dropdown__greeting" data-account-user></p>
             </li>
             <li data-account-signed-in hidden>
-              <button type="button" class="nav-dropdown__link nav-dropdown__link--logout" data-account-signout>
+              <a href="my-orders.html" class="nav-dropdown__link">
                 <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M21 12H9" stroke-linecap="round"/>
+                  <path d="M6 2h12v20H6z" stroke-linejoin="round"/>
+                  <path d="M9 6h6" stroke-linecap="round"/>
+                  <path d="M9 10h6" stroke-linecap="round"/>
+                  <path d="M9 14h4" stroke-linecap="round"/>
                 </svg>
-                Sign Out
-              </button>
+                My Orders
+              </a>
             </li>
             <li data-account-signed-in hidden>
               <a href="profile.html" class="nav-dropdown__link nav-dropdown__link--profile">
@@ -357,6 +389,16 @@
                 </span>
                 Profile
               </a>
+            </li>
+            <li data-account-signed-in hidden>
+              <button type="button" class="nav-dropdown__link nav-dropdown__link--logout" data-account-signout>
+                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M21 12H9" stroke-linecap="round"/>
+                </svg>
+                Sign Out
+              </button>
             </li>
           </ul>
         </li>
@@ -429,4 +471,527 @@ function setActiveNavItem() {
   }
 
   if (matched) matched.classList.add('is-active');
+}
+
+
+/* ===========================================================
+   API
+=========================================================== */
+
+const API = "http://localhost:5000/api";
+
+/* ===========================================================
+   Helpers
+=========================================================== */
+
+async function fetchAPI(endpoint, options = {}) {
+
+    const response = await fetch(`${API}${endpoint}`, {
+        credentials: "include",
+        ...options
+    });
+
+    const data = await response.json();
+
+    return {
+        response,
+        data
+    };
+
+}
+
+/* ===========================================================
+   CART
+=========================================================== */
+
+async function loadCart() {
+
+    try {
+
+        const { response, data } = await fetchAPI("/cart");
+
+        if (!response.ok || !data.success) return;
+
+        renderCart(data);
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+function renderCart(data) {
+
+    const container = document.querySelector("[data-cart-body]");
+
+    if (!container) return;
+
+    const items = data.cart?.items || [];
+
+    updateCartCount(data.totalItems || 0);
+
+    if (!items.length) {
+
+        container.innerHTML = `
+            <div class="cart-drawer__empty">
+
+                <h4>Your cart is empty</h4>
+
+                <p>Add your favorite wigs to get started.</p>
+
+            </div>
+        `;
+
+        updateCartSubtotal(0);
+
+        return;
+
+    }
+
+    container.innerHTML = items.map(item => {
+
+    const image = item.product.images?.[0];
+    const imageUrl = image
+        ? `http://localhost:5000${image}`
+        : "assets/images/placeholder.png";
+
+    return `
+
+        <div class="cart-item">
+
+            <img
+                src="${imageUrl}"
+                alt="${item.product.name}"
+                class="cart-item__image"
+            >
+
+            <div class="cart-item__info">
+
+                <h4>${item.product.name}</h4>
+
+                <p>$${item.product.price}</p>
+
+                <p>Qty: ${item.quantity}</p>
+
+            </div>
+
+            <button
+                class="cart-item__remove"
+                data-remove-cart="${item.product._id}"
+            >
+                ×
+            </button>
+
+        </div>
+
+    `;
+
+}).join("");
+
+    updateCartSubtotal(data.totalPrice || 0);
+
+    attachRemoveCartEvents();
+
+}
+
+function updateCartSubtotal(total) {
+
+    const subtotal = document.querySelector("[data-cart-subtotal]");
+
+    if (!subtotal) return;
+
+    subtotal.textContent = `$${Number(total).toFixed(2)}`;
+
+}
+
+function updateCartCount(count = 0) {
+
+    document.querySelectorAll("[data-cart-count]").forEach(el => {
+
+        el.textContent = count;
+
+    });
+
+}
+
+async function removeCartItem(productId) {
+
+    try {
+
+        const { response, data } = await fetchAPI(`/cart/${productId}`, {
+
+            method: "DELETE"
+
+        });
+
+        if (!response.ok || !data.success) return;
+
+        loadCart();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+function attachRemoveCartEvents() {
+
+    document.querySelectorAll("[data-remove-cart]").forEach(button => {
+
+        button.onclick = () => {
+
+            removeCartItem(button.dataset.removeCart);
+
+        };
+
+    });
+
+}
+
+/* ===========================================================
+   ACCOUNT
+=========================================================== */
+
+async function loadCurrentUser() {
+
+    try {
+
+        const { response, data } = await fetchAPI("/auth/me");
+
+        if (!response.ok || !data.success) {
+
+            showGuestUI();
+
+            return;
+
+        }
+
+        showLoggedInUI(data.user);
+
+    } catch (error) {
+
+        console.error(error);
+
+        showGuestUI();
+
+    }
+
+}
+
+function showGuestUI() {
+
+    document.querySelectorAll("[data-account-guest]").forEach(el => {
+
+        el.hidden = false;
+
+    });
+
+    document.querySelectorAll("[data-account-signed-in]").forEach(el => {
+
+        el.hidden = true;
+
+    });
+
+}
+
+function showLoggedInUI(user) {
+
+    document.querySelectorAll("[data-account-guest]").forEach(el => {
+
+        el.hidden = true;
+
+    });
+
+    document.querySelectorAll("[data-account-signed-in]").forEach(el => {
+
+        el.hidden = false;
+
+    });
+
+    document.querySelectorAll("[data-account-user]").forEach(el => {
+
+        el.textContent = `Hi, ${user.firstName || user.firstname}`;
+
+    });
+
+}
+
+async function logoutUser() {
+
+    try {
+
+        const { response, data } = await fetchAPI("/auth/logout", {
+
+            method: "POST"
+
+        });
+
+        if (!response.ok || !data.success) return;
+
+        showGuestUI();
+
+        updateCartCount(0);
+
+        const cartBody = document.querySelector("[data-cart-body]");
+
+        if (cartBody) {
+
+            cartBody.innerHTML = `
+                <p class="cart-drawer__empty">
+                    Your cart is empty
+                </p>
+            `;
+
+        }
+
+        window.location.href = "index.html";
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+async function loadHeaderCategories() {
+
+    try {
+
+        const { response, data } = await fetchAPI("/categories");
+
+        if (!response.ok || !data.success) return;
+
+        const shopDropdown =
+            document.getElementById("shop-dropdown");
+
+        const collectionsDropdown =
+            document.getElementById("collections-dropdown");
+
+        if (shopDropdown) {
+
+            shopDropdown.innerHTML = `
+                <li>
+                    <a href="shop.html"
+                       class="nav-dropdown__link">
+                        All Wigs
+                    </a>
+                </li>
+            `;
+
+            data.categories.forEach(category => {
+
+                shopDropdown.innerHTML += `
+                    <li>
+                        <a
+                           href="shop.html?category=${category.slug}"
+                           class="nav-dropdown__link">
+
+                           ${category.name}
+
+                        </a>
+                    </li>
+                `;
+
+            });
+
+        }
+
+        if (collectionsDropdown) {
+
+            collectionsDropdown.innerHTML = "";
+
+            data.categories.forEach(category => {
+
+                collectionsDropdown.innerHTML += `
+                    <li>
+                        <a
+                           href="shop.html?category=${category.slug}"
+                           class="nav-dropdown__link">
+
+                           ${category.name}
+
+                        </a>
+                    </li>
+                `;
+
+            });
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+/* ===========================================================
+   INITIALIZE HEADER
+=========================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    loadHeaderCategories();
+
+    loadCurrentUser();
+
+    loadCart();
+
+    initializeSearch();
+
+    document.querySelectorAll("[data-account-signout]").forEach(button => {
+
+        button.addEventListener("click", logoutUser);
+
+    });
+
+});
+
+/* ===========================================================
+   LIVE SEARCH
+=========================================================== */
+
+let searchTimeout;
+
+function debounce(callback, delay = 300) {
+
+    clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(callback, delay);
+
+}
+
+async function searchProducts(keyword, resultsBox) {
+
+    if (!keyword.trim()) {
+
+        resultsBox.hidden = true;
+        resultsBox.innerHTML = "";
+
+        return;
+
+    }
+
+    try {
+
+        const { data } = await fetchAPI(`/products?keyword=${encodeURIComponent(keyword)}&limit=5`);
+
+        if (!data.success) return;
+
+        renderSearchResults(data.products, resultsBox);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+function renderSearchResults(products, resultsBox) {
+
+    if (!products.length) {
+
+        resultsBox.innerHTML = `
+
+            <div class="search-results__empty">
+
+                No products found
+
+            </div>
+
+        `;
+
+        resultsBox.hidden = false;
+
+        return;
+
+    }
+
+    resultsBox.innerHTML = products.map(product => `
+
+        <a
+            href="product.html?slug=${product.slug}"
+            class="search-result"
+        >
+
+            <img
+                src="http://localhost:5000${product.images[0]}"
+                alt="${product.name}"
+            >
+
+            <div>
+
+                <h4>${product.name}</h4>
+
+                <p>$${product.price}</p>
+
+            </div>
+
+        </a>
+
+    `).join("");
+
+    resultsBox.hidden = false;
+
+}
+
+function initializeSearch() {
+
+    const forms = document.querySelectorAll("form[role='search']");
+
+    forms.forEach(form => {
+
+        const input = form.querySelector("input");
+
+        const results = form.parentElement.querySelector("[data-search-results]");
+
+        input.addEventListener("input", () => {
+
+            debounce(() => {
+
+                searchProducts(input.value, results);
+
+            });
+
+        });
+
+        form.addEventListener("submit", e => {
+
+            e.preventDefault();
+
+            const keyword = input.value.trim();
+
+            if (!keyword) return;
+
+            window.location.href =
+                `shop.html?keyword=${encodeURIComponent(keyword)}`;
+
+        });
+
+        document.addEventListener("click", e => {
+
+            if (!form.contains(e.target)) {
+
+                results.hidden = true;
+                results.scrollTop = 0;
+
+            }
+
+        });
+
+    });
+
 }
