@@ -240,6 +240,12 @@ function initCartPageQtyAndDelete() {
         }
 
         renderCartPage();
+
+        if (window.BLEGAB_CART) {
+          await window.BLEGAB_CART.renderBadge();
+          await window.BLEGAB_CART.renderDrawer();
+        }
+
         return;
 
       }
@@ -284,6 +290,11 @@ function initCartPageQtyAndDelete() {
         }
 
         renderCartPage();
+
+        if (window.BLEGAB_CART) {
+          await window.BLEGAB_CART.renderBadge();
+          await window.BLEGAB_CART.renderDrawer();
+        }
       }
 
       // ------------------------
@@ -326,6 +337,11 @@ function initCartPageQtyAndDelete() {
         }
 
         renderCartPage();
+
+        if (window.BLEGAB_CART) {
+          await window.BLEGAB_CART.renderBadge();
+          await window.BLEGAB_CART.renderDrawer();
+        }
       }
 
       // ------------------------
@@ -349,6 +365,11 @@ function initCartPageQtyAndDelete() {
        }
 
         renderCartPage();
+
+        if (window.BLEGAB_CART) {
+          await window.BLEGAB_CART.renderBadge();
+          await window.BLEGAB_CART.renderDrawer();
+        }
       }
 
     } catch (err) {
@@ -397,6 +418,11 @@ function initCartPageQtyAndDelete() {
      }
 
       renderCartPage();
+
+      if (window.BLEGAB_CART) {
+        await window.BLEGAB_CART.renderBadge();
+        await window.BLEGAB_CART.renderDrawer();
+      }
 
     } catch (err) {
       console.error(err);

@@ -338,7 +338,7 @@ function renderTransactionHistory() {
 }
 
 function formatStxDisplayDate(isoDateString) {
-  return parseISODate(isoDateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(isoDateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 /* -----------------------------

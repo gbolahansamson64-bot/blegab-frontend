@@ -32,6 +32,45 @@ var selectedLaceType = "";
 var allCategories = [];
 var wishlistProducts = [];
 
+// ---- Shared body scroll lock (works reliably on mobile/iOS, unlike overflow:hidden alone) ----
+// Reference-counted so multiple overlays (filter panel, product modal, etc.)
+// can lock/unlock independently without one closing early and re-enabling
+// scroll while another overlay is still open. Locking this way (instead of
+// just body.style.overflow = 'hidden') stops iOS's rubber-band/momentum
+// scroll from moving the background while an overlay is open — which is
+// also what was making position:fixed, centered overlays appear to
+// drift/shake on iOS, since the browser keeps recalculating their fixed
+// position against a background that's still actually scrolling.
+var __scrollLockCount = 0;
+var __scrollLockY = 0;
+
+function lockBodyScroll() {
+  if (__scrollLockCount === 0) {
+    __scrollLockY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + __scrollLockY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  __scrollLockCount++;
+}
+
+function unlockBodyScroll() {
+  if (__scrollLockCount === 0) return;
+  __scrollLockCount--;
+  if (__scrollLockCount === 0) {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, __scrollLockY);
+  }
+}
+
 const API_URL = "https://backend-6j62.onrender.com/api/products";
 
 const CATEGORY_URL = "https://backend-6j62.onrender.com/api/categories";
@@ -41,12 +80,17 @@ const CART_URL = "https://backend-6j62.onrender.com/api/cart";
 const WISHLIST_URL = "https://backend-6j62.onrender.com/api/wishlist";
 
 
-function getProductImage(image) {
+function getShopProductImage(image) {
+
     if (!image) {
         return "assets/images/no-image.webp";
     }
 
-    // Already a complete URL
+    // Fix malformed URLs such as:
+    // https//res.cloudinary.com/...
+    image = image.replace(/^https\/\//, "https://");
+
+    // Cloudinary or any other complete URL
     if (
         image.startsWith("http://") ||
         image.startsWith("https://")
@@ -54,7 +98,7 @@ function getProductImage(image) {
         return image;
     }
 
-    // Images stored by backend such as /uploads/products/...
+    // Backend image path
     return "https://backend-6j62.onrender.com" + (
         image.startsWith("/") ? image : "/" + image
     );
@@ -149,6 +193,27 @@ if (selectedLaceType) {
        const data = await response.json();
 
         allProducts = data.products;
+
+        // Keep the cart drawer, cart page, and checkout in sync with the
+        // real products from the backend. Those all read from
+        // window.BLEGAB_SHOP_PRODUCTS and expect { id, image } — the
+        // backend gives us { _id, images: [...] } — so map the shape here.
+        window.BLEGAB_SHOP_PRODUCTS = allProducts.map(function (p) {
+          return {
+            id: p._id,
+            name: p.name,
+            price: p.price,
+            image: (Array.isArray(p.images) && p.images.length) ? p.images[0] : 'assets/images/no-image.webp',
+            badge: p.badge || null
+          };
+        });
+
+        if (window.BLEGAB_CART && typeof window.BLEGAB_CART.renderDrawer === 'function') {
+          window.BLEGAB_CART.renderDrawer();
+        }
+        if (typeof window.BLEGAB_RENDER_CART_PAGE === 'function') {
+          window.BLEGAB_RENDER_CART_PAGE();
+        }
 
         currentPage = data.currentPage;
 
@@ -561,6 +626,12 @@ function renderProductGrid(page) {
     card.className = 'product-card';
 
     var isWishlisted = wishlistProducts.includes(item._id);
+
+    var image = getShopProductImage(
+    item.images && item.images.length
+        ? item.images[0]
+        : null
+);
     
     // Build badge HTML if exists
     var badgeHTML = '';
@@ -572,11 +643,7 @@ function renderProductGrid(page) {
       '<a href="#" class="product-card__link" data-open-product="' + item._id + '">' +
         '<div class="product-card__image-wrap">' +
           '<img src="' +
-(
-item.images && item.images.length
-    ? item.images[0]
-    : "assets/images/no-image.webp"
-)
+image
 +
 '" alt="' + item.name + '" class="product-card__image" loading="lazy">' +
           badgeHTML +
@@ -1115,10 +1182,11 @@ var qtyValue = modal.querySelector("[data-qty-value]");
   function openModal(product) {
     modalName.textContent = product.name;
     modalPrice.textContent = "$" + Number(product.price).toFixed(2);
-    const mainImage =
+    const mainImage = getShopProductImage(
     product.images?.length
         ? product.images[0]
-        : "assets/images/no-image.webp";
+        : null
+);
 
 modalMainImage.src = mainImage;
 
@@ -1172,9 +1240,11 @@ images.forEach(function (image, index) {
         thumb.classList.add("is-active");
     }
 
+    var imageUrl = getShopProductImage(image);
+
     thumb.innerHTML =
         '<img src="' +
-        image +
+        imageUrl +
         '" alt="' +
         product.name +
         " " +
@@ -1183,7 +1253,7 @@ images.forEach(function (image, index) {
 
     thumb.addEventListener("click", function () {
 
-        modalMainImage.src = image;
+        modalMainImage.src = imageUrl;
 
         modal.querySelectorAll(".product-modal__thumb")
             .forEach(function (item) {
@@ -1198,19 +1268,6 @@ images.forEach(function (image, index) {
 
     thumbsContainer.appendChild(thumb);
 
-    var thumbImage = thumb.querySelector("img");
-
-    thumbImage.onerror = function () {
-
-        console.error(
-            "Failed to load thumbnail:",
-            image
-        );
-
-        this.style.display = "none";
-
-    };
-
 });
     var badge = modalBadge;
     if (badge) {
@@ -1223,13 +1280,13 @@ images.forEach(function (image, index) {
     qtyValue.textContent = qty;
     modal.classList.add('is-open');
     overlay.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
   }
 
   function closeModal() {
     modal.classList.remove('is-open');
     overlay.classList.remove('is-open');
-    document.body.style.overflow = '';
+    unlockBodyScroll();
   }
 
   // option pill toggles

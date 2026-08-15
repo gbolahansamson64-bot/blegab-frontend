@@ -507,155 +507,7 @@ async function fetchAPI(endpoint, options = {}) {
    CART
 =========================================================== */
 
-async function loadCart() {
 
-    try {
-
-        const { response, data } = await fetchAPI("/cart");
-
-        if (!response.ok || !data.success) return;
-
-        renderCart(data);
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-function renderCart(data) {
-
-    const container = document.querySelector("[data-cart-body]");
-
-    if (!container) return;
-
-    const items = data.cart?.items || [];
-
-    updateCartCount(data.totalItems || 0);
-
-    if (!items.length) {
-
-        container.innerHTML = `
-            <div class="cart-drawer__empty">
-
-                <h4>Your cart is empty</h4>
-
-                <p>Add your favorite wigs to get started.</p>
-
-            </div>
-        `;
-
-        updateCartSubtotal(0);
-
-        return;
-
-    }
-
-    container.innerHTML = items.map(item => {
-
-    const image = item.product.images?.[0];
-    const imageUrl = image
-        ? `https://backend-6j62.onrender.com${image}`
-        : "assets/images/placeholder.png";
-
-    return `
-
-        <div class="cart-item">
-
-            <img
-                src="${imageUrl}"
-                alt="${item.product.name}"
-                class="cart-item__image"
-            >
-
-            <div class="cart-item__info">
-
-                <h4>${item.product.name}</h4>
-
-                <p>$${item.product.price}</p>
-
-                <p>Qty: ${item.quantity}</p>
-
-            </div>
-
-            <button
-                class="cart-item__remove"
-                data-remove-cart="${item.product._id}"
-            >
-                ×
-            </button>
-
-        </div>
-
-    `;
-
-}).join("");
-
-    updateCartSubtotal(data.totalPrice || 0);
-
-    attachRemoveCartEvents();
-
-}
-
-function updateCartSubtotal(total) {
-
-    const subtotal = document.querySelector("[data-cart-subtotal]");
-
-    if (!subtotal) return;
-
-    subtotal.textContent = `$${Number(total).toFixed(2)}`;
-
-}
-
-function updateCartCount(count = 0) {
-
-    document.querySelectorAll("[data-cart-count]").forEach(el => {
-
-        el.textContent = count;
-
-    });
-
-}
-
-async function removeCartItem(productId) {
-
-    try {
-
-        const { response, data } = await fetchAPI(`/cart/${productId}`, {
-
-            method: "DELETE"
-
-        });
-
-        if (!response.ok || !data.success) return;
-
-        loadCart();
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-function attachRemoveCartEvents() {
-
-    document.querySelectorAll("[data-remove-cart]").forEach(button => {
-
-        button.onclick = () => {
-
-            removeCartItem(button.dataset.removeCart);
-
-        };
-
-    });
-
-}
 
 /* ===========================================================
    ACCOUNT
@@ -676,6 +528,8 @@ async function loadCurrentUser() {
         }
 
         showLoggedInUI(data.user);
+
+        startHeartbeat();
 
     } catch (error) {
 
@@ -739,18 +593,9 @@ async function logoutUser() {
 
         showGuestUI();
 
-        updateCartCount(0);
-
-        const cartBody = document.querySelector("[data-cart-body]");
-
-        if (cartBody) {
-
-            cartBody.innerHTML = `
-                <p class="cart-drawer__empty">
-                    Your cart is empty
-                </p>
-            `;
-
+        if (window.BLEGAB_CART) {
+            await window.BLEGAB_CART.renderBadge();
+            await window.BLEGAB_CART.renderDrawer();
         }
 
         window.location.href = "index.html";
@@ -847,8 +692,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeaderCategories();
 
     loadCurrentUser();
-
-    loadCart();
 
     initializeSearch();
 

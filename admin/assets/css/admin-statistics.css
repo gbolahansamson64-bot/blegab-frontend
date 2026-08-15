@@ -387,6 +387,18 @@
   color: var(--color-text-muted);
 }
 
+.stx-history-row--head span:nth-child(2) {
+  padding-left: 70px;   
+}
+
+.stx-history-row--head span:nth-child(3) {
+  padding-left: 50px;   
+}
+
+.stx-history-row--head span:nth-child(4) {
+  padding-left: 8px;   
+}
+
 .stx-history-table .admin-orders-table__body {
   max-height: none;
 }
@@ -412,26 +424,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .stx-history-description {
   font-size: 12.5px;
   color: var(--color-white);
   overflow: hidden;
+  padding-left: 70px;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .stx-history-date {
   font-size: 11.5px;
   color: var(--color-text-muted);
   white-space: nowrap;
+  padding-left: 50px;
 }
 
 .stx-history-amount {
   font-size: 13px;
   font-weight: 700;
-  color: var(--color-white);
+  color: #6fcf78;
   white-space: nowrap;
 }
 
@@ -472,7 +488,7 @@
    ----------------------------- */
 @media (max-width: 1023.98px) {
   .stx-history-row--head {
-    display: none;
+    display: none; 
   }
 
   .stx-history-item.stx-history-row {
@@ -487,8 +503,8 @@
   }
 
   .stx-history-reference { grid-area: reference; white-space: normal; }
-  .stx-history-description { grid-area: description; white-space: normal; font-size: 13px; }
-  .stx-history-date { grid-area: date; }
+  .stx-history-description { grid-area: description; white-space: normal; font-size: 13px; padding-left: 0; }
+  .stx-history-date { grid-area: date; padding-left: 0; }
   .stx-history-amount { grid-area: amount; text-align: right; }
   .stx-history-item .admin-status { grid-area: status; justify-self: end; }
 }

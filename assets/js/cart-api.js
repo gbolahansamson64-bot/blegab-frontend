@@ -49,7 +49,7 @@ function updateCartCount(count) {
 // PRODUCT IMAGE URL
 // =========================================================
 
-function getProductImage(product) {
+function getCartProductImage(product) {
 
   if (
     !product ||
@@ -65,39 +65,23 @@ function getProductImage(product) {
     return "assets/images/no-image.webp";
   }
 
+  // Fix malformed Cloudinary URLs
+  const normalizedImage = image.replace(/^https\/\//, "https://");
 
-  // -------------------------------------------------------
-  // IMPORTANT:
-  // Cloudinary already gives us a complete URL.
-  // DO NOT add localhost to it.
-  // -------------------------------------------------------
-
+  // Complete URL
   if (
-    image.startsWith("http://") ||
-    image.startsWith("https://")
+    normalizedImage.startsWith("http://") ||
+    normalizedImage.startsWith("https://")
   ) {
-    return image;
+    return normalizedImage;
   }
 
-
-  // -------------------------------------------------------
   // Backend image path
-  // Example:
-  // /uploads/product.jpg
-  // -------------------------------------------------------
-
-  if (image.startsWith("/")) {
-    return BACKEND_URL + image;
+  if (normalizedImage.startsWith("/")) {
+    return BACKEND_URL + normalizedImage;
   }
 
-
-  // -------------------------------------------------------
-  // Backend image path without /
-  // Example:
-  // uploads/product.jpg
-  // -------------------------------------------------------
-
-  return BACKEND_URL + "/" + image;
+  return BACKEND_URL + "/" + normalizedImage;
 }
 
 
@@ -193,7 +177,7 @@ function renderMiniCart(data) {
 
 
     // Get correct image URL
-    const image = getProductImage(product);
+   const image = getCartProductImage(product);
 
 
     /*

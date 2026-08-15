@@ -177,13 +177,15 @@ getCart: async function () {
 
   // ---------------------------------------
   // GET CART COUNT
+  // (counts distinct products in the cart,
+  // not total quantity across all items)
   // ---------------------------------------
   getCount: async function () {
 
     try {
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart/count',
+        'https://backend-6j62.onrender.com/api/cart',
         {
           method: 'GET',
           credentials: 'include'
@@ -196,7 +198,7 @@ getCart: async function () {
         return 0;
       }
 
-      return data.count || 0;
+      return data.cart?.items?.length || 0;
 
     } catch (error) {
 
@@ -282,7 +284,7 @@ getCart: async function () {
           product.images &&
           product.images.length
             ? product.images[0]
-            : '/images/placeholder.png';
+            : 'assets/images/placeholder.png';
 
         return '' +
 
@@ -511,7 +513,6 @@ window.BLEGAB_WISHLIST = {
 //   }
 // });
 
-
 document.addEventListener('click', async function (event) {
 
   const decreaseBtn = event.target.closest('[data-cart-decrease]');
@@ -520,27 +521,21 @@ document.addEventListener('click', async function (event) {
   const resetBtn = event.target.closest('[data-cart-reset]');
   const viewBtn = event.target.closest('[data-cart-add]');
 
-  if (
-    !decreaseBtn &&
-    !increaseBtn &&
-    !removeBtn &&
-    !resetBtn &&
-    !viewBtn
-  ) {
+  if (!decreaseBtn && !increaseBtn && !removeBtn && !resetBtn && !viewBtn) {
     return;
   }
 
   try {
 
-    // =========================================
-    // DECREASE QUANTITY
-    // =========================================
+    // -----------------------------
+    // DECREASE
+    // -----------------------------
     if (decreaseBtn) {
 
       const productId = decreaseBtn.dataset.cartDecrease;
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart',
+        `https://backend-6j62.onrender.com/api/cart`,
         {
           method: 'GET',
           credentials: 'include'
@@ -549,37 +544,15 @@ document.addEventListener('click', async function (event) {
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        console.error(data.message || 'Failed to load cart');
-        return;
-      }
-
-      const item = data.cart?.items?.find(function (cartItem) {
-        return String(cartItem.product?._id) === String(productId);
+      const item = data.cart?.items?.find(function (item) {
+        return item.product?._id === productId;
       });
 
       if (!item) return;
 
-      // If quantity is 1, remove the item completely
-      if (item.quantity <= 1) {
+      if (item.quantity > 1) {
 
-        const removeResponse = await fetch(
-          `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
-          {
-            method: 'DELETE',
-            credentials: 'include'
-          }
-        );
-
-        if (!removeResponse.ok) {
-          const removeData = await removeResponse.json().catch(() => ({}));
-          alert(removeData.message || 'Failed to remove item');
-          return;
-        }
-
-      } else {
-
-        const updateResponse = await fetch(
+        await fetch(
           `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
           {
             method: 'PUT',
@@ -593,35 +566,33 @@ document.addEventListener('click', async function (event) {
           }
         );
 
-        if (!updateResponse.ok) {
-          const updateData = await updateResponse.json().catch(() => ({}));
-          alert(updateData.message || 'Failed to update quantity');
-          return;
-        }
+      } else {
+
+        await fetch(
+          `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
+          {
+            method: 'DELETE',
+            credentials: 'include'
+          }
+        );
       }
 
       await window.BLEGAB_CART.renderBadge();
       await window.BLEGAB_CART.renderDrawer();
 
-      if (
-        typeof window.BLEGAB_RENDER_CART_PAGE === 'function'
-      ) {
-        await window.BLEGAB_RENDER_CART_PAGE();
-      }
-
       return;
     }
 
 
-    // =========================================
-    // INCREASE QUANTITY
-    // =========================================
+    // -----------------------------
+    // INCREASE
+    // -----------------------------
     if (increaseBtn) {
 
       const productId = increaseBtn.dataset.cartIncrease;
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart',
+        `https://backend-6j62.onrender.com/api/cart`,
         {
           method: 'GET',
           credentials: 'include'
@@ -630,18 +601,13 @@ document.addEventListener('click', async function (event) {
 
       const data = await response.json();
 
-      if (!response.ok || !data.success) {
-        console.error(data.message || 'Failed to load cart');
-        return;
-      }
-
-      const item = data.cart?.items?.find(function (cartItem) {
-        return String(cartItem.product?._id) === String(productId);
+      const item = data.cart?.items?.find(function (item) {
+        return item.product?._id === productId;
       });
 
       if (!item) return;
 
-      const updateResponse = await fetch(
+      await fetch(
         `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
         {
           method: 'PUT',
@@ -655,28 +621,16 @@ document.addEventListener('click', async function (event) {
         }
       );
 
-      if (!updateResponse.ok) {
-        const updateData = await updateResponse.json().catch(() => ({}));
-        alert(updateData.message || 'Failed to increase quantity');
-        return;
-      }
-
       await window.BLEGAB_CART.renderBadge();
       await window.BLEGAB_CART.renderDrawer();
-
-      if (
-        typeof window.BLEGAB_RENDER_CART_PAGE === 'function'
-      ) {
-        await window.BLEGAB_RENDER_CART_PAGE();
-      }
 
       return;
     }
 
 
-    // =========================================
-    // REMOVE ITEM
-    // =========================================
+    // -----------------------------
+    // REMOVE
+    // -----------------------------
     if (removeBtn) {
 
       const productId = removeBtn.dataset.cartRemove;
@@ -689,7 +643,7 @@ document.addEventListener('click', async function (event) {
         }
       );
 
-      const data = await response.json().catch(() => ({}));
+      const data = await response.json();
 
       if (!response.ok) {
         alert(data.message || 'Failed to remove item');
@@ -699,60 +653,36 @@ document.addEventListener('click', async function (event) {
       await window.BLEGAB_CART.renderBadge();
       await window.BLEGAB_CART.renderDrawer();
 
-      if (
-        typeof window.BLEGAB_RENDER_CART_PAGE === 'function'
-      ) {
-        await window.BLEGAB_RENDER_CART_PAGE();
-      }
-
       return;
     }
 
 
-    // =========================================
-    // RESET QUANTITY TO 1
-    // =========================================
+    // -----------------------------
+    // RESET QTY TO 1
+    // -----------------------------
     if (resetBtn) {
 
       const productId = resetBtn.dataset.cartReset;
 
-      const response = await fetch(
+      await fetch(
         `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
         {
           method: 'PUT',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            quantity: 1
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: 1 })
         }
       );
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        alert(data.message || 'Failed to reset quantity');
-        return;
-      }
 
       await window.BLEGAB_CART.renderBadge();
       await window.BLEGAB_CART.renderDrawer();
 
-      if (
-        typeof window.BLEGAB_RENDER_CART_PAGE === 'function'
-      ) {
-        await window.BLEGAB_RENDER_CART_PAGE();
-      }
-
       return;
     }
 
-
-    // =========================================
+    // -----------------------------
     // VIEW CART
-    // =========================================
+    // -----------------------------
     if (viewBtn) {
 
       window.location.href = 'cart.html';
@@ -767,191 +697,6 @@ document.addEventListener('click', async function (event) {
   }
 
 });
-
-// document.addEventListener('click', async function (event) {
-
-//   const decreaseBtn = event.target.closest('[data-cart-decrease]');
-//   const increaseBtn = event.target.closest('[data-cart-increase]');
-//   const removeBtn = event.target.closest('[data-cart-remove]');
-//   const resetBtn = event.target.closest('[data-cart-reset]');
-//   const viewBtn = event.target.closest('[data-cart-add]');
-
-//   if (!decreaseBtn && !increaseBtn && !removeBtn && !resetBtn && !viewBtn) {
-//     return;
-//   }
-
-//   try {
-
-//     // -----------------------------
-//     // DECREASE
-//     // -----------------------------
-//     if (decreaseBtn) {
-
-//       const productId = decreaseBtn.dataset.cartDecrease;
-
-//       const response = await fetch(
-//         `https://backend-6j62.onrender.com/api/cart`,
-//         {
-//           method: 'GET',
-//           credentials: 'include'
-//         }
-//       );
-
-//       const data = await response.json();
-
-//       const item = data.cart?.items?.find(function (item) {
-//         return item.product?._id === productId;
-//       });
-
-//       if (!item) return;
-
-//       if (item.quantity > 1) {
-
-//         await fetch(
-//           `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
-//           {
-//             method: 'PUT',
-//             credentials: 'include',
-//             headers: {
-//               'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//               quantity: item.quantity - 1
-//             })
-//           }
-//         );
-
-//       } else {
-
-//         await fetch(
-//           `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
-//           {
-//             method: 'DELETE',
-//             credentials: 'include'
-//           }
-//         );
-//       }
-
-//       await window.BLEGAB_CART.renderBadge();
-//       await window.BLEGAB_CART.renderDrawer();
-
-//       return;
-//     }
-
-
-//     // -----------------------------
-//     // INCREASE
-//     // -----------------------------
-//     if (increaseBtn) {
-
-//       const productId = increaseBtn.dataset.cartIncrease;
-
-//       const response = await fetch(
-//         `https://backend-6j62.onrender.com/api/cart`,
-//         {
-//           method: 'GET',
-//           credentials: 'include'
-//         }
-//       );
-
-//       const data = await response.json();
-
-//       const item = data.cart?.items?.find(function (item) {
-//         return item.product?._id === productId;
-//       });
-
-//       if (!item) return;
-
-//       await fetch(
-//         `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
-//         {
-//           method: 'PUT',
-//           credentials: 'include',
-//           headers: {
-//             'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify({
-//             quantity: item.quantity + 1
-//           })
-//         }
-//       );
-
-//       await window.BLEGAB_CART.renderBadge();
-//       await window.BLEGAB_CART.renderDrawer();
-
-//       return;
-//     }
-
-
-//     // -----------------------------
-//     // REMOVE
-//     // -----------------------------
-//     if (removeBtn) {
-
-//       const productId = removeBtn.dataset.cartRemove;
-
-//       const response = await fetch(
-//         `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
-//         {
-//           method: 'DELETE',
-//           credentials: 'include'
-//         }
-//       );
-
-//       const data = await response.json();
-
-//       if (!response.ok) {
-//         alert(data.message || 'Failed to remove item');
-//         return;
-//       }
-
-//       await window.BLEGAB_CART.renderBadge();
-//       await window.BLEGAB_CART.renderDrawer();
-
-//       return;
-//     }
-
-
-//     // -----------------------------
-//     // RESET QTY TO 1
-//     // -----------------------------
-//     if (resetBtn) {
-
-//       const productId = resetBtn.dataset.cartReset;
-
-//       await fetch(
-//         `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
-//         {
-//           method: 'PUT',
-//           credentials: 'include',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify({ quantity: 1 })
-//         }
-//       );
-
-//       await window.BLEGAB_CART.renderBadge();
-//       await window.BLEGAB_CART.renderDrawer();
-
-//       return;
-//     }
-
-//     // -----------------------------
-//     // VIEW CART
-//     // -----------------------------
-//     if (viewBtn) {
-
-//       window.location.href = 'cart.html';
-
-//       return;
-//     }
-
-//   } catch (error) {
-
-//     console.error('Cart action failed:', error);
-
-//   }
-
-// });
 
 document.addEventListener('change', async function (event) {
   var qtyInput = event.target.closest('[data-cart-qty-input]');
