@@ -36,38 +36,38 @@
             <circle cx="7" cy="18" r="1.6"/>
             <circle cx="17.5" cy="18" r="1.6"/>
           </svg>
-          Free Shipping On All Orders Over $200
+          Free Shipping On All Orders Over $500
         </span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
       </div>
 
       <!-- Group 2 (exact duplicate, hidden from screen readers, makes the loop seamless) -->
       <div class="announcement-bar__group" aria-hidden="true">
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
 
-        <span class="announcement-bar__item">Free Shipping On All Orders Over $200</span>
+        <span class="announcement-bar__item">Free Shipping On All Orders Over $500</span>
         <span class="announcement-bar__dot"></span>
       </div>
 
