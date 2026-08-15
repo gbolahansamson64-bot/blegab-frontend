@@ -15,7 +15,7 @@
 (function () {
   var WHATSAPP_NUMBER = '14696180809'; // digits only, no + no spaces
   var WHATSAPP_NAME = 'Blegab Luxury Wigs';
-  var WHATSAPP_GREETING = 'Hello, how can I help you today?';
+  var WHATSAPP_GREETING = 'Welcome to Blegab. Need help finding your perfect wig? we are here to assist';
   var WHATSAPP_AVATAR = 'assets/images/whatsappchatimg.webp'; // used if the photo above is missing
 
   var mount = document.querySelector('[data-whatsapp-widget]');
