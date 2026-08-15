@@ -96,7 +96,6 @@
 
     <div class="container footer-bottom">
       <p class="footer-bottom__copyright">&copy; 2026 Blegab Luxury Wigs. All Rights Reserved.</p>
-      <a href="developer.html" class="footer-bottom__dev-link">Developer Page</a>
     </div>
   </footer>
 
