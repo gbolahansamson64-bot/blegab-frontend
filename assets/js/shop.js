@@ -18,7 +18,7 @@ var keyword = "";
 
 var selectedCategory = "";
 
-var selectedSort = "";
+var selectedSort = "best-selling";
 
 var minPrice = "";
 
@@ -32,13 +32,13 @@ var selectedLaceType = "";
 var allCategories = [];
 var wishlistProducts = [];
 
-const API_URL = "http://localhost:5000/api/products";
+const API_URL = "https://backend-6j62.onrender.com/api/products";
 
-const CATEGORY_URL = "http://localhost:5000/api/categories";
+const CATEGORY_URL = "https://backend-6j62.onrender.com/api/categories";
 
-const CART_URL = "http://localhost:5000/api/cart";
+const CART_URL = "https://backend-6j62.onrender.com/api/cart";
 
-const WISHLIST_URL = "http://localhost:5000/api/wishlist";
+const WISHLIST_URL = "https://backend-6j62.onrender.com/api/wishlist";
 
 
 function getProductImage(image) {
@@ -55,7 +55,7 @@ function getProductImage(image) {
     }
 
     // Images stored by backend such as /uploads/products/...
-    return "http://localhost:5000" + (
+    return "https://backend-6j62.onrender.com" + (
         image.startsWith("/") ? image : "/" + image
     );
 }
@@ -81,7 +81,7 @@ async function fetchProducts() {
 
          selectedCategory = params.get("category") || "";
 
-         selectedSort = params.get("sort") || "";
+         selectedSort = params.get("sort") || "best-selling";
 
          minPrice = params.get("minPrice") || "";
 
@@ -381,14 +381,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         calculateProductsPerPage();
 
-        await fetchCategories();
-
-        await fetchWishlist();
-
-        await updateWishlistCount();
-
-        await fetchProducts();
-
         initSearch();
 
         initSidebarFilters();
@@ -405,9 +397,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         initCustomSelect();
 
-        initPriceSlider();
-
         initClearFilters();
+
+        await fetchCategories();
+
+        await fetchWishlist();
+
+        await updateWishlistCount();
+
+        await fetchProducts();
+
+        initPriceSlider();
 
     })();
 
@@ -963,12 +963,18 @@ function initShopFilterPanel() {
   var panel = document.querySelector('[data-filter-panel]');
   var overlay = document.querySelector('[data-filter-overlay]');
   var closeBtn = document.querySelector('[data-filter-close]');
+  var scrollY = 0;
   if (!trigger || !panel || !overlay) return;
 
   function openPanel() {
     panel.classList.add('is-open');
     overlay.classList.add('is-visible');
     trigger.setAttribute('aria-expanded', 'true');
+    scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + scrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
   }
 
@@ -976,7 +982,12 @@ function initShopFilterPanel() {
     panel.classList.remove('is-open');
     overlay.classList.remove('is-visible');
     trigger.setAttribute('aria-expanded', 'false');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
     document.body.style.overflow = '';
+    window.scrollTo(0, scrollY);
   }
 
   trigger.addEventListener('click', openPanel);

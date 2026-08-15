@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Orders | Blegab Luxury Wigs</title>
+
+    <!-- Existing site styles -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+
+    <!-- Orders page styles -->
+    <link rel="stylesheet" href="assets/css/orders.css">
+</head>
+
+<body>
+
+    <!-- Header will be injected by header.js -->
+    <div data-site-header></div>
+
+
+    <main class="orders-page">
+
+        <section class="orders-hero">
+
+            <div class="orders-container">
+
+                
+                    <a href="profile.html" class="orders__back">
+                    ← Back to Profile
+                    </a>
+
+                <h1>My Orders</h1>
+
+                <p>
+                    View and manage your recent purchases.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="orders-section">
+
+            <div class="orders-container">
+
+                <!-- Loading state -->
+                <div
+                    id="orders-loading"
+                    class="orders-state"
+                >
+                    <p>Loading your orders...</p>
+                </div>
+
+
+                <!-- Error state -->
+                <div
+                    id="orders-error"
+                    class="orders-state orders-error"
+                    style="display: none;"
+                >
+                    <p id="orders-error-message">
+                        Unable to load your orders.
+                    </p>
+                </div>
+
+
+                <!-- Empty state -->
+                <div
+                    id="orders-empty"
+                    class="orders-state"
+                    style="display: none;"
+                >
+
+                    <h2>No Orders Yet</h2>
+
+                    <p>
+                        You haven't placed any orders yet.
+                    </p>
+
+                    <a
+                        href="shop.html"
+                        class="btn btn-primary"
+                    >
+                        Start Shopping
+                    </a>
+
+                </div>
+
+
+                <!-- Orders will be rendered here -->
+                <div
+                    id="orders-list"
+                    class="orders-list"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Existing footer -->
+    <div data-site-footer></div>
+
+
+    <!-- Existing site JavaScript -->
+    <script src="assets/js/main.js"></script>
+
+    <!-- Header -->
+    <script src="assets/js/header.js"></script>
+
+    <!-- Footer -->
+    <script src="assets/js/footer.js"></script>
+
+    <!-- Orders -->
+    <script src="assets/js/orders.js"></script>
+
+</body>
+
+</html>

@@ -9,7 +9,7 @@
    everything else (header state, icon, dropdown) already reacts
    to BLEGAB_AUTH automatically.
    ========================================================= */
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://backend-6j62.onrender.com/api";
 
 document.addEventListener('DOMContentLoaded', async function () {
   await loadCurrentUser();

@@ -525,6 +525,20 @@
   <textarea id="prd-description-input" data-prd-description-input rows="3" placeholder="Short product description"></textarea>
 </div>
 
+
+<div class="prd-form-field">
+  <label for="prd-badge-input">Badge</label>
+  <select id="prd-badge-input" data-prd-badge-input>
+    <option value="">No Badge</option>
+    <option value="New">New</option>
+    <option value="Sale">Sale</option>
+    <option value="Best Seller">Best Seller</option>
+    <option value="Featured">Featured</option>
+    <option value="Hot">Hot</option>
+    <option value="Limited">Limited</option>
+  </select>
+</div>
+
       <div class="prd-form-field prd-form-field--full">
         <label for="prd-status-select">Status</label>
         <select id="prd-status-select" data-prd-status-select>
@@ -534,9 +548,9 @@
         </select>
       </div>
 
-      <p class="prd-modal__note" data-prd-product-modal-note>
+      <!-- <p class="prd-modal__note" data-prd-product-modal-note>
         <strong>Backend note:</strong> product creation isn't wired up yet. Once the products API exists, point this form's save handler at a real endpoint (e.g. <code>POST /api/admin/products</code>) inside <code>openProductModal()</code> / <code>initProductModal()</code> in <code>admin-products.js</code> so new products persist for real.
-      </p>
+      </p> -->
 
       <div class="prd-modal__footer">
         <button type="button" class="btn btn-outline" data-prd-product-modal-cancel>Cancel</button>

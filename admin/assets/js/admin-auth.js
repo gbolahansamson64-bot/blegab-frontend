@@ -10,7 +10,7 @@
    Communicates with the Express backend API.
 ========================================================= */
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://backend-6j62.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async function () {
 

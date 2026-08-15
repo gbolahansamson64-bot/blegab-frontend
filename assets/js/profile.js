@@ -35,23 +35,70 @@
 
 import { Country, State, City } from 'https://cdn.jsdelivr.net/npm/country-state-city@3/+esm';
    
+var API_BASE = "https://backend-6j62.onrender.com/api/auth";
+
 window.BLEGAB_PROFILE = {
-  _keyFor: function (user) {
-    var id = (user && (user.email || user.id || user.name)) || 'guest';
-    return 'blegab_profile_' + id;
-  },
-  get: function (user) {
-    try {
-      var raw = localStorage.getItem(this._keyFor(user));
-      return raw ? JSON.parse(raw) : {};
-    } catch (e) {
-      return {};
+  get: async function () {
+    const response = await fetch(`${API_BASE}/me`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load profile");
     }
+
+    const user = data.user;
+
+    return {
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+
+      phoneCode: user.phoneCode || "",
+      phone: user.phone || "",
+
+      dob: user.dob
+        ? new Date(user.dob).toISOString().split("T")[0]
+        : "",
+
+      gender: user.gender || "",
+
+      address: user.address?.street || "",
+      country: user.address?.country || "",
+      state: user.address?.state || "",
+      city: user.address?.city || "",
+      postalCode: user.address?.postalCode || "",
+
+      newsletter: !!user.newsletter,
+
+      image: user.avatar || "",
+    };
   },
-  save: function (user, profile) {
-    localStorage.setItem(this._keyFor(user), JSON.stringify(profile));
-    return Promise.resolve(profile);
-  }
+
+  save: async function (profile) {
+    const response = await fetch(`${API_BASE}/profile`, {
+      method: "PUT",
+
+      credentials: "include",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(profile),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save profile");
+    }
+
+    return data.user;
+  },
 };
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -235,30 +282,54 @@ function initProfileForm(user) {
   wireBack();
 
   /* ---- Load existing profile into the form ---- */
-  function loadProfile() {
-    var profile = window.BLEGAB_PROFILE.get(user) || {};
+  async function loadProfile() {
+  try {
+    var profile = await window.BLEGAB_PROFILE.get();
+
+    profile = profile || {};
 
     fieldEls.forEach(function (el) {
       var key = el.dataset.field;
-      if (!(key in profile) || key === 'state' || key === 'city') return;
-      if (el.type === 'checkbox') {
+
+      if (!(key in profile) || key === "state" || key === "city") {
+        return;
+      }
+
+      if (el.type === "checkbox") {
         el.checked = !!profile[key];
       } else {
         el.value = profile[key];
       }
     });
 
-        if (profile.phoneCode) {
-      document.getElementById('phoneCode').dispatchEvent(new Event('change'));
+    if (profile.phoneCode) {
+      var phoneCodeElement = document.getElementById("phoneCode");
+
+      if (phoneCodeElement) {
+        phoneCodeElement.value = profile.phoneCode;
+        phoneCodeElement.dispatchEvent(new Event("change"));
+      }
     }
 
     if (profile.country && window.BLEGAB_FILL_STATES) {
       window.BLEGAB_FILL_STATES(profile.country);
-      if (profile.state) {
-        document.getElementById('state').value = profile.state;
+
+      var stateElement = document.getElementById("state");
+
+      if (stateElement && profile.state) {
+        stateElement.value = profile.state;
+
         if (window.BLEGAB_FILL_CITIES) {
-          window.BLEGAB_FILL_CITIES(profile.country, profile.state);
-          if (profile.city) document.getElementById('city').value = profile.city;
+          window.BLEGAB_FILL_CITIES(
+            profile.country,
+            profile.state
+          );
+
+          var cityElement = document.getElementById("city");
+
+          if (cityElement && profile.city) {
+            cityElement.value = profile.city;
+          }
         }
       }
     }
@@ -269,7 +340,16 @@ function initProfileForm(user) {
 
     savedSnapshot = getCurrentSnapshot();
     updateSaveButtonState();
+
+  } catch (error) {
+    console.error("Failed to load profile:", error);
+
+    if (saveStatus) {
+      saveStatus.textContent = "Unable to load profile";
+      saveStatus.classList.add("is-visible");
+    }
   }
+}
 
   /* ---- Avatar uploader ---- */
   function wireAvatarUploader() {
@@ -389,19 +469,53 @@ function wireFieldChangeTracking() {
       var profile = collectFieldData();
       profile.image = currentImage;
 
-      window.BLEGAB_PROFILE.save(user, profile).then(function () {
-        savedSnapshot = getCurrentSnapshot();
-        updateSaveButtonState();
+      form.addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-        if (saveStatus) {
-          saveStatus.textContent = 'Saved';
-          saveStatus.classList.add('is-visible');
-          window.clearTimeout(saveStatus._hideTimer);
-          saveStatus._hideTimer = window.setTimeout(function () {
-            saveStatus.classList.remove('is-visible');
-          }, 2500);
-        }
-      });
+  if (saveBtn.disabled) return;
+
+  var profile = collectFieldData();
+
+  profile.image = currentImage;
+
+  try {
+    saveBtn.disabled = true;
+
+    if (saveStatus) {
+      saveStatus.textContent = "Saving...";
+      saveStatus.classList.add("is-visible");
+    }
+
+    await window.BLEGAB_PROFILE.save(profile);
+
+    savedSnapshot = getCurrentSnapshot();
+
+    updateSaveButtonState();
+
+    if (saveStatus) {
+      saveStatus.textContent = "Saved";
+      saveStatus.classList.add("is-visible");
+
+      window.clearTimeout(saveStatus._hideTimer);
+
+      saveStatus._hideTimer = window.setTimeout(function () {
+        saveStatus.classList.remove("is-visible");
+      }, 2500);
+    }
+
+  } catch (error) {
+    console.error("Failed to save profile:", error);
+
+    if (saveStatus) {
+      saveStatus.textContent =
+        error.message || "Unable to save profile";
+
+      saveStatus.classList.add("is-visible");
+    }
+
+    updateSaveButtonState();
+  }
+});
     });
   }
 

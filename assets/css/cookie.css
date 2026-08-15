@@ -534,30 +534,110 @@ body.cc-scroll-lock {
     bottom: 12px;
     width: 94%;
     padding: var(--space-sm);
+    border-radius: var(--cc-radius-sm);
   }
-
   .cookie-banner__inner {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-sm);
   }
-
+  .cookie-banner__main {
+    gap: 10px;
+  }
+  .cookie-banner__icon {
+    width: 34px;
+    height: 34px;
+  }
+  .cookie-banner__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .cookie-banner__heading {
+    font-size: 15.5px;
+  }
+  .cookie-banner__text {
+    font-size: 13px;
+    max-width: none;
+  }
   .cookie-banner__actions {
     justify-content: stretch;
+    flex-direction: column;
+    gap: 8px;
   }
-
   .cookie-banner__actions .cc-btn {
     flex: 1 1 auto;
     text-align: center;
+    width: 100%;
+    order: 0;
+  }
+  .cookie-banner__actions .cc-btn--gold {
+    order: -2;
+  }
+  .cookie-banner__actions .cc-btn--outline {
+    order: -1;
+  }
+  .cookie-banner__actions .cc-btn--text {
+    order: 0;
+    padding: 10px 6px;
   }
 
   .cookie-modal {
     padding: var(--space-md);
     max-height: 92vh;
+    border-radius: var(--cc-radius-sm);
   }
-
   .cookie-modal__title {
     font-size: 20px;
+  }
+  .cookie-modal__header {
+    padding-right: 36px;
+  }
+
+  /* Category rows: let title wrap onto its own line above the
+     always-on badge / switch instead of squeezing everything in */
+  .cc-category {
+    flex-wrap: wrap;
+  }
+  .cc-category__title-row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .cc-category__title {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .cookie-banner {
+    width: 96%;
+    bottom: 8px;
+    padding: 14px;
+  }
+  .cookie-banner__heading {
+    font-size: 14.5px;
+  }
+  .cookie-banner__text {
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .cc-btn {
+    padding: 12px 18px;
+    font-size: 12px;
+  }
+  .cookie-modal {
+    padding: 14px;
+  }
+  .cookie-modal__title {
+    font-size: 18px;
+  }
+  .cookie-modal__subtitle {
+    font-size: 12.5px;
+  }
+  .cc-category {
+    padding: 10px;
+  }
+  .cc-category__desc {
+    font-size: 12.5px;
   }
 }
 
@@ -565,7 +645,6 @@ body.cc-scroll-lock {
   .cookie-modal__footer {
     flex-direction: column-reverse;
   }
-
   .cookie-modal__footer .cc-btn {
     width: 100%;
   }

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://backend-6j62.onrender.com/api";
 
 const params = new URLSearchParams(window.location.search);
 

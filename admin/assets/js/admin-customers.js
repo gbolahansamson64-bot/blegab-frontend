@@ -54,7 +54,7 @@ async function fetchCustomers() {
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/admin/customers",
+      "https://backend-6j62.onrender.com/api/admin/customers",
       {
         method: "GET",
         credentials: "include"
@@ -97,7 +97,7 @@ window.addEventListener('resize', function () {
 
 var allCustomers = [];
 var currentCustomers = [];
-var selectedCustomerIds = new Set();
+// var selectedCustomerIds = new Set();
 var cusCurrentPage = 1;
 
 function cusGetPageSize() {
@@ -135,11 +135,11 @@ function renderCustomers(customers) {
     return '' +
       '<div class="customer-row" data-customer-id="' + customer.id + '">' +
         '<div class="customer-row__profile">' +
-          '<button type="button" class="customer-row__check' + (selectedCustomerIds.has(customer.id) ? ' is-checked' : '') + '" data-row-check aria-label="Select customer">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
-              '<path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '</svg>' +
-          '</button>' +
+          // '<button type="button" class="customer-row__check' + (selectedCustomerIds.has(customer.id) ? ' is-checked' : '') + '" data-row-check aria-label="Select customer">' +
+          //   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+          //     '<path d="M5 12l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>' +
+          //   '</svg>' +
+          // '</button>' +
           '<img src="' + customer.image + '" alt="' + customer.name + '" class="customer-row__avatar" />' +
           '<div class="customer-row__info">' +
             '<span class="customer-row__name">' + customer.name + '</span>' +
@@ -173,7 +173,7 @@ function renderCustomers(customers) {
       '</div>';
   }).join('');
 
-  updateDeleteSelectedUI();
+  // updateDeleteSelectedUI();
   renderCustomersPagination(cusTotalPages, currentCustomers.length, cusPageSize);
 }
 
@@ -202,51 +202,56 @@ function renderCustomersPagination(totalPages, totalItems, pageSize) {
   pages.innerHTML = html;
 }
 
-function updateDeleteSelectedUI() {
-  var btn = document.querySelector('[data-delete-selected]');
-  if (btn) {
-    var count = selectedCustomerIds.size;
-    btn.hidden = count === 0;
-    var countLabel = btn.querySelector('[data-delete-selected-count]');
-    if (countLabel) countLabel.textContent = 'Delete Selected (' + count + ')';
-  }
+// function updateDeleteSelectedUI() {
+//   var btn = document.querySelector('[data-delete-selected]');
+//   if (btn) {
+//     var count = selectedCustomerIds.size;
+//     btn.hidden = count === 0;
+//     var countLabel = btn.querySelector('[data-delete-selected-count]');
+//     if (countLabel) countLabel.textContent = 'Delete Selected (' + count + ')';
+//   }
 
-  var selectAllBtn = document.querySelector('[data-select-all-toggle]');
-  if (selectAllBtn) {
-    var allSelected = currentCustomers.length > 0 && currentCustomers.every(function (c) { return selectedCustomerIds.has(c.id); });
-    selectAllBtn.classList.toggle('is-checked', allSelected);
-  }
-}
+//   var selectAllBtn = document.querySelector('[data-select-all-toggle]');
+//   if (selectAllBtn) {
+//     var allSelected = currentCustomers.length > 0 && currentCustomers.every(function (c) { return selectedCustomerIds.has(c.id); });
+//     selectAllBtn.classList.toggle('is-checked', allSelected);
+//   }
+// }
 
-function toggleCustomerSelection(id) {
-  if (selectedCustomerIds.has(id)) {
-    selectedCustomerIds.delete(id);
-  } else {
-    selectedCustomerIds.add(id);
-  }
-  var rowCheck = document.querySelector('.customer-row[data-customer-id="' + id + '"] [data-row-check]');
-  if (rowCheck) rowCheck.classList.toggle('is-checked', selectedCustomerIds.has(id));
-  updateDeleteSelectedUI();
-}
+// function toggleCustomerSelection(id) {
+//   if (selectedCustomerIds.has(id)) {
+//     selectedCustomerIds.delete(id);
+//   } else {
+//     selectedCustomerIds.add(id);
+//   }
+//   var rowCheck = document.querySelector('.customer-row[data-customer-id="' + id + '"] [data-row-check]');
+//   if (rowCheck) rowCheck.classList.toggle('is-checked', selectedCustomerIds.has(id));
+//   updateDeleteSelectedUI();
+// }
 
-function setAllSelected(select) {
-  selectedCustomerIds.clear();
-  if (select) {
-    currentCustomers.forEach(function (c) { selectedCustomerIds.add(c.id); });
-  }
-  document.querySelectorAll('[data-row-check]').forEach(function (el) {
-    var id = el.closest('.customer-row').dataset.customerId;
-    el.classList.toggle('is-checked', selectedCustomerIds.has(id));
-  });
-  updateDeleteSelectedUI();
-}
+// function setAllSelected(select) {
+//   selectedCustomerIds.clear();
+//   if (select) {
+//     currentCustomers.forEach(function (c) { selectedCustomerIds.add(c.id); });
+//   }
+//   document.querySelectorAll('[data-row-check]').forEach(function (el) {
+//     var id = el.closest('.customer-row').dataset.customerId;
+//     el.classList.toggle('is-checked', selectedCustomerIds.has(id));
+//   });
+//   updateDeleteSelectedUI();
+// }
 
 function applyCustomersFilter(status) {
   if (!status || status === 'all') {
     renderCustomers(allCustomers);
-  } else {
-    renderCustomers(allCustomers.filter(function (c) { return c.status === status; }));
+    return;
   }
+
+  var filteredCustomers = allCustomers.filter(function (customer) {
+    return customer.status === status;
+  });
+
+  renderCustomers(filteredCustomers);
 }
 
 async function deleteCustomerById(id) {
@@ -254,7 +259,7 @@ async function deleteCustomerById(id) {
     try {
 
         const response = await fetch(
-            `http://localhost:5000/api/admin/customers/${id}`,
+            `https://backend-6j62.onrender.com/api/admin/customers/${id}`,
             {
                 method: "DELETE",
                 credentials: "include"
@@ -268,10 +273,10 @@ async function deleteCustomerById(id) {
         }
 
         allCustomers = allCustomers.filter(function (c) {
-            return c._id !== id;
-        });
+         return c.id !== id;
+       });
 
-        selectedCustomerIds.delete(id);
+        // selectedCustomerIds.delete(id);
 
         var toggleBtn = document.querySelector(
             "[data-customers-filter-toggle]"
@@ -293,15 +298,62 @@ async function deleteCustomerById(id) {
 
 }
 
-function deleteSelectedCustomers() {
-  if (selectedCustomerIds.size === 0) return;
-  allCustomers = allCustomers.filter(function (c) {
-    return !selectedCustomerIds.has(c.id);
-});
-  selectedCustomerIds.clear();
-  var toggleBtn = document.querySelector('[data-customers-filter-toggle]');
-  applyCustomersFilter(toggleBtn ? toggleBtn.dataset.customersFilterValue : 'all');
-}
+// async function deleteSelectedCustomers() {
+//   if (selectedCustomerIds.size === 0) return;
+
+//   const customerIds = Array.from(selectedCustomerIds);
+
+//   try {
+//     const response = await fetch(
+//       "http://localhost:5000/api/admin/customers",
+//       {
+//         method: "DELETE",
+//         credentials: "include",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify({
+//           customerIds
+//         })
+//       }
+//     );
+
+//     const data = await response.json();
+
+//     if (!response.ok) {
+//       throw new Error(
+//         data.message || "Failed to delete selected customers"
+//       );
+//     }
+
+//     // Remove deleted customers from frontend state
+//     allCustomers = allCustomers.filter(function (customer) {
+//       return !customerIds.includes(String(customer.id));
+//     });
+
+//     selectedCustomerIds.clear();
+
+//     cusCurrentPage = 1;
+
+//     const toggleBtn = document.querySelector(
+//       "[data-customers-filter-toggle]"
+//     );
+
+//     applyCustomersFilter(
+//       toggleBtn
+//         ? toggleBtn.dataset.customersFilterValue
+//         : "all"
+//     );
+
+//   } catch (error) {
+//     console.error("DELETE SELECTED CUSTOMERS ERROR:", error);
+
+//     alert(
+//       error.message ||
+//       "Something went wrong while deleting customers."
+//     );
+//   }
+// }
 
 /* -----------------------------
    Customer detail modal
@@ -325,10 +377,12 @@ function initCustomerModal() {
     var csvBtn = e.target.closest('[data-download-csv]');
     var row = e.target.closest('.customer-row');
 
-    var rowCheckBtn = e.target.closest('[data-row-check]');
-    var selectAllBtn = e.target.closest('[data-select-all-toggle]');
+    // var rowCheckBtn = e.target.closest('[data-row-check]');
+    // var selectAllBtn = e.target.closest('[data-select-all-toggle]');
+    // var deleteCustomerBtn = e.target.closest('[data-delete-customer]');
+    // var deleteSelectedBtn = e.target.closest('[data-delete-selected]');
+
     var deleteCustomerBtn = e.target.closest('[data-delete-customer]');
-    var deleteSelectedBtn = e.target.closest('[data-delete-selected]');
 
     if (pageBtn) {
       e.stopPropagation();
@@ -340,19 +394,19 @@ function initCustomerModal() {
       return;
     }
 
-    if (rowCheckBtn) {
-      e.stopPropagation();
-      var checkRow = rowCheckBtn.closest('.customer-row');
-      if (checkRow) toggleCustomerSelection(checkRow.dataset.customerId);
-      return;
-    }
+    // if (rowCheckBtn) {
+    //   e.stopPropagation();
+    //   var checkRow = rowCheckBtn.closest('.customer-row');
+    //   if (checkRow) toggleCustomerSelection(checkRow.dataset.customerId);
+    //   return;
+    // }
 
-    if (selectAllBtn) {
-      e.stopPropagation();
-      var allCurrentlySelected = currentCustomers.length > 0 && currentCustomers.every(function (c) { return selectedCustomerIds.has(c.id); });
-      setAllSelected(!allCurrentlySelected);
-      return;
-    }
+    // if (selectAllBtn) {
+    //   e.stopPropagation();
+    //   var allCurrentlySelected = currentCustomers.length > 0 && currentCustomers.every(function (c) { return selectedCustomerIds.has(c.id); });
+    //   setAllSelected(!allCurrentlySelected);
+    //   return;
+    // }
 
     if (deleteCustomerBtn) {
       e.stopPropagation();
@@ -364,13 +418,13 @@ function initCustomerModal() {
       return;
     }
 
-    if (deleteSelectedBtn) {
-      e.stopPropagation();
-      if (confirm('Delete ' + selectedCustomerIds.size + ' selected customer(s)? This cannot be undone.')) {
-        deleteSelectedCustomers();
-      }
-      return;
-    }
+    // if (deleteSelectedBtn) {
+    //   e.stopPropagation();
+    //   if (confirm('Delete ' + selectedCustomerIds.size + ' selected customer(s)? This cannot be undone.')) {
+    //     deleteSelectedCustomers();
+    //   }
+    //   return;
+    // }
 
     if (toggleBtn) {
       e.stopPropagation();
@@ -569,7 +623,7 @@ function initCustomersFilter() {
       });
       option.classList.add('is-selected');
 
-      selectedCustomerIds.clear();
+      // selectedCustomerIds.clear();
       cusCurrentPage = 1;
       applyCustomersFilter(value);
 

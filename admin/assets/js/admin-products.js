@@ -1,10 +1,10 @@
 /* ADMIN PRODUCTS PAGE JS — delegated events, idempotent init */
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://backend-6j62.onrender.com/api";
 
-const CATEGORY_API = "http://localhost:5000/api/categories";
+const CATEGORY_API = "https://backend-6j62.onrender.com/api/categories";
 
-const API_URL = "http://localhost:5000/api/products";
+const PRODUCT_API_URL = "https://backend-6j62.onrender.com/api/products";
 
 
 
@@ -84,12 +84,7 @@ function mapProduct(product) {
 
         laceType: product.laceType || "",
 
-        status:
-            product.stock <= 0
-                ? "out-of-stock"
-                : product.stock < 5
-                ? "low-stock"
-                : "in-stock"
+        status: product.status || "in-stock"
 
     };
 
@@ -143,7 +138,7 @@ async function deleteCategory(id) {
 }
 
 async function getProducts() {
-    const res = await fetch(API_URL, {
+    const res = await fetch(PRODUCT_API_URL, {
         credentials: "include"
     });
 
@@ -157,20 +152,18 @@ async function getProducts() {
 async function getProduct(id) {
 
     const res = await fetch(`${API_BASE}/products/${id}`, {
-
         credentials: "include"
-
     });
 
-    const product = await res.json();
+    const data = await res.json();
+
+    console.log("GET SINGLE PRODUCT RESPONSE:", data);
 
     if (!res.ok) {
-
-        throw new Error(product.message);
-
+        throw new Error(data.message || "Failed to fetch product");
     }
 
-    return product.product;
+    return data;
 
 }
 
@@ -285,12 +278,35 @@ var PRD_STATUS_MAP = {
   'out-of-stock': { label: 'Out of Stock', className: 'admin-status--cancelled' }
 };
 
+function initProductSearch() {
+
+    var searchInput = document.querySelector("[data-prd-search-input]");
+
+    if (!searchInput) {
+        console.warn("Product search input not found.");
+        return;
+    }
+
+    searchInput.value = prdState.search || "";
+
+    searchInput.addEventListener("input", function () {
+
+        prdState.search = this.value.trim().toLowerCase();
+
+        prdState.visibleCount = prdGetBatchSize();
+
+        renderProducts();
+
+    });
+
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
 
     await Promise.all([
-    loadCategories(),
-    loadProducts()
-]);
+        loadCategories(),
+        loadProducts()
+    ]);
 
     renderCategorySidebar();
 
@@ -299,6 +315,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     renderProducts();
 
     bindAllEvents();
+
+    initProductSearch();
 
     initCategoryDragReorder();
 
@@ -530,9 +548,20 @@ function prdComputeFilteredProducts() {
 }
   if (prdState.status !== 'all') list = list.filter(function (p) { return p.status === prdState.status; });
   if (prdState.search) {
-    var q = prdState.search;
-    list = list.filter(function (p) { return p.name.toLowerCase().indexOf(q) !== -1 || p.sku.toLowerCase().indexOf(q) !== -1; });
-  }
+
+    var q = prdState.search.toLowerCase();
+
+    list = list.filter(function (p) {
+
+        var name = (p.name || "").toLowerCase();
+        var sku = (p.sku || "").toLowerCase();
+
+        return name.indexOf(q) !== -1 ||
+               sku.indexOf(q) !== -1;
+
+    });
+
+}
 var hasSoftFilters =
     (prdState.priceMin != null && !isNaN(prdState.priceMin)) ||
     (prdState.priceMax != null && !isNaN(prdState.priceMax)) ||
@@ -831,16 +860,17 @@ function openProductModal(mode, product) {
   if (!overlay || !modal) return;
 
   var nameInput = document.querySelector('[data-prd-name-input]');
-  var skuInput = document.querySelector('[data-prd-sku-input]');
-  var categorySelect = document.querySelector('[data-prd-category-select]');
-  var priceInput = document.querySelector('[data-prd-price-input]');
-  var stockInput = document.querySelector('[data-prd-stock-input]');
-  var statusSelect = document.querySelector('[data-prd-status-select]');
-  var imageInput = document.querySelector('[data-prd-image-file-input]');
-  var descriptionInput = document.querySelector('[data-prd-description-input]');
-  var lengthInput = document.querySelector('[data-prd-length-input]');
-  var densityInput = document.querySelector('[data-prd-density-input]');
-  var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
+var skuInput = document.querySelector('[data-prd-sku-input]');
+var categorySelect = document.querySelector('[data-prd-category-select]');
+var priceInput = document.querySelector('[data-prd-price-input]');
+var stockInput = document.querySelector('[data-prd-stock-input]');
+var statusSelect = document.querySelector('[data-prd-status-select]');
+var badgeInput = document.querySelector('[data-prd-badge-input]');
+var imageInput = document.querySelector('[data-prd-image-file-input]');
+var descriptionInput = document.querySelector('[data-prd-description-input]');
+var lengthInput = document.querySelector('[data-prd-length-input]');
+var densityInput = document.querySelector('[data-prd-density-input]');
+var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
 
   modal.dataset.mode = mode;
   modal.dataset.productId = product ? (product._id || product.id) : "";
@@ -853,6 +883,7 @@ function openProductModal(mode, product) {
     priceInput.value = product.price;
     stockInput.value = product.stock;
     statusSelect.value = product.status;
+    if (badgeInput) badgeInput.value = product.badge || '';
     if (imageInput) imageInput.value = "";
     prdModalImages = product.images ? product.images.slice() : [];
     if (descriptionInput) descriptionInput.value = product.description || '';
@@ -867,6 +898,7 @@ function openProductModal(mode, product) {
     priceInput.value = '';
     stockInput.value = '';
     statusSelect.value = 'in-stock';
+    if (badgeInput) badgeInput.value = '';
     prdModalImages = [];
     if (descriptionInput) descriptionInput.value = '';
     if (lengthInput) lengthInput.value = '';
@@ -948,6 +980,7 @@ function openViewModal(product) {
 
   overlay.classList.add('is-open');
   modal.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeViewModal() {
@@ -955,6 +988,7 @@ function closeViewModal() {
   var modal = document.querySelector('[data-prd-view-modal]');
   if (overlay) overlay.classList.remove('is-open');
   if (modal) modal.classList.remove('is-open');
+  document.body.style.overflow = '';
   prdViewProductId = null;
 }
 
@@ -978,6 +1012,7 @@ if (!saveBtn) {
   var lengthInput = document.querySelector('[data-prd-length-input]');
   var densityInput = document.querySelector('[data-prd-density-input]');
   var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
+  var badgeInput = document.querySelector('[data-prd-badge-input]');
 
   if (!nameInput.value.trim()) { nameInput.focus(); return; }
   if (!categorySelect.value) {
@@ -1011,6 +1046,8 @@ formData.append("price", priceInput.value);
 formData.append("stock", stockInput.value);
 
 formData.append("status", statusSelect.value);
+
+formData.append("badge", badgeInput.value.trim());
 
 formData.append("categoryId", categorySelect.value);
 
@@ -1577,51 +1614,51 @@ if (e.target.closest('[data-prd-image-delete]')) {
     // SEARCH
     // ==========================
 
-    if (e.target.matches("[data-prd-search-input]")) {
+    // if (e.target.matches("[data-prd-search-input]")) {
 
-        prdState.search = e.target.value.trim().toLowerCase();
+    //     prdState.search = e.target.value.trim().toLowerCase();
 
-        var clearBtn = document.querySelector("[data-prd-search-clear]");
+    //     var clearBtn = document.querySelector("[data-prd-search-clear]");
 
-        if (clearBtn) {
-            clearBtn.hidden = e.target.value.trim() === "";
-        }
+    //     if (clearBtn) {
+    //         clearBtn.hidden = e.target.value.trim() === "";
+    //     }
 
-        renderProducts();
+    //     renderProducts();
 
-    }
+    // }
 
     // ==========================
     // AUTO STOCK STATUS
     // ==========================
 
-    if (e.target.matches("[data-prd-stock-input]")) {
+    // if (e.target.matches("[data-prd-stock-input]")) {
 
-        var statusSelect = document.querySelector("[data-prd-status-select]");
+    //     var statusSelect = document.querySelector("[data-prd-status-select]");
 
-        var stock = parseInt(e.target.value, 10);
+    //     var stock = parseInt(e.target.value, 10);
 
-        if (!statusSelect) return;
+    //     if (!statusSelect) return;
 
-        if (isNaN(stock)) {
+    //     if (isNaN(stock)) {
 
-            statusSelect.value = "in-stock";
+    //         statusSelect.value = "in-stock";
 
-        } else if (stock <= 0) {
+    //     } else if (stock <= 0) {
 
-            statusSelect.value = "out-of-stock";
+    //         statusSelect.value = "out-of-stock";
 
-        } else if (stock < 5) {
+    //     } else if (stock < 5) {
 
-            statusSelect.value = "low-stock";
+    //         statusSelect.value = "low-stock";
 
-        } else {
+    //     } else {
 
-            statusSelect.value = "in-stock";
+    //         statusSelect.value = "in-stock";
 
-        }
+    //     }
 
-    }
+    // }
 
 });
 

@@ -32,6 +32,11 @@
   grid-column: 1 / -1;
 }
 
+.footer-bottom__dev-link {
+  color: var(--color-gold);
+  text-decoration: underline;
+}
+
 .footer-brand {
   order: -1;
   grid-column: 1 / -1;

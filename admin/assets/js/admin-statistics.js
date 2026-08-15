@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 async function loadStatistics() {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/admin/statistics"
+      "https://backend-6j62.onrender.com/api/admin/statistics"
     );
 
     console.log("STATISTICS RESPONSE STATUS:", response.status);

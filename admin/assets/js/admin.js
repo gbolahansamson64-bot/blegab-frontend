@@ -8,7 +8,7 @@
 
     try {
 
-        const res = await fetch("http://localhost:5000/api/admin/me", {
+        const res = await fetch("https://backend-6j62.onrender.com/api/admin/me", {
             credentials: "include"
         });
 
@@ -26,7 +26,7 @@ async function loadDashboard() {
 
     try {
 
-        const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+        const res = await fetch("https://backend-6j62.onrender.com/api/admin/dashboard", {
             credentials: "include"
         });
 
@@ -433,7 +433,7 @@ async function loadAdminNotifications() {
   try {
 
     const res = await fetch(
-      "http://localhost:5000/api/admin/notifications",
+      "https://backend-6j62.onrender.com/api/admin/notifications",
       {
         method: "GET",
         credentials: "include"
@@ -488,7 +488,7 @@ async function loadUnreadNotificationCount() {
   try {
 
     const res = await fetch(
-      "http://localhost:5000/api/admin/notifications/unread-count",
+      "https://backend-6j62.onrender.com/api/admin/notifications/unread-count",
       {
         method: "GET",
         credentials: "include"
@@ -674,7 +674,7 @@ async function initNotifications() {
         try {
 
           const res = await fetch(
-            "http://localhost:5000/api/admin/notifications",
+            "https://backend-6j62.onrender.com/api/admin/notifications",
             {
               method: "DELETE",
               credentials: "include"
@@ -861,7 +861,7 @@ async function markNotificationAsRead(id) {
   try {
 
     const res = await fetch(
-      "http://localhost:5000/api/admin/notifications/" +
+      "https://backend-6j62.onrender.com/api/admin/notifications/" +
       id +
       "/read",
       {
@@ -925,7 +925,7 @@ async function dismissAdminNotification(id) {
   try {
 
     const res = await fetch(
-      "http://localhost:5000/api/admin/notifications/" +
+      "https://backend-6j62.onrender.com/api/admin/notifications/" +
       id,
       {
         method: "DELETE",
@@ -1547,7 +1547,7 @@ window.BLEGAB_ADMIN_AUTH = {
 
     try {
 
-      const res = await fetch("http://localhost:5000/api/admin/me", {
+      const res = await fetch("https://backend-6j62.onrender.com/api/admin/me", {
         credentials: "include"
       });
 
@@ -1572,7 +1572,7 @@ window.BLEGAB_ADMIN_AUTH = {
     try {
 
         const res = await fetch(
-            "http://localhost:5000/api/admin/logout",
+            "https://backend-6j62.onrender.com/api/admin/logout",
             {
                 method: "POST",
                 credentials: "include"

@@ -87,7 +87,7 @@
           <ul class="footer-col__list">
             <li class="footer-col__contact-item">Email: info@blegab.com</li>
             <li class="footer-col__contact-item">Phone: +1 469-618-0809</li>
-            <li class="footer-col__contact-item">Dallas, Texas, USA</li>
+            <li class="footer-col__contact-item">Dallas, TX, USA</li>
           </ul>
         </div>
 
@@ -96,6 +96,7 @@
 
     <div class="container footer-bottom">
       <p class="footer-bottom__copyright">&copy; 2026 Blegab Luxury Wigs. All Rights Reserved.</p>
+      <a href="developer.html" class="footer-bottom__dev-link">Developer Page</a>
     </div>
   </footer>
 

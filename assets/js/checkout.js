@@ -6,6 +6,38 @@
    selected in step 1 (card fields / GPay / Stripe / Apple Pay / AfterPay).
    ========================================================= */
 
+   const CHECKOUT_API_URL = "https://backend-6j62.onrender.com/api";
+
+async function createCheckoutSession(checkoutData) {
+
+    const response = await fetch(`${CHECKOUT_API_URL}/orders/checkout`, {
+
+        method: "POST",
+
+        credentials: "include",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify(checkoutData)
+
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+        throw new Error(data.message);
+
+    }
+
+    return data;
+
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   initCheckoutModal();
 });
@@ -16,7 +48,6 @@ function initCheckoutModal() {
   var checkoutBtn = document.querySelector('[data-checkout]');
   if (!overlay || !modal || !checkoutBtn) return;
 
-  var selectedMethod = 'card';
   var currentStep = 1;
   var scrollLockY = 0;
   var mainEl = document.querySelector('main');
@@ -452,7 +483,8 @@ function initCheckoutModal() {
       selectCity(option.getAttribute('data-city-value'));
     });
   }
-if (countryEl) {
+
+  if (countryEl) {
   countryEl.addEventListener('change', function () {
     populateStates(countryEl.value);
     var wrapper = stateEl ? stateEl.closest('.checkout-field') : null;
@@ -481,13 +513,8 @@ var COUNTRY_DIAL_CODES = {
 var phoneEl = modal.querySelector('#checkout-phone');
 if (phoneEl) {
   var PHONE_LOCAL_LENGTH = 10;
-  // 10 digits formatted as "XXX XXX XXXX" = 12 characters with spaces.
   phoneEl.setAttribute('maxlength', String(PHONE_LOCAL_LENGTH + 2));
 
-  // If a pasted number already includes the selected country's dial code
-  // (with or without a leading + or 00), strip it off — the badge next to
-  // the field already shows the code, so this field should only ever hold
-  // the local number.
   function stripCountryCode(digits) {
     var country = countryEl ? countryEl.value : '';
     var dialCode = (COUNTRY_DIAL_CODES[country] || '').replace('+', '');
@@ -503,15 +530,11 @@ if (phoneEl) {
       codeFound = true;
     }
 
-    // Only drop a leftover trunk "0" when we actually just removed a
-    // country code (e.g. +234 0801... -> 801...). If no code was found,
-    // leave the digits alone — a leading 0 may be a legitimate local number.
     if (codeFound && digits.charAt(0) === '0') digits = digits.slice(1);
 
     return digits;
   }
 
-  // Groups digits as "XXX XXX XXXX" (e.g. 1234567890 -> "123 456 7890").
   function formatPhoneDisplay(digits) {
     var groups = [];
     if (digits.length > 6) {
@@ -536,8 +559,6 @@ if (phoneEl) {
       e.preventDefault();
       return;
     }
-    // Block new digits once at the 10-digit cap, unless replacing a
-    // selected range (e.g. user has text selected and types over it).
     var hasSelection = phoneEl.selectionStart !== phoneEl.selectionEnd;
     var digitsOnly = phoneEl.value.replace(/\D/g, '');
     if (!hasSelection && digitsOnly.length >= PHONE_LOCAL_LENGTH) {
@@ -554,7 +575,6 @@ if (phoneEl) {
 }
 
 if (phoneEl) {
-  // Wrap the phone input with a dial-code badge (built in JS so no HTML edits needed).
   var phoneWrap = document.createElement('div');
   phoneWrap.className = 'checkout-phone-wrap';
 
@@ -626,7 +646,6 @@ if (stateEl) {
   });
 }
 
-// ---------- CVV: digits only, 3-digit cap ----------
 var cvvEl = modal.querySelector('#checkout-cvv');
 if (cvvEl) {
   var CVV_MAX_DIGITS = 3;
@@ -663,14 +682,8 @@ if (cvvEl) {
   });
 }
 
-// ---------- Expiry date: MM/YY, auto-slash, live month validation (01-12) ----------
 var expiryEl = modal.querySelector('#checkout-expiry');
 if (expiryEl) {
-  // Rebuilds a valid MM+YY digit string from raw input, correcting/dropping
-  // digits as they're typed so an invalid month can never be reached:
-  // - a first digit of 2-9 is auto-padded to "0X" (e.g. typing "3" -> "03")
-  // - "00" is never allowed (second digit after a leading 0 must be 1-9)
-  // - "13"-"19" are never allowed (second digit after a leading 1 must be 0-2)
   function buildExpiryDigits(raw) {
     var source = raw.replace(/\D/g, '');
     var result = '';
@@ -680,17 +693,17 @@ if (expiryEl) {
         if (ch === '0' || ch === '1') {
           result += ch;
         } else {
-          result += '0' + ch; // 2-9 typed first -> auto leading zero, month complete
+          result += '0' + ch;
         }
       } else if (result.length === 1) {
         var firstDigit = result.charAt(0);
         if (firstDigit === '0') {
-          if (ch !== '0') result += ch; // block "00"
-        } else { // firstDigit === '1'
-          if (ch >= '0' && ch <= '2') result += ch; // block "13"-"19"
+          if (ch !== '0') result += ch;
+        } else {
+          if (ch >= '0' && ch <= '2') result += ch;
         }
       } else {
-        result += ch; // year digits — any 0-9 allowed
+        result += ch;
       }
     }
     return result;
@@ -700,9 +713,6 @@ if (expiryEl) {
     return digits.length <= 2 ? digits : digits.slice(0, 2) + '/' + digits.slice(2);
   }
 
-  // Given the finished digit string and how many raw digits preceded the
-  // caret before this edit, works out where the caret should land after
-  // the value is rebuilt and re-slashed.
   function expiryCaretPos(digits, digitsBeforeCaret) {
     var caretDigits = Math.min(digitsBeforeCaret, digits.length);
     var slashOffset = caretDigits > 2 ? 1 : 0;
@@ -717,8 +727,6 @@ if (expiryEl) {
   }
 
   expiryEl.addEventListener('keydown', function (e) {
-    // Backspacing right after the auto-inserted "/" should remove the
-    // month digit before it too, not just leave a dangling slash.
     if (e.key === 'Backspace' && expiryEl.selectionStart === expiryEl.selectionEnd) {
       var pos = expiryEl.selectionStart;
       if (pos > 0 && expiryEl.value.charAt(pos - 1) === '/') {
@@ -728,7 +736,7 @@ if (expiryEl) {
         applyExpiryValue(newDigits, digitsBeforeCaret);
         return;
       }
-      return; // normal backspace — let the input handler reformat
+      return;
     }
 
     var allowedKeys = ['Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
@@ -765,7 +773,6 @@ if (expiryEl) {
   });
 }
 
-// ---------- Card number: digits only, 16-digit cap, "4 4 4 4" grouping ----------
 var cardNumberEl = modal.querySelector('#checkout-card-number');
 if (cardNumberEl) {
   var CARD_NUMBER_MAX_DIGITS = 16;
@@ -774,8 +781,6 @@ if (cardNumberEl) {
     return digits.replace(/(.{4})/g, '$1 ').trim();
   }
 
-  // Reformats a raw string into grouped digits and works out where the caret
-  // should land, given how many digits preceded it before reformatting.
   function reformatCardNumber(rawValue, digitsBeforeCaret) {
     var digits = rawValue.replace(/\D/g, '').slice(0, CARD_NUMBER_MAX_DIGITS);
     var formatted = formatCardNumberDisplay(digits);
@@ -792,7 +797,6 @@ if (cardNumberEl) {
       e.preventDefault();
       return;
     }
-    // Block new digits once at the 16-digit cap, unless replacing a selection.
     var hasSelection = cardNumberEl.selectionStart !== cardNumberEl.selectionEnd;
     var digitsOnly = cardNumberEl.value.replace(/\D/g, '');
     if (!hasSelection && digitsOnly.length >= CARD_NUMBER_MAX_DIGITS) {
@@ -854,12 +858,6 @@ if (zipEl) {
   });
 }
 
-// ---------- Auto-fill postal/ZIP code when a city is selected ----------
-// Nigeria: postal codes are assigned per state (not per city) by NIPOST,
-// so this is a direct lookup, no network call needed.
-// US / Canada: looked up live via Zippopotam.us (free, no API key).
-// UK: left blank for manual entry — UK postcodes are too hyper-local
-// (street-level) for a reliable city-based lookup.
 var US_STATE_ABBR = {
   'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
   'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
@@ -936,10 +934,8 @@ function autoFillZip(city) {
 
   fetchZipForCity(country, state, city).then(function (code) {
     if (code) zipEl.value = code;
-    // UK, or no match found: leave the field for manual entry.
   });
 }
-
 
   function lockPageScroll() {
     scrollLockY = window.scrollY || window.pageYOffset || 0;
@@ -978,28 +974,45 @@ function autoFillZip(city) {
   }
 
   var continueBtn = modal.querySelector('[data-checkout-continue]');
-  var backBtn = modal.querySelector('[data-checkout-back]');
   var closeBtns = modal.querySelectorAll('[data-checkout-modal-close]');
   var stepIndicators = modal.querySelectorAll('[data-checkout-step-indicator]');
   var stepPanels = modal.querySelectorAll('[data-checkout-step-panel]');
-  var paymentPanels = modal.querySelectorAll('[data-payment-panel]');
-  var methodOptions = modal.querySelectorAll('.checkout-payment-option');
 
-  checkoutBtn.addEventListener('click', function () {
-    if (window.BLEGAB_CART && window.BLEGAB_CART.getCount() === 0) return;
-    renderOrderSummary();
-    goToStep(1);
-    openModal();
-  });
+  checkoutBtn.addEventListener("click", async function () {
+
+    // console.log("CHECKOUT BUTTON CLICKED");
+
+    try {
+
+        const response = await window.BLEGAB_CART.getCart();
+
+        if (response.totalItems === 0) {
+
+            alert("Your cart is empty.");
+
+            return;
+
+        }
+
+        await renderOrderSummary();
+
+        goToStep(1);
+
+        openModal();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+});
 
   closeBtns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var isMobileOrTablet = window.matchMedia('(max-width: 1024px)').matches;
-      if (isMobileOrTablet && currentStep === 2) {
-        goToStep(1);
-      } else {
-        closeModal();
-      }
+      closeModal();
     });
   });
   overlay.addEventListener('click', closeModal);
@@ -1008,53 +1021,58 @@ function autoFillZip(city) {
     if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
   });
 
-  // Payment method selection (step 1)
-  methodOptions.forEach(function (option) {
-    option.addEventListener('click', function () {
-      methodOptions.forEach(function (o) { o.classList.remove('is-active'); });
-      option.classList.add('is-active');
-      var radio = option.querySelector('input[type="radio"]');
-      if (radio) radio.checked = true;
-      selectedMethod = option.dataset.paymentMethod;
+  // function showOrderConfirmation() {
+  //   var note = document.createElement('div');
+  //   note.className = 'checkout-order-toast';
+  //   note.textContent = 'Order placed! Redirecting you to the homepage...';
+  //   document.body.appendChild(note);
 
-      if (selectedMethod !== 'card') {
-        ['card-name', 'card-number', 'card-expiry', 'card-cvv'].forEach(function (key) {
-          var errorEl = modal.querySelector('[data-field-error="' + key + '"]');
-          if (errorEl) errorEl.classList.remove('is-visible');
-        });
-        modal.querySelectorAll('.checkout-payment-panel .checkout-field--invalid').forEach(function (wrapper) {
-          wrapper.classList.remove('checkout-field--invalid');
-        });
-      }
-    });
-  });
-
-  function showOrderConfirmation() {
-    var note = document.createElement('div');
-    note.className = 'checkout-order-toast';
-    note.textContent = 'Order placed! Redirecting you to the homepage...';
-    document.body.appendChild(note);
-
-    setTimeout(function () {
-      window.location.href = 'index.html';
-    }, 2200);
-  }
+  //   setTimeout(function () {
+  //     window.location.href = 'index.html';
+  //   }, 2200);
+  // }
 
   continueBtn.addEventListener('click', function () {
-    if (currentStep === 1) {
-      if (!validateShippingFields()) return;
-      goToStep(2);
-    } else {
-      if (!validatePaymentFields()) return;
-      // No real payment backend yet — placeholder confirmation.
-      closeModal();
-      showOrderConfirmation();
-    }
-  });
 
-  backBtn.addEventListener('click', function () {
-    goToStep(1);
-  });
+    if (!validateShippingFields()) return;
+
+    var checkoutData = {
+
+        firstName: modal.querySelector("#checkout-first-name").value.trim(),
+
+        lastName: modal.querySelector("#checkout-last-name").value.trim(),
+
+        email: modal.querySelector("#checkout-email").value.trim(),
+
+        phone: modal.querySelector("#checkout-phone").value.trim(),
+
+        country: modal.querySelector("#checkout-country").value,
+
+        address: modal.querySelector("#checkout-address").value.trim(),
+
+        city: modal.querySelector("#checkout-city").value.trim(),
+
+        state: modal.querySelector("#checkout-state").value.trim(),
+
+        postalCode: modal.querySelector("#checkout-zip").value.trim()
+
+    };
+
+    createCheckoutSession(checkoutData)
+
+    .then(function(data){
+
+        window.location.href = data.url;
+
+    })
+
+    .catch(function(error){
+
+        alert(error.message);
+
+    });
+
+});
 
   ['checkout-first-name', 'checkout-last-name', 'checkout-email', 'checkout-phone', 'checkout-country', 'checkout-address', 'checkout-city', 'checkout-state', 'checkout-zip'].forEach(function (id) {
     var input = modal.querySelector('#' + id);
@@ -1112,66 +1130,8 @@ function autoFillZip(city) {
     return allFilled;
   }
 
-  function validatePaymentFields() {
-    // Redirect-style methods (Google Pay, Cash App, Apple Pay, Afterpay,
-    // Klarna) have no fields to fill — selecting one is enough, and a
-    // method is always selected by default ('card').
-    if (selectedMethod !== 'card') return true;
-
-    var fields = [
-      { input: modal.querySelector('#checkout-card-name'), key: 'card-name', message: 'Name on card is required.' },
-      { input: modal.querySelector('#checkout-card-number'), key: 'card-number', message: 'Card number is required.' },
-      { input: modal.querySelector('#checkout-expiry'), key: 'card-expiry', message: 'Expiry date is required.' },
-      { input: modal.querySelector('#checkout-cvv'), key: 'card-cvv', message: 'CVV is required.' }
-    ];
-
-    var allFilled = true;
-    var firstInvalidInput = null;
-
-    fields.forEach(function (field) {
-      var errorEl = modal.querySelector('[data-field-error="' + field.key + '"]');
-      var wrapper = field.input ? field.input.closest('.checkout-field') : null;
-      var isEmpty = !field.input || field.input.value.trim() === '';
-
-      if (isEmpty) {
-        allFilled = false;
-        if (!firstInvalidInput) firstInvalidInput = field.input;
-        if (errorEl) {
-          errorEl.textContent = field.message;
-          errorEl.classList.add('is-visible');
-        }
-        if (wrapper) wrapper.classList.add('checkout-field--invalid');
-      } else {
-        if (errorEl) errorEl.classList.remove('is-visible');
-        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
-      }
-    });
-
-    if (!allFilled && firstInvalidInput) {
-      firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      firstInvalidInput.focus({ preventScroll: true });
-    }
-
-    return allFilled;
-  }
-
-  ['checkout-card-name', 'checkout-card-number', 'checkout-expiry', 'checkout-cvv'].forEach(function (id) {
-    var input = modal.querySelector('#' + id);
-    if (!input) return;
-    input.addEventListener('input', function () {
-      var wrapper = input.closest('.checkout-field');
-      var errorEl = wrapper ? wrapper.querySelector('.checkout-field-error') : null;
-      if (input.value.trim() !== '') {
-        if (wrapper) wrapper.classList.remove('checkout-field--invalid');
-        if (errorEl) errorEl.classList.remove('is-visible');
-      }
-    });
-  });
-
   function goToStep(step) {
     currentStep = step;
-
-    modal.classList.toggle('checkout-modal--step-2', step === 2);
 
     stepPanels.forEach(function (panel) {
       panel.hidden = panel.dataset.checkoutStepPanel !== String(step);
@@ -1182,19 +1142,6 @@ function autoFillZip(city) {
       indicator.classList.toggle('is-active', num === String(step));
       indicator.classList.toggle('is-done', Number(num) < step);
     });
-
-    if (step === 1) {
-      backBtn.hidden = true;
-      continueBtn.querySelector('.btn-text') ? (continueBtn.querySelector('.btn-text').textContent = 'Continue to Payment') : (continueBtn.textContent = 'Continue to Payment');
-    } else {
-      backBtn.hidden = false;
-      paymentPanels.forEach(function (panel) {
-        panel.hidden = panel.dataset.paymentPanel !== selectedMethod;
-      });
-      updateAfterpayBreakdown();
-      var label = selectedMethod === 'card' ? 'Complete Order' : 'Confirm & Pay';
-      continueBtn.querySelector('.btn-text') ? (continueBtn.querySelector('.btn-text').textContent = label) : (continueBtn.textContent = label);
-    }
 
     var modalBody = modal.querySelector('.checkout-modal__body');
     if (modalBody) {
@@ -1221,59 +1168,125 @@ function autoFillZip(city) {
     unlockBackground();
   }
 
-  function formatMoney(amount) {
-    var fixed = Number(amount).toFixed(2);
-    var parts = fixed.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return '$' + parts.join('.');
-  }
+  function getProductImage(image) {
 
-  function updateAfterpayBreakdown() {
-    var el = modal.querySelector('[data-afterpay-breakdown]');
-    if (!el || !window.BLEGAB_CART) return;
-    var items = window.BLEGAB_CART.getItems();
-    var products = window.BLEGAB_SHOP_PRODUCTS || [];
-    var total = items.reduce(function (sum, item) {
-      var product = products.find(function (p) { return p.id === item.id; });
-      return product ? sum + product.price * item.qty : sum;
-    }, 0);
-    var installment = total / 4;
-    el.innerHTML = [1, 2, 3, 4].map(function (n) {
-      return '<div><span class="label">Payment ' + n + '</span><span class="amount">' + formatMoney(installment) + '</span></div>';
-    }).join('');
-  }
+    if (!image) {
+        return '/assets/images/placeholder.png';
+    }
 
-  function renderOrderSummary() {
-    var itemsEl = modal.querySelector('[data-checkout-summary-items]');
-    var subtotalEl = modal.querySelector('[data-checkout-summary-subtotal]');
-    var totalEl = modal.querySelector('[data-checkout-summary-total]');
-    var countEl = modal.querySelector('[data-checkout-summary-count]');
-    var ctaTotalEl = modal.querySelector('[data-checkout-cta-total]');
-    if (!itemsEl || !window.BLEGAB_CART) return;
+    if (
+        image.startsWith('http://') ||
+        image.startsWith('https://')
+    ) {
+        return image;
+    }
 
-    var items = window.BLEGAB_CART.getItems();
-    var products = window.BLEGAB_SHOP_PRODUCTS || [];
-    var subtotal = 0;
+    return '/assets/images/products/' + image;
+}
 
-    itemsEl.innerHTML = items.map(function (item) {
-      var product = products.find(function (p) { return p.id === item.id; });
-      if (!product) return '';
-      var lineTotal = product.price * item.qty;
-      subtotal += lineTotal;
-      return '' +
-        '<div class="checkout-summary__item">' +
-          '<img src="' + product.image + '" alt="' + product.name + '" />' +
-          '<div class="checkout-summary__item-info">' +
-            '<span class="name">' + product.name + '</span>' +
-            '<span class="meta">&times;' + item.qty + '</span>' +
-          '</div>' +
-          '<span class="checkout-summary__item-price">' + formatMoney(lineTotal) + '</span>' +
-        '</div>';
-    }).join('');
+  async function renderOrderSummary() {
 
-    if (subtotalEl) subtotalEl.textContent = formatMoney(subtotal);
-    if (totalEl) totalEl.textContent = formatMoney(subtotal);
-    if (countEl) countEl.textContent = window.BLEGAB_CART.getCount();
-    if (ctaTotalEl) ctaTotalEl.textContent = formatMoney(subtotal);
-  }
+    var itemsEl = modal.querySelector("[data-checkout-summary-items]");
+    var subtotalEl = modal.querySelector("[data-checkout-summary-subtotal]");
+    var totalEl = modal.querySelector("[data-checkout-summary-total]");
+    var countEl = modal.querySelector("[data-checkout-summary-count]");
+    var ctaTotalEl = modal.querySelector("[data-checkout-cta-total]");
+
+    if (!itemsEl) return;
+
+    try {
+
+        const response = await window.BLEGAB_CART.getCart();
+
+        if (!response || !response.success) {
+            throw new Error(
+                response?.message || "Failed to load cart"
+            );
+        }
+
+        const cart = response.cart;
+
+        if (!cart || !Array.isArray(cart.items)) {
+            throw new Error("Invalid cart response");
+        }
+
+        itemsEl.innerHTML = "";
+
+        if (!cart.items.length) {
+
+            itemsEl.innerHTML =
+                "<p>Your cart is empty.</p>";
+
+            return;
+        }
+
+        cart.items.forEach(function (item) {
+
+            const product = item.product;
+
+            if (!product) return;
+
+            const image = getProductImage(
+                product.images?.[0]
+            );
+
+            itemsEl.innerHTML +=
+
+                '<div class="checkout-summary__item">' +
+
+                    '<img src="' +
+                        image +
+                        '" alt="' +
+                        product.name +
+                    '">' +
+
+                    '<div class="checkout-summary__item-info">' +
+
+                        '<span class="name">' +
+                            product.name +
+                        "</span>" +
+
+                        '<span class="meta">×' +
+                            item.quantity +
+                        "</span>" +
+
+                    "</div>" +
+
+                    '<span class="checkout-summary__item-price">$' +
+                        Number(item.lineTotal).toFixed(2) +
+                    "</span>" +
+
+                "</div>";
+        });
+
+        const subtotal = Number(response.subtotal || 0);
+
+        if (subtotalEl) {
+            subtotalEl.textContent =
+                "$" + subtotal.toFixed(2);
+        }
+
+        if (totalEl) {
+            totalEl.textContent =
+                "$" + subtotal.toFixed(2);
+        }
+
+        if (ctaTotalEl) {
+            ctaTotalEl.textContent =
+                "$" + subtotal.toFixed(2);
+        }
+
+        if (countEl) {
+            countEl.textContent =
+                response.totalItems || 0;
+        }
+
+    } catch (err) {
+
+        console.error(
+            "Failed to render checkout summary:",
+            err
+        );
+    }
+}
 }

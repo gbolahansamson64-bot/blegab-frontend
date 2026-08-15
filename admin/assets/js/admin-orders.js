@@ -46,7 +46,7 @@ async function fetchOrders() {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/admin/orders",
+            "https://backend-6j62.onrender.com/api/admin/orders",
             {
                 credentials: "include"
             }
@@ -388,7 +388,7 @@ async function deleteOrderById(id) {
 
         const response = await fetch(
 
-            "http://localhost:5000/api/admin/orders/" + id,
+            "https://backend-6j62.onrender.com/api/admin/orders/" + id,
 
             {
                 method: "DELETE",
@@ -427,7 +427,7 @@ async function deleteSelectedOrders() {
 
         const response = await fetch(
 
-            "http://localhost:5000/api/admin/orders",
+            "https://backend-6j62.onrender.com/api/admin/orders",
 
             {
                 method: "DELETE",
@@ -472,7 +472,7 @@ async function updateOrderStatus(orderId, status) {
 
         const response = await fetch(
 
-            "http://localhost:5000/api/admin/orders/" + orderId + "/status",
+            "https://backend-6j62.onrender.com/api/admin/orders/" + orderId + "/status",
 
             {
 

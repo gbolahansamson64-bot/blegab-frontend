@@ -92,15 +92,129 @@
           <span class="menu-toggle__bar"></span>
         </button>
 
-        <!-- Logo -->
-          <a href="index.html" class="site-logo" aria-label="Blegab Luxury Wigs — Home">
+        <a href="index.html" class="site-logo" aria-label="Blegab Luxury Wigs — Home">
             <img src="assets/images/logo.png" alt="Blegab Luxury Wigs" class="site-logo__image" />
           </a>
 
+        <!-- Primary navigation — fixed slide-in drawer on mobile/tablet,
+             inline bar in the header row on desktop (see header.css) -->
+        <nav class="primary-nav" id="primary-nav" data-primary-nav aria-label="Primary">
+      <div class="primary-nav__header">
+        <span class="primary-nav__title">Menus</span>
+        <button type="button" class="primary-nav__close" data-nav-close aria-label="Close menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="shop.html" class="nav-link">Shop</a>
+        </li>
+
+
+        <li class="nav-item">
+          <a href="about-us.html" class="nav-link">About Us</a>
+        </li>
+
+<li class="nav-item">
+          <a href="contact-us.html" class="nav-link">Contact Us</a>
+        </li>
+
+<li class="nav-item has-dropdown nav-item--account">
+          <a href="account.html" class="nav-link">
+            <span class="nav-link__label-group">
+              <svg class="nav-link__icon nav-link__icon--outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              <svg class="nav-link__icon nav-link__icon--filled" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+              Account
+            </span>
+            <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <ul class="nav-dropdown nav-dropdown--account">
+            <li data-account-guest>
+              <a href="login.html" class="nav-dropdown__link nav-dropdown__link--signin">
+                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M15 12H3" stroke-linecap="round"/>
+                </svg>
+                Sign In
+              </a>
+            </li>
+            <li data-account-guest>
+              <a href="signup.html" class="nav-dropdown__link nav-dropdown__link--signup">
+                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M15 12H3" stroke-linecap="round"/>
+                </svg>
+                Sign Up
+              </a>
+            </li>
+            <li data-account-signed-in hidden>
+              <p class="nav-dropdown__greeting" data-account-user></p>
+            </li>
+            <li data-account-signed-in hidden>
+              <a href="my-orders.html" class="nav-dropdown__link">
+                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M6 2h12v20H6z" stroke-linejoin="round"/>
+                  <path d="M9 6h6" stroke-linecap="round"/>
+                  <path d="M9 10h6" stroke-linecap="round"/>
+                  <path d="M9 14h4" stroke-linecap="round"/>
+                </svg>
+                My Orders
+              </a>
+            </li>
+            <li data-account-signed-in hidden>
+              <a href="profile.html" class="nav-dropdown__link nav-dropdown__link--profile">
+                <span class="profile-btn__icon-circle">
+                  <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                Profile
+              </a>
+            </li>
+            <li data-account-signed-in hidden>
+              <button type="button" class="nav-dropdown__link nav-dropdown__link--logout" data-account-signout>
+                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M21 12H9" stroke-linecap="round"/>
+                </svg>
+                Sign Out
+              </button>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
         <!-- Search (tablet/desktop) -->
-          <div class="header-search">
+          <!-- Search (tablet/desktop) -->
+          <div class="header-search" data-desktop-search>
+            <button type="button" class="header-search__toggle" data-desktop-search-toggle aria-label="Search" aria-expanded="false">
+              <svg class="header-action__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+              </svg>
+            </button>
             <form class="header-search__field" id="desktop-search-form" role="search" action="/search" method="get">
-              <input type="search" name="q" id="desktop-search-input" class="header-search__input" placeholder="Search for wigs, collections..." aria-label="Search for wigs, collections" autocomplete="off" />
+              <input type="search" name="q" id="desktop-search-input" class="header-search__input" data-search placeholder="Search for wigs, collections..." aria-label="Search for wigs, collections" autocomplete="off" />
               <button type="submit" class="header-search__submit" aria-label="Submit search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <circle cx="11" cy="11" r="7"/>
@@ -115,7 +229,7 @@
 <div class="header-actions">
   <div class="search-expand" data-search-expand>
     <form class="search-expand__field" id="mobile-search-form" role="search" action="/search" method="get">
-      <input type="search" name="q" id="mobile-search-input" class="search-expand__input" placeholder="Search for wigs, collections..." aria-label="Search for wigs, collections" autocomplete="off" />
+      <input type="search" name="q" id="mobile-search-input" class="search-expand__input" data-search placeholder="Search for wigs, collections..." aria-label="Search for wigs, collections" autocomplete="off" />
     </form>
     <div class="search-results" data-search-results hidden></div>
     <button type="button" class="search-expand__icon" data-search-toggle aria-label="Search" aria-expanded="false">
@@ -266,149 +380,38 @@
     </aside>
 
     <!-- Primary navigation -->
-    <nav class="primary-nav" id="primary-nav" data-primary-nav aria-label="Primary">
-      <div class="primary-nav__header">
-        <span class="primary-nav__title">Menus</span>
-        <button type="button" class="primary-nav__close" data-nav-close aria-label="Close menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-
-      <ul class="nav-list">
-        <li class="nav-item">
-          <a href="index.html" class="nav-link">Home</a>
-        </li>
-
-        <li class="nav-item has-dropdown">
-          <a href="shop.html" class="nav-link">
-            Shop
-            <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <ul class="nav-dropdown" id="shop-dropdown">
-            <li><a href="shop.html" class="nav-dropdown__link">All Wigs</a></li>
-            <li><a href="shop.html?filter=new-arrivals" class="nav-dropdown__link">New Arrivals</a></li>
-            <li><a href="shop.html?filter=best-sellers" class="nav-dropdown__link">Best Sellers</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item has-dropdown">
-          <a href="collections.html" class="nav-link">
-            Collections
-            <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <ul class="nav-dropdown" id="collections-dropdown">
-            <li><a href="shop.html">Loading...</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item has-dropdown">
-          <a href="lace-wigs.html" class="nav-link">
-            Lace Wigs
-            <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <ul class="nav-dropdown">
-            <li><a href="lace-front.html" class="nav-dropdown__link">Lace Front</a></li>
-            <li><a href="full-lace.html" class="nav-dropdown__link">Full Lace</a></li>
-            <li><a href="hd-lace.html" class="nav-dropdown__link">HD Lace</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item">
-          <a href="custom.html" class="nav-link">Custom Wigs</a>
-        </li>
-
-        <li class="nav-item">
-          <a href="bone-straight.html" class="nav-link">Bone Straight</a>
-        </li>
-
-        <li class="nav-item">
-          <a href="about-us.html" class="nav-link">About Us</a>
-        </li>
-
-<li class="nav-item">
-          <a href="contact-us.html" class="nav-link">Contact Us</a>
-        </li>
-
-<li class="nav-item has-dropdown nav-item--account">
-          <a href="account.html" class="nav-link">
-            <span class="nav-link__label-group">
-              <svg class="nav-link__icon nav-link__icon--outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
-              </svg>
-              <svg class="nav-link__icon nav-link__icon--filled" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-              </svg>
-              Account
-            </span>
-            <svg class="nav-link__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-          <ul class="nav-dropdown nav-dropdown--account">
-            <li data-account-guest>
-              <a href="signup.html" class="nav-dropdown__link nav-dropdown__link--signup">
-                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M15 12H3" stroke-linecap="round"/>
-                </svg>
-                Sign Up
-              </a>
-            </li>
-            <li data-account-signed-in hidden>
-              <p class="nav-dropdown__greeting" data-account-user></p>
-            </li>
-            <li data-account-signed-in hidden>
-              <a href="my-orders.html" class="nav-dropdown__link">
-                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M6 2h12v20H6z" stroke-linejoin="round"/>
-                  <path d="M9 6h6" stroke-linecap="round"/>
-                  <path d="M9 10h6" stroke-linecap="round"/>
-                  <path d="M9 14h4" stroke-linecap="round"/>
-                </svg>
-                My Orders
-              </a>
-            </li>
-            <li data-account-signed-in hidden>
-              <a href="profile.html" class="nav-dropdown__link nav-dropdown__link--profile">
-                <span class="profile-btn__icon-circle">
-                  <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4"/>
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
-                  </svg>
-                </span>
-                Profile
-              </a>
-            </li>
-            <li data-account-signed-in hidden>
-              <button type="button" class="nav-dropdown__link nav-dropdown__link--logout" data-account-signout>
-                <svg class="nav-dropdown__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M21 12H9" stroke-linecap="round"/>
-                </svg>
-                Sign Out
-              </button>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </nav>
 
   </header>`;
 
   setActiveNavItem();
+  initDesktopSearchToggle();
 })();
+
+function initDesktopSearchToggle() {
+  var header = document.querySelector('.site-header');
+  var wrap = document.querySelector('[data-desktop-search]');
+  var toggle = document.querySelector('[data-desktop-search-toggle]');
+  if (!header || !wrap || !toggle) return;
+
+  toggle.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var isOpen = wrap.classList.toggle('is-open');
+    header.classList.toggle('search-active', isOpen);
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    if (isOpen) {
+      var input = wrap.querySelector('.header-search__input');
+      if (input) input.focus();
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    if (wrap.classList.contains('is-open') && !wrap.contains(e.target)) {
+      wrap.classList.remove('is-open');
+      header.classList.remove('search-active');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
 
 /* -----------------------------
    Mark the current page's nav tab as active.
@@ -478,7 +481,7 @@ function setActiveNavItem() {
    API
 =========================================================== */
 
-const API = "http://localhost:5000/api";
+const API = "https://backend-6j62.onrender.com/api";
 
 /* ===========================================================
    Helpers
@@ -554,7 +557,7 @@ function renderCart(data) {
 
     const image = item.product.images?.[0];
     const imageUrl = image
-        ? `http://localhost:5000${image}`
+        ? `https://backend-6j62.onrender.com${image}`
         : "assets/images/placeholder.png";
 
     return `
@@ -928,7 +931,7 @@ function renderSearchResults(products, resultsBox) {
         >
 
             <img
-                src="http://localhost:5000${product.images[0]}"
+                src="https://backend-6j62.onrender.com${product.images[0]}"
                 alt="${product.name}"
             >
 
@@ -994,4 +997,40 @@ function initializeSearch() {
 
     });
 
+}
+
+
+/* =========================================================
+   CUSTOMER ONLINE HEARTBEAT
+   ========================================================= */
+
+let heartbeatTimer = null;
+
+async function sendHeartbeat() {
+    try {
+        const { response, data } = await fetchAPI("/auth/heartbeat", {
+            method: "POST"
+        });
+
+        if (!response.ok || !data.success) {
+            console.log("Heartbeat failed");
+            return;
+        }
+
+        console.log("Customer heartbeat sent");
+
+    } catch (error) {
+        console.error("Heartbeat error:", error);
+    }
+}
+
+function startHeartbeat() {
+
+    // Send immediately
+    sendHeartbeat();
+
+    // Then send every 30 seconds
+    heartbeatTimer = setInterval(() => {
+        sendHeartbeat();
+    }, 30000);
 }

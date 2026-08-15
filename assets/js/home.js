@@ -5,7 +5,7 @@
    Load order: main.js -> header-loader.js -> home.js
    ============================================================= */
 
-   const API_URL = "http://localhost:5000/api";
+   const API_URL = "https://backend-6j62.onrender.com/api";
 
 document.addEventListener('DOMContentLoaded', function () {
   initHeroDots();
@@ -203,7 +203,7 @@ async function initCollections() {
 
             li.innerHTML = `
 
-<a href="product.html?slug=${product.slug}" class="collection-card__link">
+<a href="shop.html?slug=${product.slug}" class="collection-card__link">
 
     <span class="collection-card__image-wrap">
 
@@ -229,7 +229,7 @@ async function initCollections() {
 </a>
 
 <a
-    href="product.html?slug=${product.slug}"
+    href="shop.html?slug=${product.slug}"
     class="btn btn-primary btn--card"
 >
 

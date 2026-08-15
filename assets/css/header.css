@@ -179,17 +179,56 @@
   display: none;
   position: relative;
   order: 2;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-search__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+  transition: background-color var(--transition-base), color var(--transition-fast), opacity var(--transition-base);
+}
+
+.header-search__toggle:hover {
+  color: var(--color-gold);
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.header-search.is-open .header-search__toggle {
+  background-color: transparent;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .header-search__field {
   display: flex;
   align-items: center;
+  width: 0;
+  max-width: 0;
+  padding: 10px 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-bg-dark-alt);
+  opacity: 0;
+  overflow: hidden;
+  transition: width var(--transition-base), max-width var(--transition-base), padding var(--transition-base), opacity var(--transition-fast), border-color var(--transition-fast), margin var(--transition-base);
+}
+
+.header-search.is-open .header-search__field {
   width: 100%;
   max-width: 420px;
   padding: 10px 16px;
-  border: 1px solid var(--color-border-dark);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-bg-dark-alt);
+  border-color: var(--color-border-dark);
+  opacity: 1;
+  margin-left: var(--space-sm);
 }
 
 .header-search__input {
@@ -1148,8 +1187,32 @@ body.announcement-dismissed .primary-nav__header {
     justify-content: center;
   }
 
+  .header-search__toggle {
+    display: flex;
+  }
+
   .header-action__label {
     display: block;
+  }
+}
+
+/* -----------------------------
+   Tablet-only override (768px–1023px)
+   Search bar open by default, no toggle click needed.
+   Does NOT affect phone (<768px) or desktop (≥1024px).
+   ----------------------------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .header-search__toggle {
+    display: none;
+  }
+
+  .header-search__field {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 16px;
+    border-color: var(--color-border-dark);
+    opacity: 1;
+    margin-left: var(--space-sm);
   }
 }
 
@@ -1188,13 +1251,18 @@ body.announcement-dismissed .primary-nav__header {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: var(--space-lg);
+    gap: var(--space-2xl);
     padding-top: 14px;
     padding-inline: var(--page-gutter);
     padding-bottom: 25px;
     overflow-y: visible;
     flex: none;
     min-height: auto;
+    transition: gap var(--transition-base);
+  }
+
+  .site-header.search-active .nav-list {
+    gap: var(--space-lg);
   }
 
   .nav-item {

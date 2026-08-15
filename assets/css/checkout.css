@@ -675,6 +675,124 @@
   max-width: 320px;
 }
 
+/* ---------- Stripe secure-checkout banner (above Place Order) ---------- */
+.checkout-stripe-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: var(--space-sm);
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+}
+
+.checkout-stripe-banner__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.checkout-stripe-banner__text strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--color-white);
+  margin-bottom: 3px;
+}
+
+.checkout-stripe-banner__text p {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.checkout-stripe-banner__brand {
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+/* ---------- "Proceed to Secure Payment" panel ---------- */
+.checkout-redirect-panel--stripe {
+  border-style: solid;
+  padding: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.checkout-redirect-panel__lock {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  margin-bottom: 2px;
+}
+
+.checkout-redirect-panel__lock svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-gold);
+}
+
+.checkout-redirect-panel--stripe h3 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.checkout-redirect-panel--stripe p {
+  max-width: 380px;
+}
+
+/* ---------- Trust row: Secure Checkout / Stripe / Privacy Protected ---------- */
+.checkout-stripe-trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0;
+  margin-top: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border-dark);
+  list-style: none;
+}
+
+.checkout-stripe-trust-row li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.checkout-stripe-trust-row svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-gold);
+}
+
+.checkout-stripe-trust-row strong {
+  font-size: 11.5px;
+  color: var(--color-white);
+}
+
+.checkout-stripe-trust-row span {
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+}
+
+.checkout-stripe-trust-row__stripe-logo {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-gold);
+  font-style: normal;
+}
+
 .checkout-afterpay-breakdown {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1003,8 +1121,18 @@
     order: 4;
   }
 
+  .checkout-stripe-banner,
+  .checkout-redirect-panel--stripe {
+    order: 4;
+  }
+
   .checkout-modal__actions {
     order: 5;
+    margin-top: 8px;
+  }
+
+  .checkout-stripe-trust-row {
+    order: 6;
     margin-top: 8px;
   }
 

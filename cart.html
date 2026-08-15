@@ -277,11 +277,6 @@
           <span class="checkout-step__num">1</span>
           <span class="checkout-step__label">Shipping Information</span>
         </div>
-        <div class="checkout-step__divider"></div>
-        <div class="checkout-step" data-checkout-step-indicator="2">
-          <span class="checkout-step__num">2</span>
-          <span class="checkout-step__label">Payment</span>
-        </div>
       </div>
 
       <div class="checkout-modal__body">
@@ -361,7 +356,7 @@
 
               <div class="checkout-field">
                 <label>Phone Number (Optional)</label>
-                <input type="tel" id="checkout-phone" placeholder="555 123 4567" />
+                <input type="tel" id="checkout-phone" placeholder=" 555 123 4567" />
               </div>
 
               <label class="checkout-save-info">
@@ -372,169 +367,53 @@
                 Save this information for next time
               </label>
             </div>
+          </div>
 
-            <div class="checkout-section checkout-section--payment-method">
-              <h3 data-mobile-step="2">Payment</h3>
-              <p class="checkout-section__hint">Choose your preferred payment method.</p>
-
-              <div class="checkout-payment-options">
-                <label class="checkout-payment-option is-active" data-payment-method="card">
-                  <input type="radio" name="payment-method" checked />
-                  <span class="checkout-payment-option__radio"></span>
-                  <span class="checkout-payment-option__info">
-                    <strong>Debit / Credit Card</strong>
-                    <span>Visa, Mastercard, Verve</span>
-                  </span>
-                  <span class="pay-logos">
-                    <span class="pay-logo pay-logo--visa">VISA</span>
-                    <span class="pay-logo pay-logo--mastercard" aria-label="Mastercard">
-                      <span class="pay-logo__circle pay-logo__circle--red"></span>
-                      <span class="pay-logo__circle pay-logo__circle--yellow"></span>
-                    </span>
-                    <span class="pay-logo pay-logo--verve">Verve</span>
-                  </span>
-                </label>
-
-                <div class="checkout-payment-options__logos-row" role="group" aria-label="Other payment options">
-                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="gpay" aria-label="Google Pay">
-                    <input type="radio" name="payment-method" />
-                    <span class="pay-logo pay-logo--gpay">
-                      <svg class="pay-logo__gicon" viewBox="0 0 20 20" aria-hidden="true">
-                        <path fill="#4285F4" d="M19.6 10.23c0-.67-.06-1.31-.17-1.93H10v3.65h5.38a4.6 4.6 0 0 1-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.24z"/>
-                        <path fill="#34A853" d="M10 20c2.7 0 4.96-.9 6.62-2.43l-3.24-2.5c-.9.6-2.04.96-3.38.96-2.6 0-4.8-1.75-5.6-4.11H1.06v2.58A10 10 0 0 0 10 20z"/>
-                        <path fill="#FBBC05" d="M4.4 11.92a5.99 5.99 0 0 1 0-3.84V5.5H1.06a10 10 0 0 0 0 9l3.34-2.58z"/>
-                        <path fill="#EA4335" d="M10 3.96c1.47 0 2.79.5 3.83 1.5l2.87-2.87A9.96 9.96 0 0 0 10 0 10 10 0 0 0 1.06 5.5l3.34 2.58C5.2 5.71 7.4 3.96 10 3.96z"/>
-                      </svg>
-                      <span>Pay</span>
-                    </span>
-                  </label>
-
-                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="cashapp" aria-label="Cash App">
-                    <input type="radio" name="payment-method" />
-                    <span class="pay-logo pay-logo--cashapp">
-                      <img src="assets/images/shopimage/cashapp-logo.png" alt="" class="pay-logo__cashapp-icon" />
-                        <path fill="currentColor" d="M13.2 6.4c-1-.4-2-.4-2.9-.1-.8.3-1.3.9-1.3 1.6 0 .8.6 1.2 1.9 1.6l1 .3c2.1.6 3.2 1.6 3.2 3.3 0 1.9-1.4 3.2-3.6 3.5l-.3 1.3c-.1.3-.3.5-.6.5h-1c-.4 0-.6-.3-.6-.7l.3-1.2c-1.1-.2-2.1-.6-2.9-1.2-.3-.2-.3-.5-.1-.8l.6-.8c.2-.3.5-.3.8-.1.7.5 1.6.9 2.6.9 1.2 0 2-.5 2-1.4 0-.8-.5-1.2-1.9-1.6l-1-.3c-1.9-.5-3.1-1.5-3.1-3.2 0-1.7 1.2-2.9 3.2-3.3l.3-1.3c.1-.3.3-.5.6-.5h1c.4 0 .6.3.5.7l-.3 1.2c.9.2 1.7.5 2.4 1 .3.2.3.5.1.8l-.5.7c-.2.3-.5.3-.8.1z"/>
-                      </svg>
-                      <span>Cash App</span>
-                    </span>
-                  </label>
-
-                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="applepay" aria-label="Apple Pay">
-                    <input type="radio" name="payment-method" />
-                    <span class="pay-logo pay-logo--applepay">
-                      <svg class="pay-logo__apple" viewBox="0 0 14 16" aria-hidden="true">
-                        <path fill="currentColor" d="M11.6 8.5c0-1.8 1.4-2.7 1.5-2.8-.8-1.2-2.1-1.3-2.5-1.4-1.1-.1-2.1.6-2.7.6-.6 0-1.4-.6-2.3-.6-1.2 0-2.3.7-2.9 1.7-1.2 2.1-.3 5.3.9 7 .6.9 1.3 1.8 2.2 1.8.9 0 1.2-.6 2.3-.6s1.4.6 2.3.5c1-.1 1.4-.5 1.9-1.3.6-.9.9-1.8.9-1.8-.1 0-1.6-.6-1.6-2.1zM9.3 3c.5-.6.8-1.4.7-2.2-.7 0-1.5.4-2 1-.4.5-.8 1.3-.7 2.1.8.1 1.5-.3 2-.9z"/>
-                      </svg>
-                      <span>Pay</span>
-                    </span>
-                  </label>
-
-                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="afterpay" aria-label="AfterPay">
-                    <input type="radio" name="payment-method" />
-                    <span class="pay-logo pay-logo--afterpay">afterpay</span>
-                  </label>
-
-                  <label class="checkout-payment-option checkout-payment-option--logo-only" data-payment-method="klarna" aria-label="Klarna">
-                    <input type="radio" name="payment-method" />
-                    <span class="pay-logo pay-logo--klarna">Klarna</span>
-                  </label>
-                </div>
-              </div>
-
-              <p class="checkout-secure-note">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg>
-                Your payment information is secure and encrypted.
-              </p>
+          <!-- Stripe secure-checkout indicator -->
+          <div class="checkout-stripe-banner">
+            <svg class="checkout-stripe-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg>
+            <div class="checkout-stripe-banner__text">
+              <strong>Secure &amp; Trusted Checkout</strong>
+              <p>Your payment will be securely processed by <span class="checkout-stripe-banner__brand">Stripe</span>.<br>We never store your card details.</p>
             </div>
           </div>
 
-          <!-- STEP 2 -->
-          <div class="checkout-step-panel" data-checkout-step-panel="2" hidden>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="card">
-              <h3>Card Details</h3>
-              <div class="checkout-field">
-                <label>Name on Card <span class="checkout-field__required">*</span></label>
-                <span class="checkout-field-error" data-field-error="card-name"></span>
-                <input type="text" id="checkout-card-name" autocomplete="cc-name" placeholder="Enter name as shown on card" required />
-              </div>
-              <div class="checkout-field">
-                <label>Card Number <span class="checkout-field__required">*</span></label>
-                <span class="checkout-field-error" data-field-error="card-number"></span>
-                <input type="text" id="checkout-card-number" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required />
-              </div>
-              <div class="checkout-field-row">
-                <div class="checkout-field">
-                  <label>Expiry Date <span class="checkout-field__required">*</span></label>
-                  <span class="checkout-field-error" data-field-error="card-expiry"></span>
-                  <input type="text" id="checkout-expiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY" required />
-                </div>
-                <div class="checkout-field">
-                  <label>CVV <span class="checkout-field__required">*</span></label>
-                  <span class="checkout-field-error" data-field-error="card-cvv"></span>
-                  <input type="text" id="checkout-cvv" inputmode="numeric" autocomplete="cc-csc" maxlength="3" placeholder="123" required />
-                </div>
-              </div>
-            </div>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="gpay" hidden>
-              <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge">G Pay</span>
-                <p>You'll be redirected to Google Pay to complete your purchase securely.</p>
-              </div>
-            </div>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="cashapp" hidden>
-              <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge">Cash App</span>
-                <p>You'll be redirected to Cash App to complete your purchase securely.</p>
-              </div>
-            </div>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="applepay" hidden>
-              <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge"> Pay</span>
-                <p>Confirm this purchase using Apple Pay on your device.</p>
-              </div>
-            </div>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="afterpay" hidden>
-              <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge">afterpay</span>
-                <p>Split your total into 4 interest-free payments.</p>
-                <div class="checkout-afterpay-breakdown" data-afterpay-breakdown></div>
-              </div>
-            </div>
-
-            <div class="checkout-section checkout-payment-panel" data-payment-panel="klarna" hidden>
-              <div class="checkout-redirect-panel">
-                <span class="checkout-redirect-panel__badge">Klarna</span>
-                <p>Pay in 4 interest-free installments, or pay in full, with Klarna.</p>
-              </div>
-            </div>
-
+          <div class="checkout-redirect-panel checkout-redirect-panel--stripe">
+            <span class="checkout-redirect-panel__lock">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>
+            </span>
+            <h3>Proceed to Secure Payment</h3>
+            <p>Click the button below to continue to our secure payment partner, Stripe. You&rsquo;ll be able to choose your preferred payment method.</p>
           </div>
 
           <div class="checkout-modal__actions">
-            <button type="button" class="checkout-modal__back" data-checkout-back hidden>Back</button>
 <button type="button" class="btn btn-primary checkout-modal__continue" data-checkout-continue>
   <span class="btn-icon-wrap">
     <svg class="btn-icon btn-icon--bag checkout-modal__continue-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg>
     <svg class="btn-icon btn-icon--arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </span>
   <span class="btn-text">Continue to Payment</span>
-  <span class="checkout-modal__continue-mobile-text">Proceed to Payment</span>
+  <span class="checkout-modal__continue-mobile-text">Continue to Payment</span>
   <span class="checkout-modal__continue-amount" data-checkout-cta-total></span>
 </button>
           </div>
-          <p class="checkout-ssl-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg>
-            SSL Encrypted
-          </p>
-          <p class="checkout-ssl-note checkout-ssl-note--mobile">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z" stroke-linejoin="round"/></svg>
-            100% Secure &amp; Encrypted Checkout
-          </p>
+
+          <ul class="checkout-stripe-trust-row">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke-linecap="round"/></svg>
+              <strong>Secure Checkout</strong>
+              <span>SSL encrypted</span>
+            </li>
+            <li>
+              <span class="checkout-stripe-trust-row__stripe-logo">stripe</span>
+              <span>Powered by Stripe</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z" stroke-linejoin="round"/></svg>
+              <strong>Privacy Protected</strong>
+              <span>Your data is safe</span>
+            </li>
+          </ul>
         </div>
 
         <!-- ORDER SUMMARY -->
@@ -587,7 +466,7 @@
   <script src="assets/js/footer.js"></script>
 
   <!-- Scripts -->
-  <script src="assets/js/Product-data.js"></script>
+  <script src="assets/js/product-data.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/cart.js"></script>
   <script src="assets/js/checkout.js"></script>
