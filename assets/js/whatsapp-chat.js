@@ -35,7 +35,7 @@
         '<img src="' + WHATSAPP_AVATAR + '" alt="' + WHATSAPP_NAME + '" class="whatsapp-widget__avatar" data-whatsapp-avatar />' +
         '<div class="whatsapp-widget__header-text">' +
           '<p class="whatsapp-widget__name">' + WHATSAPP_NAME + '</p>' +
-          '<p class="whatsapp-widget__status">Typically replies instantly</p>' +
+          '<p class="whatsapp-widget__status">Typically replies within an hour</p>' +
         '</div>' +
         '<button type="button" class="whatsapp-widget__close" data-whatsapp-close aria-label="Close chat">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
