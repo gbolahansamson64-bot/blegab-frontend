@@ -1,5 +1,5 @@
-const CART_API = "https://backend-6j62.onrender.com/api/cart";
-const BACKEND_URL = "https://backend-6j62.onrender.com";
+const CART_API = "https://api.blegab.com/api/cart";
+const BACKEND_URL = "https://api.blegab.com";
 
 
 // =========================================================

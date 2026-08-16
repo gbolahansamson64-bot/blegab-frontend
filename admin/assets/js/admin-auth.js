@@ -10,7 +10,7 @@
    Communicates with the Express backend API.
 ========================================================= */
 
-const API_BASE = "https://backend-6j62.onrender.com";
+const API_BASE = "https://api.blegab.com";
 
 document.addEventListener("DOMContentLoaded", async function () {
 

@@ -6,7 +6,7 @@
    modal (same markup/behavior as shop.html) and the
    newsletter form.
    ========================================================= */
-const API_URL = "https://backend-6j62.onrender.com/api/cart";
+const API_URL = "https://api.blegab.com/api/cart";
 
 document.addEventListener("DOMContentLoaded", function () {
 

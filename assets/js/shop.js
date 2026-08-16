@@ -71,13 +71,13 @@ function unlockBodyScroll() {
   }
 }
 
-const API_URL = "https://backend-6j62.onrender.com/api/products";
+const API_URL = "https://api.blegab.com/api/products";
 
-const CATEGORY_URL = "https://backend-6j62.onrender.com/api/categories";
+const CATEGORY_URL = "https://api.blegab.com/api/categories";
 
-const CART_URL = "https://backend-6j62.onrender.com/api/cart";
+const CART_URL = "https://api.blegab.com/api/cart";
 
-const WISHLIST_URL = "https://backend-6j62.onrender.com/api/wishlist";
+const WISHLIST_URL = "https://api.blegab.com/api/wishlist";
 
 
 function getShopProductImage(image) {
@@ -99,7 +99,7 @@ function getShopProductImage(image) {
     }
 
     // Backend image path
-    return "https://backend-6j62.onrender.com" + (
+    return "https://api.blegab.com" + (
         image.startsWith("/") ? image : "/" + image
     );
 }

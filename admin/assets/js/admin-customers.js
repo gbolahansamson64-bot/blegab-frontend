@@ -54,7 +54,7 @@ async function fetchCustomers() {
   try {
 
     const response = await fetch(
-      "https://backend-6j62.onrender.com/api/admin/customers",
+      "https://api.blegab.com/api/admin/customers",
       {
         method: "GET",
         credentials: "include"
@@ -259,7 +259,7 @@ async function deleteCustomerById(id) {
     try {
 
         const response = await fetch(
-            `https://backend-6j62.onrender.com/api/admin/customers/${id}`,
+            `https://api.blegab.com/api/admin/customers/${id}`,
             {
                 method: "DELETE",
                 credentials: "include"

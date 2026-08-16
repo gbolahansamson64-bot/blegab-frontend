@@ -6,7 +6,7 @@
    selected in step 1 (card fields / GPay / Stripe / Apple Pay / AfterPay).
    ========================================================= */
 
-   const CHECKOUT_API_URL = "https://backend-6j62.onrender.com/api";
+   const CHECKOUT_API_URL = "https://api.blegab.com/api";
 
 async function createCheckoutSession(checkoutData) {
 

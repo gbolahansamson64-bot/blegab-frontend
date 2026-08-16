@@ -481,7 +481,7 @@ function setActiveNavItem() {
    API
 =========================================================== */
 
-const API = "https://backend-6j62.onrender.com/api";
+const API = "https://api.blegab.com/api";
 
 /* ===========================================================
    Helpers
@@ -774,7 +774,7 @@ function renderSearchResults(products, resultsBox) {
         >
 
             <img
-                src="https://backend-6j62.onrender.com${product.images[0]}"
+                src="https://api.blegab.com${product.images[0]}"
                 alt="${product.name}"
             >
 

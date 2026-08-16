@@ -56,7 +56,7 @@ window.BLEGAB_CART = {
     try {
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart',
+        'https://api.blegab.com/api/cart',
         {
           method: 'GET',
           credentials: 'include'
@@ -89,7 +89,7 @@ getCart: async function () {
   try {
 
     const response = await fetch(
-      'https://backend-6j62.onrender.com/api/cart',
+      'https://api.blegab.com/api/cart',
       {
         method: 'GET',
         credentials: 'include'
@@ -122,7 +122,7 @@ getCart: async function () {
     try {
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart/add',
+        'https://api.blegab.com/api/cart/add',
         {
           method: 'POST',
           credentials: 'include',
@@ -185,7 +185,7 @@ getCart: async function () {
     try {
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart',
+        'https://api.blegab.com/api/cart',
         {
           method: 'GET',
           credentials: 'include'
@@ -243,7 +243,7 @@ getCart: async function () {
     try {
 
       const response = await fetch(
-        'https://backend-6j62.onrender.com/api/cart',
+        'https://api.blegab.com/api/cart',
         {
           method: 'GET',
           credentials: 'include'
@@ -535,7 +535,7 @@ document.addEventListener('click', async function (event) {
       const productId = decreaseBtn.dataset.cartDecrease;
 
       const response = await fetch(
-        `https://backend-6j62.onrender.com/api/cart`,
+        `https://api.blegab.com/api/cart`,
         {
           method: 'GET',
           credentials: 'include'
@@ -553,7 +553,7 @@ document.addEventListener('click', async function (event) {
       if (item.quantity > 1) {
 
         await fetch(
-          `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
+          `https://api.blegab.com/api/cart/update/${productId}`,
           {
             method: 'PUT',
             credentials: 'include',
@@ -569,7 +569,7 @@ document.addEventListener('click', async function (event) {
       } else {
 
         await fetch(
-          `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
+          `https://api.blegab.com/api/cart/remove/${productId}`,
           {
             method: 'DELETE',
             credentials: 'include'
@@ -592,7 +592,7 @@ document.addEventListener('click', async function (event) {
       const productId = increaseBtn.dataset.cartIncrease;
 
       const response = await fetch(
-        `https://backend-6j62.onrender.com/api/cart`,
+        `https://api.blegab.com/api/cart`,
         {
           method: 'GET',
           credentials: 'include'
@@ -608,7 +608,7 @@ document.addEventListener('click', async function (event) {
       if (!item) return;
 
       await fetch(
-        `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
+        `https://api.blegab.com/api/cart/update/${productId}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -636,7 +636,7 @@ document.addEventListener('click', async function (event) {
       const productId = removeBtn.dataset.cartRemove;
 
       const response = await fetch(
-        `https://backend-6j62.onrender.com/api/cart/remove/${productId}`,
+        `https://api.blegab.com/api/cart/remove/${productId}`,
         {
           method: 'DELETE',
           credentials: 'include'
@@ -665,7 +665,7 @@ document.addEventListener('click', async function (event) {
       const productId = resetBtn.dataset.cartReset;
 
       await fetch(
-        `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
+        `https://api.blegab.com/api/cart/update/${productId}`,
         {
           method: 'PUT',
           credentials: 'include',
@@ -713,7 +713,7 @@ document.addEventListener('change', async function (event) {
 
   try {
     await fetch(
-      `https://backend-6j62.onrender.com/api/cart/update/${productId}`,
+      `https://api.blegab.com/api/cart/update/${productId}`,
       {
         method: 'PUT',
         credentials: 'include',

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 async function loadStatistics() {
   try {
     const response = await fetch(
-      "https://backend-6j62.onrender.com/api/admin/statistics"
+      "https://api.blegab.com/api/admin/statistics"
     );
 
     console.log("STATISTICS RESPONSE STATUS:", response.status);

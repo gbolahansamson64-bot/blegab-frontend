@@ -1,10 +1,10 @@
 /* ADMIN PRODUCTS PAGE JS — delegated events, idempotent init */
 
-const API_BASE = "https://backend-6j62.onrender.com/api";
+const API_BASE = "https://api.blegab.com/api";
 
-const CATEGORY_API = "https://backend-6j62.onrender.com/api/categories";
+const CATEGORY_API = "https://api.blegab.com/api/categories";
 
-const PRODUCT_API_URL = "https://backend-6j62.onrender.com/api/products";
+const PRODUCT_API_URL = "https://api.blegab.com/api/products";
 
 
 

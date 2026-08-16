@@ -5,7 +5,7 @@
    Load order: main.js -> header-loader.js -> home.js
    ============================================================= */
 
-   const API_URL = "https://backend-6j62.onrender.com/api";
+   const API_URL = "https://api.blegab.com/api";
 
 document.addEventListener('DOMContentLoaded', function () {
   initHeroDots();

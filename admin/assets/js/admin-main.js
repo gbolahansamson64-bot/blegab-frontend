@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initHeaderProductModal();
 });
 
-const API_URL = "https://backend-6j62.onrender.com/api";
+const API_URL = "https://api.blegab.com/api";
 
 
 

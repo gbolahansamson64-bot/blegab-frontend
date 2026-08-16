@@ -35,7 +35,7 @@
 
 import { Country, State, City } from 'https://cdn.jsdelivr.net/npm/country-state-city@3/+esm';
    
-var API_BASE = "https://backend-6j62.onrender.com/api/auth";
+var API_BASE = "https://api.blegab.com/api/auth";
 
 window.BLEGAB_PROFILE = {
   get: async function () {
