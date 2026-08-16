@@ -405,6 +405,7 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--color-white);
+  white-space: nowrap;
 }
 
 .collection-card__price {
@@ -1033,4 +1034,33 @@
     opacity: 1;
     transform: none;
   }
+}
+
+.product-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.collection-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-gold);
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 2;
 }

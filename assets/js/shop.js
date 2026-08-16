@@ -1198,9 +1198,6 @@ modalMainImage.onerror = function () {
     modalDescription.textContent = product.description || "No description available.";
     modalLength.textContent = product.length || "Not specified";
 
-   modalTexture.textContent = product.texture || "Not specified";
-
-   modalCapSize.textContent = product.capSize || "Not specified";
 
   modalLaceType.textContent = product.laceType || "Not specified";
 
