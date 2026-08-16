@@ -4,19 +4,31 @@
    overview page from window.BLEGAB_ADMIN_* (admin-data.js).
    ========================================================= */
 
-   async function checkAdminAuth() {
+  async function checkAdminAuth() {
 
     try {
 
-        const res = await fetch("https://backend-6j62.onrender.com/api/admin/me", {
-            credentials: "include"
-        });
+        const res = await fetch(
+            "https://backend-6j62.onrender.com/api/admin/me",
+            {
+                method: "GET",
+                credentials: "include"
+            }
+        );
 
-        return res.ok;
+        if (!res.ok) {
+            return null;
+        }
+
+        const data = await res.json();
+
+        return data.admin || null;
 
     } catch (err) {
 
-        return false;
+        console.error("ADMIN AUTH CHECK ERROR:", err);
+
+        return null;
 
     }
 
@@ -50,12 +62,16 @@ async function loadDashboard() {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const loggedIn = await checkAdminAuth();
+    const admin = await checkAdminAuth();
 
-    if (!loggedIn) {
+    if (!admin) {
         window.location.href = "admin-login.html";
         return;
     }
+
+    // Store the authenticated admin so other functions
+    // don't need to call /api/admin/me again.
+    window.BLEGAB_ADMIN_USER = admin;
 
     initAdminSidebar();
 
@@ -71,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await loadDashboard();
 
-    await renderAdminAuthState();
+    renderAdminAuthState();
 
 });
 
@@ -1591,50 +1607,53 @@ window.BLEGAB_ADMIN_AUTH = {
 
 };
 
-async function renderAdminAuthState() {
+function renderAdminAuthState() {
 
     var submenu = document.querySelector('[data-admin-auth-submenu]');
 
     if (!submenu) return;
 
-    var user = await window.BLEGAB_ADMIN_AUTH.getUser();
+    var user = window.BLEGAB_ADMIN_USER;
 
-  if (user) {
-    submenu.innerHTML =
-      '<li class="admin-nav__sublink admin-nav__sublink--static">Signed in as ' + (user.name || user.email) + '</li>' +
-      '<li>' +
-        '<button type="button" class="admin-nav__sublink admin-nav__sublink--btn" data-admin-signout>' +
-          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-            '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M10 17l-5-5 5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M15 12H3" stroke-linecap="round"/>' +
-          '</svg>' +
-          'Sign Out' +
-        '</button>' +
-      '</li>';
-  } else {
-    submenu.innerHTML =
-      '<li>' +
-        '<a href="admin-login.html" class="admin-nav__sublink">' +
-          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-            '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M21 12H9" stroke-linecap="round"/>' +
-          '</svg>' +
-          'Admin Sign In' +
-        '</a>' +
-      '</li>' +
-      '<li>' +
-        '<a href="admin-signup.html" class="admin-nav__sublink">' +
-          '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
-            '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M10 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
-            '<path d="M15 12H3" stroke-linecap="round"/>' +
-          '</svg>' +
-          'Admin Sign Up' +
-        '</a>' +
-      '</li>';
-  }
+    if (user) {
+
+        submenu.innerHTML =
+            '<li class="admin-nav__sublink admin-nav__sublink--static">' +
+                'Signed in as ' +
+                (user.name || user.email) +
+            '</li>' +
+
+            '<li>' +
+                '<button type="button" class="admin-nav__sublink admin-nav__sublink--btn" data-admin-signout>' +
+
+                    '<svg class="admin-nav__sublink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+                        '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke-linecap="round" stroke-linejoin="round"/>' +
+                        '<path d="M10 17l-5-5 5-5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                        '<path d="M15 12H3" stroke-linecap="round"/>' +
+                    '</svg>' +
+
+                    'Sign Out' +
+
+                '</button>' +
+            '</li>';
+
+    } else {
+
+        submenu.innerHTML =
+            '<li>' +
+                '<a href="admin-login.html" class="admin-nav__sublink">' +
+                    'Admin Sign In' +
+                '</a>' +
+            '</li>' +
+
+            '<li>' +
+                '<a href="admin-signup.html" class="admin-nav__sublink">' +
+                    'Admin Sign Up' +
+                '</a>' +
+            '</li>';
+
+    }
+
 }
 
 document.addEventListener("click", async function (e) {
