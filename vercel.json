@@ -19,6 +19,11 @@
       "source": "/contact.html",
       "destination": "/contact",
       "permanent": true
+    },
+    {
+      "source": "/about-us.html",
+      "destination": "/about",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -33,20 +38,9 @@
     {
       "source": "/contact",
       "destination": "/contact.html"
-    }
-  ]
-}
-{
-  "redirects": [
+    },
     {
-      "source": "/about-us.html",
-      "destination": "/about",
-      "permanent": true
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/about-us",
+      "source": "/about",
       "destination": "/about-us.html"
     }
   ]
