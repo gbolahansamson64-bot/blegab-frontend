@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/index.html",
-      "destination": "/home",
+      "destination": "/",
       "permanent": true
     },
     {
@@ -23,16 +23,16 @@
   ],
   "rewrites": [
     {
-      "source": "/shop.html",
-      "destination": "/shop"
+      "source": "/shop",
+      "destination": "/shop.html"
     },
     {
-      "source": "/cart.html",
-      "destination": "/cart"
+      "source": "/cart",
+      "destination": "/cart.html"
     },
     {
-      "source": "/contact.html",
-      "destination": "/contact"
+      "source": "/contact",
+      "destination": "/contact.html"
     }
   ]
 }
