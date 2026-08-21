@@ -40,7 +40,7 @@
   "redirects": [
     {
       "source": "/about-us.html",
-      "destination": "/about-us",
+      "destination": "/about",
       "permanent": true
     }
   ],
