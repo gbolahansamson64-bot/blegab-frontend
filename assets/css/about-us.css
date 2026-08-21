@@ -550,14 +550,20 @@ body {
   text-align: center;
 }
 
-.stat__emoji {
-  display: block;
-  font-size: 28px;
+.stat__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--space-xs);
 }
 
-.stat__emoji--spin {
-  display: inline-block;
+.stat__icon {
+  width: 30px;
+  height: 30px;
+  color: var(--color-gold);
+}
+
+.stat__icon-wrap--spin .stat__icon {
   animation: globeSpin 6s linear infinite;
 }
 
@@ -567,7 +573,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stat__emoji--spin {
+  .stat__icon-wrap--spin .stat__icon {
     animation: none;
   }
 }
