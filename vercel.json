@@ -21,6 +21,11 @@
       "permanent": true
     },
     {
+      "source": "/contact-us.html",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
       "source": "/about-us.html",
       "destination": "/about",
       "permanent": true
@@ -37,7 +42,7 @@
     },
     {
       "source": "/contact",
-      "destination": "/contact.html"
+      "destination": "/contact-us.html"
     },
     {
       "source": "/about",
