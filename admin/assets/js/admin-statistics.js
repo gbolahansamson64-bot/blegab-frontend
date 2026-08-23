@@ -36,8 +36,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 async function loadStatistics() {
   try {
     const response = await fetch(
-      "https://api.blegab.com/api/admin/statistics"
-    );
+  "https://api.blegab.com/api/admin/statistics",
+  {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }
+);
 
     console.log("STATISTICS RESPONSE STATUS:", response.status);
 

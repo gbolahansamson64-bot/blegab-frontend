@@ -80,7 +80,7 @@ function mapProduct(product) {
 
         length: product.length || "",
 
-        density: product.density || "",
+        // density: product.density || "",
 
         laceType: product.laceType || "",
 
@@ -267,7 +267,7 @@ var prdState = {
   stockMin: null,
   stockMax: null,
   length: 'all',
-  density: 'all',
+  // density: 'all',
   laceType: 'all',
   visibleCount: prdGetBatchSize()
 };
@@ -568,7 +568,7 @@ var hasSoftFilters =
     (prdState.stockMin != null && !isNaN(prdState.stockMin)) ||
     (prdState.stockMax != null && !isNaN(prdState.stockMax)) ||
     prdState.length !== 'all' ||
-    prdState.density !== 'all' ||
+    // prdState.density !== 'all' ||
     prdState.laceType !== 'all';
 
   if (hasSoftFilters) {
@@ -579,7 +579,7 @@ var hasSoftFilters =
       if (prdState.stockMin != null && !isNaN(prdState.stockMin) && p.stock >= prdState.stockMin) score++;
       if (prdState.stockMax != null && !isNaN(prdState.stockMax) && p.stock <= prdState.stockMax) score++;
       if (prdState.length !== 'all' && p.length === prdState.length) score++;
-      if (prdState.density !== 'all' && p.density === prdState.density) score++;
+      // if (prdState.density !== 'all' && p.density === prdState.density) score++;
       if (prdState.laceType !== 'all' && p.laceType === prdState.laceType) score++;
       return { p: p, score: score };
     }).sort(function (a, b) { return b.score - a.score; }).map(function (x) { return x.p; });
@@ -869,7 +869,7 @@ var badgeInput = document.querySelector('[data-prd-badge-input]');
 var imageInput = document.querySelector('[data-prd-image-file-input]');
 var descriptionInput = document.querySelector('[data-prd-description-input]');
 var lengthInput = document.querySelector('[data-prd-length-input]');
-var densityInput = document.querySelector('[data-prd-density-input]');
+// var densityInput = document.querySelector('[data-prd-density-input]');
 var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
 
   modal.dataset.mode = mode;
@@ -888,7 +888,7 @@ var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
     prdModalImages = product.images ? product.images.slice() : [];
     if (descriptionInput) descriptionInput.value = product.description || '';
     if (lengthInput) lengthInput.value = product.length || '';
-    if (densityInput) densityInput.value = product.density || '';
+    // if (densityInput) densityInput.value = product.density || '';
     if (laceTypeInput) laceTypeInput.value = product.laceType || '';
     saveBtn.textContent = 'Save Changes';
    } else {
@@ -902,7 +902,7 @@ var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
     prdModalImages = [];
     if (descriptionInput) descriptionInput.value = '';
     if (lengthInput) lengthInput.value = '';
-    if (densityInput) densityInput.value = '';
+    // if (densityInput) densityInput.value = '';
     if (laceTypeInput) laceTypeInput.value = '';
     saveBtn.textContent = 'Save Product';
   }
@@ -974,7 +974,7 @@ function openViewModal(product) {
   document.querySelector('[data-prd-view-stock]').textContent = product.stock;
   document.querySelector('[data-prd-view-status]').textContent = status.label;
   document.querySelector('[data-prd-view-length]').textContent = product.length || '—';
-  document.querySelector('[data-prd-view-density]').textContent = product.density || '—';
+  // document.querySelector('[data-prd-view-density]').textContent = product.density || '—';
   document.querySelector('[data-prd-view-lacetype]').textContent = product.laceType || '—';
   document.querySelector('[data-prd-view-description]').textContent = product.description || 'No description added.';
 
@@ -1010,7 +1010,7 @@ if (!saveBtn) {
   var statusSelect = document.querySelector('[data-prd-status-select]');
   var descriptionInput = document.querySelector('[data-prd-description-input]');
   var lengthInput = document.querySelector('[data-prd-length-input]');
-  var densityInput = document.querySelector('[data-prd-density-input]');
+  // var densityInput = document.querySelector('[data-prd-density-input]');
   var laceTypeInput = document.querySelector('[data-prd-lacetype-input]');
   var badgeInput = document.querySelector('[data-prd-badge-input]');
 
@@ -1053,7 +1053,7 @@ formData.append("categoryId", categorySelect.value);
 
 formData.append("length", lengthInput.value);
 
-formData.append("density", densityInput.value);
+// formData.append("density", densityInput.value);
 
 formData.append("laceType", laceTypeInput.value);
 
@@ -1217,7 +1217,7 @@ if (e.target.closest('[data-prd-filter-apply]')) {
   var stockMinInput = document.querySelector('[data-prd-stock-min]');
   var stockMaxInput = document.querySelector('[data-prd-stock-max]');
   var lengthSelect = document.querySelector('[data-prd-length-filter]');
-  var densitySelect = document.querySelector('[data-prd-density-filter]');
+  // var densitySelect = document.querySelector('[data-prd-density-filter]');
   var laceSelect = document.querySelector('[data-prd-lacetype-filter]');
   prdState.sort = sortSelect ? sortSelect.value : 'default';
   prdState.priceMin = minInput && minInput.value !== '' ? parseFloat(minInput.value) : null;
@@ -1225,7 +1225,7 @@ if (e.target.closest('[data-prd-filter-apply]')) {
   prdState.stockMin = stockMinInput && stockMinInput.value !== '' ? parseFloat(stockMinInput.value) : null;
   prdState.stockMax = stockMaxInput && stockMaxInput.value !== '' ? parseFloat(stockMaxInput.value) : null;
   prdState.length = lengthSelect ? lengthSelect.value : 'all';
-  prdState.density = densitySelect ? densitySelect.value : 'all';
+  // prdState.density = densitySelect ? densitySelect.value : 'all';
 prdState.laceType = laceSelect ? laceSelect.value : 'all';
   prdState.visibleCount = prdGetBatchSize();
   var appliedFilterPanel = document.querySelector('[data-prd-filter-panel]');
@@ -1244,7 +1244,7 @@ prdState.priceMin = null;
   prdState.stockMin = null;
   prdState.stockMax = null;
   prdState.length = 'all';
-  prdState.density = 'all';
+  // prdState.density = 'all';
   prdState.laceType = 'all';
 var sortSel = document.querySelector('[data-prd-sort-select]');
   var minEl = document.querySelector('[data-prd-price-min]');
@@ -1252,7 +1252,7 @@ var sortSel = document.querySelector('[data-prd-sort-select]');
   var stockMinEl = document.querySelector('[data-prd-stock-min]');
   var stockMaxEl = document.querySelector('[data-prd-stock-max]');
   var lengthEl = document.querySelector('[data-prd-length-filter]');
-  var densityEl = document.querySelector('[data-prd-density-filter]');
+  // var densityEl = document.querySelector('[data-prd-density-filter]');
   var laceEl = document.querySelector('[data-prd-lacetype-filter]');
   if (sortSel) sortSel.value = 'default';
   if (minEl) minEl.value = '';
@@ -1260,7 +1260,7 @@ var sortSel = document.querySelector('[data-prd-sort-select]');
   if (stockMinEl) stockMinEl.value = '';
   if (stockMaxEl) stockMaxEl.value = '';
   if (lengthEl) lengthEl.value = 'all';
-  if (densityEl) densityEl.value = 'all';
+  // if (densityEl) densityEl.value = 'all';
 if (laceEl) laceEl.value = 'all';
   prdState.visibleCount = prdGetBatchSize();
   renderProducts();
@@ -1313,7 +1313,7 @@ const product = {
     image: apiProduct.images?.[0] || "",
     images: apiProduct.images || [],
     length: apiProduct.length,
-    density: apiProduct.density,
+    // density: apiProduct.density,
     laceType: apiProduct.laceType
 };
 

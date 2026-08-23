@@ -80,17 +80,42 @@ const CART_URL = "https://api.blegab.com/api/cart";
 const WISHLIST_URL = "https://api.blegab.com/api/wishlist";
 
 
+// function getShopProductImage(image) {
+
+//     if (!image) {
+//         return "assets/images/no-image.webp";
+//     }
+
+//     // Fix malformed URLs such as:
+//     // https//res.cloudinary.com/...
+//     image = image.replace(/^https\/\//, "https://");
+
+//     // Cloudinary or any other complete URL
+//     if (
+//         image.startsWith("http://") ||
+//         image.startsWith("https://")
+//     ) {
+//         return image;
+//     }
+
+//     // Backend image path
+//     return "http://localhost:5000" + (
+//         image.startsWith("/") ? image : "/" + image
+//     );
+// }
+
+
 function getShopProductImage(image) {
 
     if (!image) {
-        return "assets/images/no-image.webp";
+        return "";
     }
 
     // Fix malformed URLs such as:
     // https//res.cloudinary.com/...
     image = image.replace(/^https\/\//, "https://");
 
-    // Cloudinary or any other complete URL
+    // Cloudinary or any complete external URL
     if (
         image.startsWith("http://") ||
         image.startsWith("https://")
@@ -98,10 +123,12 @@ function getShopProductImage(image) {
         return image;
     }
 
-    // Backend image path
-    return "https://api.blegab.com" + (
-        image.startsWith("/") ? image : "/" + image
-    );
+    // Local frontend image
+    // Example:
+    // assets/images/products/bodywave.webp
+    return image.startsWith("/")
+        ? image
+        : "/" + image;
 }
 
 async function fetchProducts() {
@@ -674,9 +701,7 @@ image
     if (cardImage) {
 
     cardImage.onerror = function () {
-
-        this.src = "assets/images/no-image.webp";
-
+    this.onerror = null;
     };
 
    }

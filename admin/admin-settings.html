@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Settings | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/admin-base.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/admin-settings.css" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+</head>
+<body class="admin-body">
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar" data-admin-sidebar>
+      <div class="admin-sidebar__logo">
+        <img class="admin-sidebar__logo-mark" src="assets/images/adminlogo.webp" alt="Blegab logo" />
+        <div class="admin-sidebar__logo-text">
+          <span class="admin-sidebar__logo-name">BLEGAB</span>
+          <span class="admin-sidebar__logo-tagline">Premium Hair Wigs</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav" aria-label="Admin navigation">
+        <ul class="admin-nav__list">
+          <li class="admin-nav__item">
+            <a href="admin.html" class="admin-nav__link" data-nav-key="overview">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M3 11l9-8 9 8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Overview
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-statistics.html" class="admin-nav__link" data-nav-key="statistics">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 20V10M11 20V4M18 20v-7" stroke-linecap="round"/>
+              </svg>
+              Statistics
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-products.html" class="admin-nav__link" data-nav-key="products">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="4" rx="1"/>
+                <path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12h4" stroke-linecap="round"/>
+              </svg>
+              Products
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-orders.html" class="admin-nav__link" data-nav-key="orders">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M7 3h10l1 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 7h14l-1.2 12.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Orders
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-customers.html" class="admin-nav__link" data-nav-key="customers">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5" stroke-linecap="round"/>
+                <circle cx="17" cy="9" r="2.4"/>
+                <path d="M15 13.3c2.5.3 4.5 2.1 4.5 5.2" stroke-linecap="round"/>
+              </svg>
+              Customers
+            </a>
+          </li>
+          <li class="admin-nav__item">
+            <a href="admin-settings.html" class="admin-nav__link is-active" data-nav-key="settings">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2"/>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .88 1.7 1.7 0 0 0-.2 1.02V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.29 16.9l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.88-1 1.7 1.7 0 0 0-1.02-.2H2.6a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.88 1.7 1.7 0 0 0 .2-1.02V2.6a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7.04l-.06.06A1.7 1.7 0 0 0 19.4 9c.34.27.8.37 1.22.27a1.7 1.7 0 0 0 1.02-.2h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.02.2c-.42.1-.88 0-1.22-.27z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Settings
+            </a>
+          </li>
+
+          <li class="admin-nav__item admin-nav__item--auth">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-admin-auth-toggle aria-expanded="false">
+              <svg class="admin-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/>
+              </svg>
+              Admin Account
+              <svg class="admin-nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <ul class="admin-nav__submenu" data-admin-auth-submenu>
+              <li><a href="admin-login.html" class="admin-nav__sublink">Admin Sign In</a></li>
+              <li><a href="admin-signup.html" class="admin-nav__sublink">Admin Sign Up</a></li>
+            </ul>
+          </li>
+
+          <li class="admin-nav__item">
+            <button type="button" class="admin-nav__link admin-nav__link--btn" data-theme-toggle aria-label="Toggle theme">
+              <svg class="admin-nav__icon admin-nav__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span data-theme-toggle-label>Dark Mode</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="admin-sidebar-overlay" data-admin-sidebar-overlay></div>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <button type="button" class="admin-topbar__menu-toggle" data-admin-menu-toggle aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="admin-topbar__search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+          <input type="search" placeholder="Search settings..." aria-label="Search settings" />
+        </div>
+      </header>
+
+      <main class="admin-content">
+        <div class="admin-page-head">
+          <div class="admin-page-head__info">
+            <h1 class="admin-page-head__title">Store Settings</h1>
+            <p class="admin-page-head__subtitle">Manage your store profile, shipping rules, and security preferences.</p>
+          </div>
+        </div>
+
+        <form class="admin-settings-page" data-settings-form>
+
+          <!-- Business Profile -->
+          <section class="settings-card settings-card--profile">
+            <div class="settings-card__head">
+              <span class="settings-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="3" y="7" width="18" height="13" rx="2"/>
+                  <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3 12h18" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <div class="settings-card__head-text">
+                <h2>Business Profile</h2>
+                <p class="settings-card__subtitle">Your store information and contact details</p>
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <label class="form-field">
+                <span>Store Name</span>
+                <input type="text" name="storeName" data-field="storeName" value="Blegab Luxury Wigs" />
+              </label>
+
+              <label class="form-field">
+                <span>Support Email</span>
+                <input type="email" name="supportEmail" data-field="supportEmail" value="support@blegab.com" />
+              </label>
+
+              <label class="form-field form-field--full">
+                <span>Store Address</span>
+                <textarea name="storeAddress" data-field="storeAddress" rows="3">Lagos, Nigeria</textarea>
+              </label>
+            </div>
+
+            <div class="settings-card__actions">
+              <button type="button" class="btn btn-primary" data-save-profile>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 4h11l3 3v13H5z" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 4v5h8V4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 14h8v6H8z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span data-btn-label>Save Profile</span>
+              </button>
+            </div>
+          </section>
+
+          <div class="settings-columns">
+
+            <!-- Shipping Rules -->
+            <section class="settings-card settings-card--shipping">
+              <div class="settings-card__head settings-card__head--split">
+                <div class="settings-card__head-left">
+                  <span class="settings-card__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <rect x="1" y="6" width="13" height="11" rx="1"/>
+                      <path d="M14 10h4l3 3v4h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="6" cy="19" r="1.6"/>
+                      <circle cx="17.5" cy="19" r="1.6"/>
+                    </svg>
+                  </span>
+                  <div class="settings-card__head-text">
+                    <h2>Shipping Rules</h2>
+                    <p class="settings-card__subtitle">Manage countries and shipping fees for your store</p>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-small" data-add-country-rule>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+                  </svg>
+                  Add Country
+                </button>
+              </div>
+
+              <div class="shipping-table-wrap">
+                <table class="shipping-table">
+                  <thead>
+                    <tr>
+                      <th>Country</th>
+                      <th><span class="th-full">Country Code</span><span class="th-short">Code</span></th>
+                      <th><span class="th-full">Shipping Fee</span><span class="th-short">Fee</span></th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody data-shipping-tbody>
+                    <tr data-country-row data-id="nigeria">
+                      <td data-cell="country">Nigeria</td>
+                      <td data-cell="code">NG</td>
+                      <td data-cell="fee" data-fee="20">$20.00</td>
+                      <td data-cell="status">
+                        <button type="button" class="status-badge is-active" data-status-badge>
+                          <span class="status-dot"></span><span data-status-label>Active</span>
+                        </button>
+                      </td>
+                      <td class="shipping-table__actions">
+                        <button type="button" class="icon-btn" data-edit-row aria-label="Edit country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 20h9" stroke-linecap="round"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                        <button type="button" class="icon-btn icon-btn--danger" data-delete-row aria-label="Delete country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 6h18" stroke-linecap="round"/>
+                            <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr data-country-row data-id="ghana">
+                      <td data-cell="country">Ghana</td>
+                      <td data-cell="code">GH</td>
+                      <td data-cell="fee" data-fee="25">$25.00</td>
+                      <td data-cell="status">
+                        <button type="button" class="status-badge is-active" data-status-badge>
+                          <span class="status-dot"></span><span data-status-label>Active</span>
+                        </button>
+                      </td>
+                      <td class="shipping-table__actions">
+                        <button type="button" class="icon-btn" data-edit-row aria-label="Edit country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 20h9" stroke-linecap="round"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                        <button type="button" class="icon-btn icon-btn--danger" data-delete-row aria-label="Delete country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 6h18" stroke-linecap="round"/>
+                            <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr data-country-row data-id="united-kingdom">
+                      <td data-cell="country">United Kingdom</td>
+                      <td data-cell="code">GB</td>
+                      <td data-cell="fee" data-fee="35">$35.00</td>
+                      <td data-cell="status">
+                        <button type="button" class="status-badge is-active" data-status-badge>
+                          <span class="status-dot"></span><span data-status-label>Active</span>
+                        </button>
+                      </td>
+                      <td class="shipping-table__actions">
+                        <button type="button" class="icon-btn" data-edit-row aria-label="Edit country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 20h9" stroke-linecap="round"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                        <button type="button" class="icon-btn icon-btn--danger" data-delete-row aria-label="Delete country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 6h18" stroke-linecap="round"/>
+                            <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr data-country-row data-id="united-states">
+                      <td data-cell="country">United States</td>
+                      <td data-cell="code">US</td>
+                      <td data-cell="fee" data-fee="40">$40.00</td>
+                      <td data-cell="status">
+                        <button type="button" class="status-badge is-active" data-status-badge>
+                          <span class="status-dot"></span><span data-status-label>Active</span>
+                        </button>
+                      </td>
+                      <td class="shipping-table__actions">
+                        <button type="button" class="icon-btn" data-edit-row aria-label="Edit country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M12 20h9" stroke-linecap="round"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                        <button type="button" class="icon-btn icon-btn--danger" data-delete-row aria-label="Delete country">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M3 6h18" stroke-linecap="round"/>
+                            <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <details class="shipping-guide" open>
+                <summary class="shipping-guide__title">
+                  <span class="shipping-guide__title-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="12" cy="12" r="9"/>
+                      <path d="M12 8h.01M11 12h1v5h1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Shipping Rules Guide
+                  </span>
+                  <svg class="shipping-guide__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </summary>
+                <ul>
+                  <li>Add or remove countries you ship to.</li>
+                  <li>Set the shipping fee for each country.</li>
+                  <li>Enable or disable shipping for any country at any time.</li>
+                  <li>Checkout will use these rules to calculate the correct shipping fee for customers.</li>
+                </ul>
+              </details>
+            </section>
+
+            <div class="settings-side">
+
+              <!-- Security -->
+              <section class="settings-card settings-card--security">
+                <div class="settings-card__head">
+                  <span class="settings-card__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <div class="settings-card__head-text">
+                    <h2>Security</h2>
+                    <p class="settings-card__subtitle">Manage admin access and session settings</p>
+                  </div>
+                </div>
+
+                <div class="field-grid field-grid--single">
+                  <label class="form-field">
+                    <span>Admin Email</span>
+                    <input type="email" name="adminEmail" data-field="adminEmail" value="admin@blegab.com" />
+                  </label>
+
+                  <div class="form-field">
+    <span>Session Timeout</span>
+
+    <div class="settings-dropdown">
+
+        <button
+            type="button"
+            class="settings-dropdown__toggle"
+            aria-expanded="false"
+        >
+            <span data-dropdown-label>30 minutes</span>
+
+            <svg
+                class="settings-dropdown__caret"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+            >
+                <path
+                    d="M6 9l6 6 6-6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
+
+        <ul class="settings-dropdown__menu">
+
+            <li>
+                <button
+                    type="button"
+                    class="settings-dropdown__item"
+                    data-value="15"
+                >
+                    15 minutes
+                </button>
+            </li>
+
+            <li>
+                <button
+                    type="button"
+                    class="settings-dropdown__item is-active"
+                    data-value="30"
+                >
+                    30 minutes
+                </button>
+            </li>
+
+            <li>
+                <button
+                    type="button"
+                    class="settings-dropdown__item"
+                    data-value="60"
+                >
+                    60 minutes
+                </button>
+            </li>
+
+            <li>
+                <button
+                    type="button"
+                    class="settings-dropdown__item"
+                    data-value="never"
+                >
+                    Never
+                </button>
+            </li>
+
+        </ul>
+
+        <input
+            type="hidden"
+            name="sessionTimeout"
+            data-dropdown-value
+            data-field="sessionTimeout"
+            value="30"
+        />
+
+    </div>
+
+    <p class="form-field__hint">
+        You will be automatically logged out after this period of inactivity.
+    </p>
+</div>
+                </div>
+
+                <div class="settings-card__actions">
+                  <button type="button" class="btn btn-primary" data-save-security>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M5 4h11l3 3v13H5z" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M8 4v5h8V4" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M8 14h8v6H8z" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span data-btn-label>Save Security</span>
+                  </button>
+                </div>
+              </section>
+
+              <!-- Save All Settings -->
+              <section class="settings-card settings-card--save-all">
+                <button type="submit" class="btn btn-primary btn-block">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M5 4h11l3 3v13H5z" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 4v5h8V4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 14h8v6H8z" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span data-btn-label>Save All Settings</span>
+                </button>
+                <p class="settings-card__footnote">Update your store configuration</p>
+              </section>
+
+            </div>
+          </div>
+        </form>
+      </main>
+
+      <div class="modal-overlay" data-add-country-modal hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addCountryModalTitle">
+          <div class="modal__head">
+            <div class="modal__head-text">
+              <h3 id="addCountryModalTitle">Add Country</h3>
+              <p>Add a new country to your shipping rules.</p>
+            </div>
+            <button type="button" class="modal__close" data-modal-close aria-label="Close">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="modal__body">
+            <label class="form-field">
+              <span>Country Name</span>
+              <input type="text" data-modal-field="country" placeholder="e.g. Kenya" />
+            </label>
+
+            <label class="form-field">
+              <span>Country Code</span>
+              <input type="text" data-modal-field="code" placeholder="e.g. KE" maxlength="3" />
+            </label>
+
+            <label class="form-field">
+              <span>Shipping Fee</span>
+              <div class="modal__fee-input">
+                <span class="modal__fee-prefix">$</span>
+                <input type="number" step="0.01" min="0" data-modal-field="fee" placeholder="0.00" />
+              </div>
+            </label>
+
+            <div class="form-field">
+              <span>Status</span>
+              <label class="status-toggle">
+                <input type="checkbox" data-modal-field="active" checked />
+                <span class="status-toggle__track"><span class="status-toggle__thumb"></span></span>
+                <span class="status-toggle__label" data-status-toggle-label>Active</span>
+              </label>
+            </div>
+
+            <p class="modal__error" data-modal-error hidden>Please enter a country name and code.</p>
+          </div>
+
+          <div class="modal__actions">
+            <button type="button" class="btn-ghost" data-modal-close>Cancel</button>
+            <button type="button" class="btn btn-primary" data-modal-submit>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+              </svg>
+              <span>Add Country</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/admin-data.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-main.js"></script>
+  <script src="assets/js/admin-settings.js"></script>
+</body>
+</html>

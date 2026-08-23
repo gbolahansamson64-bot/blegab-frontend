@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Help &amp; Guide — BLEGAB Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+<link rel="stylesheet" href="assets/css/guide.css" />
+</head>
+<body>
+
+  <div class="guide-page">
+
+    <a href="admin.html" class="guide-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+
+    <header class="guide-hero">
+      <h1 class="guide-hero__title">Help &amp; Guide</h1>
+      <div class="guide-hero__divider"><span></span><i>&#10022;</i><span></span></div>
+      <p class="guide-hero__updated">Last updated: August 23, 2026</p>
+      <p class="guide-hero__intro">
+        Welcome to the BLEGAB Luxury Wigs Admin Dashboard. This guide explains how to use the
+        administration system to manage products, orders, customers, store settings, sales
+        information, and your <strong>administrator account</strong>.
+      </p>
+
+      <div class="guide-search" id="guideSearch">
+        <div class="guide-search__field">
+          <input
+            type="text"
+            id="guideSearchInput"
+            class="guide-search__input"
+            placeholder="Search the help guide..."
+            autocomplete="off"
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="guideSearchPanel"
+            aria-autocomplete="list"
+          />
+          <button type="button" id="guideSearchClear" class="guide-search__clear" aria-label="Clear search" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <svg class="guide-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="guide-search__panel" id="guideSearchPanel" role="listbox" hidden></div>
+      </div>
+    </header>
+
+    <main class="guide-content">
+
+      <section class="guide-section" id="section-1">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M10.5 12.5L20 3M16 5l3 3M13 8l3 3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">1. Getting Started</h2>
+        </div>
+        <div class="guide-section__body">
+<h2>1.1 Admin Sign In</h2>
+<p>The Admin Sign In page is used to securely access the administration dashboard.</p>
+<p>To sign in, enter:</p>
+<ul>
+<li><strong>Email</strong> — The email address registered to your administrator account.</li>
+<li><strong>Password</strong> — Your administrator password.</li>
+<li><strong>Admin Access Code</strong> — Your 8-digit administrator access code.</li>
+</ul>
+<p>Click <strong>Sign In</strong> to access the dashboard.</p>
+<h3>Important</h3>
+<p>The Admin Access Code must contain exactly <strong>8 digits</strong>.</p>
+<p>If any required field is missing or the access code is invalid, the dashboard will display an error message.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-2">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6" stroke-linecap="round"/><path d="M18 8v6M15 11h6" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">2. Creating an Administrator Account</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Admin Sign Up page allows a new administrator account to be created.</p>
+<p>You will be required to provide:</p>
+<ul>
+<li>Full Name</li>
+<li>Email Address</li>
+<li>Password</li>
+<li>Confirm Password</li>
+<li>8-digit Admin Access Code</li>
+<li>Master Admin Secret</li>
+</ul>
+<h3>Password Requirements</h3>
+<p>The administrator password must:</p>
+<ul>
+<li>Contain at least 8 characters</li>
+<li>Contain at least one uppercase letter</li>
+<li>Contain at least one lowercase letter</li>
+<li>Contain at least one number</li>
+<li>Contain at least one of these symbols: <code># @ * , .</code></li>
+</ul>
+<p>The password confirmation must match the original password.</p>
+<p>The Admin Access Code must contain exactly 8 numbers.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-3">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M6.3 6.3l3.2 3.2M17.7 6.3l-3.2 3.2M6.3 17.7l3.2-3.2M17.7 17.7l-3.2-3.2" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">3. Recovering an Admin Account</h2>
+        </div>
+        <div class="guide-section__body">
+<p>If you forget your administrator password or access code, use <strong>Forgot Password or Access Code?</strong> on the Admin Sign In page.</p>
+<h2>Step 1 — Select the Recovery Option</h2>
+<p>Choose whether you want to recover:</p>
+<ul>
+<li>Your password</li>
+<li>Your admin access code</li>
+</ul>
+<p>Enter the email address associated with the administrator account and click <strong>Send Recovery Link</strong>.</p>
+<h2>Step 2 — Verify Your Code</h2>
+<p>A verification code is sent to the administrator's email.</p>
+<p>Enter the <strong>6-digit verification code</strong> on the verification page.</p>
+<h2>Step 3 — Reset Your Credentials</h2>
+<p>After successful verification, you can create a new:</p>
+<ul>
+<li>Administrator password, or</li>
+<li>8-digit administrator access code</li>
+</ul>
+<p>For a new password, the same password requirements used during registration apply.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-4">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 11l8-7 8 7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">4. Dashboard Overview</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Dashboard is the main page of the administration system.</p>
+<p>It provides a quick overview of the store and shortcuts to frequently used functions.</p>
+<p>The dashboard includes:</p>
+<ul>
+<li>Store statistics</li>
+<li>Sales information</li>
+<li>Low-stock alerts</li>
+<li>Recent orders</li>
+<li>Quick actions</li>
+<li>Notifications</li>
+</ul>
+<h2>Quick Actions</h2>
+<p>The dashboard provides shortcuts such as:</p>
+<ul>
+<li><strong>Add Product</strong></li>
+<li><strong>View Stats</strong></li>
+<li><strong>View Orders</strong></li>
+<li><strong>View All Orders</strong></li>
+</ul>
+<p>These shortcuts allow common tasks to be performed without navigating through the sidebar.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-5">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">5. Dashboard Statistics</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The dashboard provides an overview of important store information.</p>
+<p>Depending on the available store data, the dashboard can display information such as:</p>
+<ul>
+<li>Sales</li>
+<li>Orders</li>
+<li>Customers</li>
+<li>Products</li>
+<li>Other store performance information</li>
+</ul>
+<p>A date selector can be used where available to view statistics for a particular date.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-6">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3z" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.3 21a1.7 1.7 0 0 0 3.4 0" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">6. Notifications</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The notification bell in the admin dashboard displays important administrative notifications.</p>
+<p>The notification area provides:</p>
+<ul>
+<li>Unread notification count</li>
+<li>Notification list</li>
+<li>Notification details</li>
+<li>Mark as read</li>
+<li>Dismiss notification</li>
+<li>Clear all notifications</li>
+</ul>
+<h2>Opening a Notification</h2>
+<p>Click the notification to view its details.</p>
+<p>Opening a notification marks it as read.</p>
+<h2>Dismissing a Notification</h2>
+<p>Use the dismiss action on a notification to remove it from the active notification list.</p>
+<h2>Clearing Notifications</h2>
+<p>Click <strong>Clear All</strong> to remove the current notifications from the notification list.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-7">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5 6.6 6.6 0 0 0 20.5 14.5z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">7. Dark Mode</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The admin dashboard supports a light and dark display mode.</p>
+<p>Use the <strong>Dark Mode</strong> toggle to switch between the available dashboard themes.</p>
+<p>Your selected theme is remembered by the browser.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-8">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 8v8l9 5 9-5V8M12 13v8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">8. Managing Products</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Products</strong> section is where you manage the products available in the store.</p>
+<p>You can:</p>
+<ul>
+<li>View products</li>
+<li>Search products</li>
+<li>Add products</li>
+<li>Edit products</li>
+<li>Delete products</li>
+<li>View product details</li>
+<li>Manage product categories</li>
+<li>Filter products</li>
+<li>Sort products</li>
+<li>Change product status</li>
+<li>Move products between categories</li>
+<li>Perform bulk actions</li>
+<li>Manage product images</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-9">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">9. Adding a Product</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Click <strong>Add Product</strong> to create a new product.</p>
+<p>The product form includes:</p>
+<h3>Product Name</h3>
+<p>Enter the name customers will see for the product.</p>
+<h3>SKU</h3>
+<p>Enter the product's SKU/reference.</p>
+<h3>Category</h3>
+<p>Select the category the product belongs to.</p>
+<h3>Price</h3>
+<p>Enter the product price.</p>
+<h3>Quantity</h3>
+<p>Enter the available stock quantity.</p>
+<h3>Product Images</h3>
+<p>Upload a main product image and additional images.</p>
+<p>The system allows multiple product images to be uploaded.</p>
+<p>You can:</p>
+<ul>
+<li>Add the main image</li>
+<li>Add additional images</li>
+<li>Preview images</li>
+<li>Remove images</li>
+<li>Change/remove the main image</li>
+</ul>
+<h3>Product Specifications</h3>
+<p>The product form supports:</p>
+<ul>
+<li>Length</li>
+<li>Density</li>
+<li>Lace Type</li>
+</ul>
+<p>Examples include:</p>
+<ul>
+<li>22"</li>
+<li>180%</li>
+<li>HD Lace</li>
+</ul>
+<h3>Description</h3>
+<p>Enter a short description explaining the product.</p>
+<h3>Badge</h3>
+<p>Products can have promotional/display badges such as:</p>
+<ul>
+<li>No Badge</li>
+<li>New</li>
+<li>Sale</li>
+<li>Best Seller</li>
+<li>Featured</li>
+<li>Hot</li>
+<li>Limited</li>
+</ul>
+<h3>Product Status</h3>
+<p>Products can be assigned one of the following statuses:</p>
+<ul>
+<li><strong>In Stock</strong></li>
+<li><strong>Low Stock</strong></li>
+<li><strong>Out of Stock</strong></li>
+</ul>
+<p>After entering the information, click <strong>Save Product</strong>.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-10">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4z" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 6.5l4 4" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">10. Editing a Product</h2>
+        </div>
+        <div class="guide-section__body">
+<p>To edit an existing product:</p>
+<ol>
+<li>Find the product in the Products section.</li>
+<li>Open the product actions.</li>
+<li>Select <strong>Edit</strong>.</li>
+<li>Update the required information.</li>
+<li>Save the product.</li>
+</ol>
+<p>You can update product information such as:</p>
+<ul>
+<li>Name</li>
+<li>SKU</li>
+<li>Category</li>
+<li>Price</li>
+<li>Quantity</li>
+<li>Images</li>
+<li>Length</li>
+<li>Density</li>
+<li>Lace Type</li>
+<li>Description</li>
+<li>Badge</li>
+<li>Status</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-11">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h2 class="guide-section__title">11. Viewing Product Details</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Opening a product allows you to view its information without immediately editing it.</p>
+<p>The product view can display:</p>
+<ul>
+<li>Product images</li>
+<li>Product name</li>
+<li>SKU</li>
+<li>Category</li>
+<li>Price</li>
+<li>Stock quantity</li>
+<li>Length</li>
+<li>Density</li>
+<li>Lace Type</li>
+<li>Description</li>
+<li>Badge</li>
+<li>Status</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-12">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m3 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">12. Deleting a Product</h2>
+        </div>
+        <div class="guide-section__body">
+<p>A product can be permanently removed from the Products section.</p>
+<p>Before deleting a product, make sure it is no longer required in the store.</p>
+<p>Use the product's <strong>Delete</strong> action and confirm the deletion when prompted.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-13">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">13. Searching Products</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Use the product search field to quickly locate a product.</p>
+<p>You can search products by the information supported by the product search functionality.</p>
+<p>This is useful when the store contains many products.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-14">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">14. Filtering Products</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Products can be filtered using several criteria.</p>
+<p>Available filters include:</p>
+<h3>Category</h3>
+<p>View products belonging to a particular category.</p>
+<h3>Stock Status</h3>
+<p>Filter by:</p>
+<ul>
+<li>All Status</li>
+<li>In Stock</li>
+<li>Low Stock</li>
+<li>Out of Stock</li>
+</ul>
+<h3>Price Range</h3>
+<p>Enter minimum and maximum prices.</p>
+<h3>Quantity Range</h3>
+<p>Enter minimum and maximum stock quantities.</p>
+<h3>Length</h3>
+<p>Available product lengths include:</p>
+<ul>
+<li>14"</li>
+<li>18"</li>
+<li>22"</li>
+<li>26"</li>
+</ul>
+<h3>Density</h3>
+<p>Available densities include:</p>
+<ul>
+<li>130%</li>
+<li>150%</li>
+<li>180%</li>
+<li>200%</li>
+</ul>
+<h3>Lace Type</h3>
+<p>Available lace types include:</p>
+<ul>
+<li>HD Lace</li>
+<li>Transparent Lace</li>
+<li>Swiss Lace</li>
+</ul>
+<p>Click <strong>Apply</strong> to apply the selected filters.</p>
+<p>Use <strong>Reset</strong> to clear the filters.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-15">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M9 12h11M4 18h13M19 18h1" stroke-linecap="round"/><circle cx="13" cy="6" r="1.8"/><circle cx="7" cy="12" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg></span>
+          <h2 class="guide-section__title">15. Sorting Products</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Products can be sorted by:</p>
+<ul>
+<li>Default</li>
+<li>Name A–Z</li>
+<li>Name Z–A</li>
+<li>Price Low–High</li>
+<li>Price High–Low</li>
+<li>Stock Low–High</li>
+<li>Stock High–Low</li>
+</ul>
+<p>Sorting makes it easier to locate products based on name, price, or stock level.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-16">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M8 12l2.5 2.5L16 9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">16. Bulk Product Management</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Multiple products can be selected at the same time.</p>
+<p>After selecting products, bulk actions can be used to:</p>
+<ul>
+<li>Change product status</li>
+<li>Move products to a category</li>
+<li>Delete selected products</li>
+<li>Clear the current selection</li>
+</ul>
+<p>This is useful when making the same change to multiple products.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-17">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8A2 2 0 0 1 21 9.5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">17. Managing Product Categories</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Categories section allows you to organize products into groups.</p>
+<p>You can:</p>
+<ul>
+<li>View categories</li>
+<li>Add categories</li>
+<li>Edit categories</li>
+<li>Delete categories</li>
+<li>Filter products by category</li>
+<li>Move products to another category</li>
+</ul>
+<h2>Adding a Category</h2>
+<ol>
+<li>Click <strong>Add Category</strong>.</li>
+<li>Enter the category name.</li>
+<li>Click <strong>Save Category</strong>.</li>
+</ol>
+<h2>Editing a Category</h2>
+<p>Select the category's edit option, change its name, and save the changes.</p>
+<h2>Deleting a Category</h2>
+<p>Select the category's delete option and confirm the deletion.</p>
+<p>Before deleting a category, make sure the products assigned to it are properly handled.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-18">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 8h12l1 12H5L6 8z" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">18. Managing Orders</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Orders</strong> section allows administrators to monitor and manage customer orders.</p>
+<p>You can:</p>
+<ul>
+<li>View orders</li>
+<li>Search orders</li>
+<li>Filter orders by status</li>
+<li>Open order details</li>
+<li>Update order status</li>
+<li>Download order information</li>
+<li>Delete orders</li>
+<li>Select multiple orders</li>
+<li>Export order information</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-19">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13" stroke-linecap="round"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></span>
+          <h2 class="guide-section__title">19. Order Statuses</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Orders can have the following statuses:</p>
+<h3>Pending</h3>
+<p>The order has been received but has not yet entered processing.</p>
+<h3>Processing</h3>
+<p>The order is currently being prepared/processed.</p>
+<h3>Shipped</h3>
+<p>The order has been shipped to the customer.</p>
+<h3>Delivered</h3>
+<p>The order has been delivered.</p>
+<h3>Cancelled</h3>
+<p>The order has been cancelled.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-20">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3v5h5M9 13h6M9 17h6" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">20. Viewing an Order</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Click an order to open its details.</p>
+<p>The order details can include:</p>
+<ul>
+<li>Order information</li>
+<li>Customer information</li>
+<li>Order status</li>
+<li>Product information</li>
+<li>Product image</li>
+<li>Quantity</li>
+<li>Price</li>
+<li>Product length</li>
+<li>Product density</li>
+<li>Lace type</li>
+<li>Order total</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-21">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11A8 8 0 0 0 6 6.3L4 8M4 13a8 8 0 0 0 14 4.7l2-1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v4h4M20 20v-4h-4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">21. Updating an Order Status</h2>
+        </div>
+        <div class="guide-section__body">
+<p>To change an order status:</p>
+<ol>
+<li>Open the order.</li>
+<li>Locate <strong>Order Status</strong>.</li>
+<li>Select the new status.</li>
+<li>The system saves the status change.</li>
+</ol>
+<p>Available statuses are:</p>
+<ul>
+<li>Pending</li>
+<li>Processing</li>
+<li>Shipped</li>
+<li>Delivered</li>
+<li>Cancelled</li>
+</ul>
+<p>Always make sure the status accurately reflects the current state of the customer's order.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-22">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">22. Searching Orders</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Use the <strong>Search Orders</strong> field to locate a specific order.</p>
+<p>This is especially useful when managing a large number of orders.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-23">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">23. Filtering Orders</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Orders can be filtered by status.</p>
+<p>You can view:</p>
+<ul>
+<li>All Orders</li>
+<li>Pending</li>
+<li>Processing</li>
+<li>Shipped</li>
+<li>Delivered</li>
+<li>Cancelled</li>
+</ul>
+<p>This makes it easier to focus on orders requiring attention.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-24">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">24. Exporting Orders</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Order information can be downloaded for record keeping or reporting.</p>
+<p>Available export options include:</p>
+<ul>
+<li>PDF</li>
+<li>DOC</li>
+</ul>
+<p>You can download an individual order or export the order list/report.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-25">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m3 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">25. Deleting Orders</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Orders can be deleted from the Orders section.</p>
+<p>Use the order action menu and select <strong>Delete</strong>.</p>
+<p>Because deleting an order removes it from the admin list, make sure the order is no longer required before confirming the action.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-26">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6" stroke-linecap="round"/><circle cx="17.5" cy="9" r="2.8"/><path d="M15 14.3c2.9.5 5 2.6 5 5.7" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">26. Managing Customers</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Customers</strong> section provides access to customer information.</p>
+<p>You can:</p>
+<ul>
+<li>View customers</li>
+<li>Search customers</li>
+<li>Filter customers</li>
+<li>Open customer details</li>
+<li>Export customer information</li>
+<li>Delete customers</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-27">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12h4l2.5-7L14 19l2.5-7H21" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">27. Customer Status</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Customers can have one of two displayed statuses:</p>
+<ul>
+<li><strong>Online</strong></li>
+<li><strong>Offline</strong></li>
+</ul>
+<p>This indicates the customer's current availability/activity state as provided by the system.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-28">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">28. Searching Customers</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Use the <strong>Search Customers</strong> field to find a specific customer.</p>
+<p>This is useful when looking for a customer's account or order-related information.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-29">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8L3 5z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">29. Filtering Customers</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Customers can be filtered by their status.</p>
+<p>Available statuses include:</p>
+<ul>
+<li>All Customers</li>
+<li>Online</li>
+<li>Offline</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-30">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">30. Viewing Customer Details</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Opening a customer displays available customer information such as:</p>
+<ul>
+<li>Customer ID</li>
+<li>Name</li>
+<li>Status</li>
+<li>Email</li>
+<li>Phone number</li>
+<li>State</li>
+<li>Country</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-31">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">31. Exporting Customer Information</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Customer information can be exported in several formats.</p>
+<p>Available formats include:</p>
+<ul>
+<li>PDF</li>
+<li>DOC</li>
+<li>CSV</li>
+</ul>
+<p>You can export an individual customer's information or the customer list.</p>
+<p>CSV is particularly useful when customer data needs to be opened in spreadsheet software.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-32">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m3 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">32. Deleting Customers</h2>
+        </div>
+        <div class="guide-section__body">
+<p>A customer can be removed using the customer's action menu.</p>
+<p>Select <strong>Delete</strong> and confirm the action.</p>
+<p>Use caution when deleting customer records because the action removes the customer from the admin customer list.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-33">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">33. Statistics &amp; Earnings</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Statistics &amp; Earnings</strong> section provides a more detailed view of store performance.</p>
+<p>It includes:</p>
+<ul>
+<li>Revenue overview</li>
+<li>Revenue statistics</li>
+<li>Revenue chart</li>
+<li>Earnings by category</li>
+<li>Transaction history</li>
+<li>Date-based reporting</li>
+<li>Earnings statement downloads</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-34">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 21V9M12 21V3M19 21v-6" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">34. Revenue Overview</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Revenue Overview section provides statistics for store earnings.</p>
+<p>Statistics can be viewed using different periods, including:</p>
+<ul>
+<li>Daily</li>
+<li>Weekly</li>
+<li>Monthly</li>
+</ul>
+<p>Use the available period controls to change the chart view.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-35">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9V3z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">35. Earnings by Category</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The earnings breakdown shows how revenue is distributed among product categories.</p>
+<p>This can help the store administrator understand which categories are generating the most revenue.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-36">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">36. Transaction History</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Transaction History section displays recorded transactions.</p>
+<p>Transaction statuses can include:</p>
+<ul>
+<li>Paid</li>
+<li>Pending</li>
+<li>Refunded</li>
+</ul>
+<p>Refunded transactions are represented as deductions when calculating the total earnings.</p>
+<p>Use <strong>Load More History</strong> to display additional transaction records when available.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-37">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3v5h5M12 12v6M9 15h6" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">37. Generating an Earnings Statement</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Statistics section provides an earnings statement generator.</p>
+<p>Available date ranges include:</p>
+<ul>
+<li>Today</li>
+<li>This Week</li>
+<li>This Month</li>
+<li>This Year</li>
+<li>Custom Range</li>
+</ul>
+<p>For a custom range, select:</p>
+<ul>
+<li>From date</li>
+<li>To date</li>
+</ul>
+<p>Choose the required export format:</p>
+<ul>
+<li>PDF</li>
+<li>CSV</li>
+</ul>
+<p>Then click <strong>Generate &amp; Download</strong>.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-38">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">38. Downloading Statistics</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Download Statement</strong> function allows earnings information to be saved for reporting or record keeping.</p>
+<p>PDF statements contain information such as:</p>
+<ul>
+<li>Business name</li>
+<li>Statement period</li>
+<li>Generation date</li>
+<li>Transaction reference</li>
+<li>Description</li>
+<li>Date</li>
+<li>Status</li>
+<li>Amount</li>
+<li>Total earnings</li>
+</ul>
+<p>CSV statements can be opened using spreadsheet applications.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-39">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .88 1.7 1.7 0 0 0-.2 1.02V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.29 16.9l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.88-1 1.7 1.7 0 0 0-1.02-.2H2.6a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.29l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.88 1.7 1.7 0 0 0 .2-1.02V2.6a2 2 0 1 1 4 0v.1A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7.04l-.06.06A1.7 1.7 0 0 0 19.4 9c.34.27.8.37 1.22.27a1.7 1.7 0 0 0 1.02-.2h.1a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.02.2c-.42.1-.88 0-1.22-.27z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">39. Store Settings</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The <strong>Settings</strong> section allows administrators to configure important store information.</p>
+<p>The available settings include:</p>
+<ul>
+<li>Business Profile</li>
+<li>Shipping Rules</li>
+<li>Security</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-40">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-linecap="round"/><path d="M3 12h18" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">40. Business Profile</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Business Profile section contains the store's basic information.</p>
+<p>You can update:</p>
+<h3>Store Name</h3>
+<p>The name of the ecommerce store.</p>
+<h3>Support Email</h3>
+<p>The email customers can use for support.</p>
+<h3>Store Address</h3>
+<p>The store/business address.</p>
+<p>After making changes, click <strong>Save Profile</strong>.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-41">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11v9H2zM13 11h4l3 3v3h-7z" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="19" r="1.8"/><circle cx="16.5" cy="19" r="1.8"/></svg></span>
+          <h2 class="guide-section__title">41. Shipping Rules</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Shipping Rules section allows the administrator to configure shipping countries.</p>
+<p>You can:</p>
+<ul>
+<li>Add a country</li>
+<li>Edit a country</li>
+<li>Delete a country</li>
+<li>Enable/disable a country</li>
+<li>Set a shipping fee</li>
+<li>Set a country code</li>
+</ul>
+<p>Each shipping country contains:</p>
+<ul>
+<li>Country Name</li>
+<li>Country Code</li>
+<li>Shipping Fee</li>
+<li>Active/Inactive status</li>
+</ul>
+<h2>Adding a Shipping Country</h2>
+<ol>
+<li>Click <strong>Add Country</strong>.</li>
+<li>Enter the country name.</li>
+<li>Enter the country code.</li>
+<li>Enter the shipping fee.</li>
+<li>Choose whether the country is active.</li>
+<li>Click <strong>Add Country</strong>.</li>
+</ol>
+<h2>Editing Shipping Rules</h2>
+<p>Select the edit action for a country and update the information.</p>
+<h2>Activating or Deactivating a Country</h2>
+<p>Use the status control for the country.</p>
+<p>An <strong>Active</strong> country is enabled in the shipping configuration.</p>
+<p>An <strong>Inactive</strong> country is disabled.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-42">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">42. Security Settings</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Security section contains administrator security configuration.</p>
+<p>Available settings include:</p>
+<h3>Admin Email</h3>
+<p>The administrator email associated with the settings.</p>
+<h3>Session Timeout</h3>
+<p>The available session timeout options include:</p>
+<ul>
+<li>15 minutes</li>
+<li>30 minutes</li>
+<li>60 minutes</li>
+<li>Never</li>
+</ul>
+<p>Select the desired session duration and save the security settings.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-43">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h11l3 3v13H5V4z" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 4v6h8V4M8 14h8v6H8z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">43. Saving Settings</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Individual settings sections can be saved using their corresponding save buttons.</p>
+<p>The settings page also provides <strong>Save All Settings</strong> for saving the configured settings.</p>
+<p>After changing important store settings, confirm that the displayed information is correct before leaving the page.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-44">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6 6-2z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">44. Navigation</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The main admin navigation provides access to:</p>
+<ul>
+<li>Overview</li>
+<li>Statistics</li>
+<li>Products</li>
+<li>Orders</li>
+<li>Customers</li>
+<li>Settings</li>
+<li>Admin Account</li>
+</ul>
+<p>The navigation can also be used on smaller screens through the mobile navigation menu.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-45">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6" stroke-linecap="round"/><path d="M15.5 12.5l2 2 3-3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">45. Admin Account</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The Admin Account area provides access to administrator authentication options.</p>
+<p>Depending on the current account state, it provides access to:</p>
+<ul>
+<li>Admin Sign In</li>
+<li>Admin Sign Up</li>
+<li>Account recovery</li>
+<li>Password reset</li>
+<li>Access code reset</li>
+<li>Sign out</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-46">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17l5-5-5-5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H9" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">46. Signing Out</h2>
+        </div>
+        <div class="guide-section__body">
+<p>Always sign out when you have finished using the administration dashboard, especially when using a shared or public computer.</p>
+<p>Use the administrator account menu and select the sign-out option.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-47">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">47. Recommended Daily Workflow</h2>
+        </div>
+        <div class="guide-section__body">
+<p>For normal store management, the recommended workflow is:</p>
+<h3>Step 1 — Check the Dashboard</h3>
+<p>Review:</p>
+<ul>
+<li>Sales information</li>
+<li>Recent orders</li>
+<li>Low-stock alerts</li>
+<li>Notifications</li>
+</ul>
+<h3>Step 2 — Check Orders</h3>
+<p>Review new orders and update their statuses as they move through the fulfilment process.</p>
+<h3>Step 3 — Check Inventory</h3>
+<p>Review products marked:</p>
+<ul>
+<li>Low Stock</li>
+<li>Out of Stock</li>
+</ul>
+<p>Update product quantities when inventory changes.</p>
+<h3>Step 4 — Review Customers</h3>
+<p>Use the Customers section when customer information needs to be reviewed or exported.</p>
+<h3>Step 5 — Review Statistics</h3>
+<p>Check the Statistics &amp; Earnings section periodically to monitor revenue and transaction activity.</p>
+<h3>Step 6 — Check Notifications</h3>
+<p>Review and clear important administrative notifications.</p>
+<h3>Step 7 — Sign Out</h3>
+<p>Sign out after completing administrative tasks.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-48">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18h6M10 21h4" stroke-linecap="round"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6v.5h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">48. Tips for Managing the Store</h2>
+        </div>
+        <div class="guide-section__body">
+<h2>Keep Product Information Accurate</h2>
+<p>Make sure product names, prices, stock quantities, specifications, and images are correct.</p>
+<h2>Update Stock Regularly</h2>
+<p>Low-stock and out-of-stock statuses help identify products that require inventory attention.</p>
+<h2>Keep Order Statuses Updated</h2>
+<p>Customers and store staff rely on accurate order statuses.</p>
+<h2>Use Categories Properly</h2>
+<p>Well-organized product categories make products easier to manage.</p>
+<h2>Use Filters and Search</h2>
+<p>When the store contains many products, orders, or customers, use the search and filtering tools instead of manually browsing through the entire list.</p>
+<h2>Export Important Records</h2>
+<p>Use PDF, DOC, or CSV exports when you need offline records or reports.</p>
+<h2>Protect Administrator Credentials</h2>
+<p>Do not share the administrator password, access code, or master admin secret with unauthorized users.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-49">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M3.5 9.5h17M9.5 9.5V21" stroke-linecap="round"/></svg></span>
+          <h2 class="guide-section__title">49. Quick Reference</h2>
+        </div>
+        <div class="guide-section__body">
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Main Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dashboard</td>
+<td>Store overview, alerts, recent orders and quick actions</td>
+</tr>
+<tr>
+<td>Statistics</td>
+<td>Revenue, earnings, charts and transaction history</td>
+</tr>
+<tr>
+<td>Products</td>
+<td>Manage products, categories, stock and product information</td>
+</tr>
+<tr>
+<td>Orders</td>
+<td>Manage customer orders and order statuses</td>
+</tr>
+<tr>
+<td>Customers</td>
+<td>View and manage customer information</td>
+</tr>
+<tr>
+<td>Settings</td>
+<td>Configure store profile, shipping and security</td>
+</tr>
+<tr>
+<td>Admin Account</td>
+<td>Manage administrator access and authentication</td>
+</tr>
+</tbody>
+</table>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-50">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4.5" stroke-linecap="round"/><circle cx="12" cy="15.5" r="0.6" fill="currentColor" stroke="none"/></svg></span>
+          <h2 class="guide-section__title">50. Important Security Reminder</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The administration dashboard provides access to sensitive store information and management functions.</p>
+<p>Administrators should:</p>
+<ul>
+<li>Keep passwords private.</li>
+<li>Keep the 8-digit access code private.</li>
+<li>Never share the Master Admin Secret.</li>
+<li>Use strong passwords.</li>
+<li>Sign out when finished.</li>
+<li>Avoid using administrator accounts on untrusted computers.</li>
+<li>Only give dashboard access to trusted personnel.</li>
+</ul>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-51">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.3a2.8 2.8 0 1 1 4 2.6c-.8.4-1.4.9-1.4 1.9v.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="17.2" r="0.6" fill="currentColor" stroke="none"/></svg></span>
+          <h2 class="guide-section__title">51. Troubleshooting</h2>
+        </div>
+        <div class="guide-section__body">
+<h2>I cannot sign in</h2>
+<p>Check that:</p>
+<ul>
+<li>Your email is correct.</li>
+<li>Your password is correct.</li>
+<li>Your access code contains exactly 8 digits.</li>
+<li>Your account has been registered.</li>
+</ul>
+<h2>I forgot my password</h2>
+<p>Use <strong>Forgot Password or Access Code?</strong> and follow the verification process.</p>
+<h2>I forgot my access code</h2>
+<p>Use the account recovery option for the access code and follow the email verification process.</p>
+<h2>My password is rejected</h2>
+<p>Make sure the password contains:</p>
+<ul>
+<li>At least 8 characters</li>
+<li>Uppercase letter</li>
+<li>Lowercase letter</li>
+<li>Number</li>
+<li>One of the supported symbols: <code># @ * , .</code></li>
+</ul>
+<h2>A product is difficult to find</h2>
+<p>Use the Products search and filtering tools.</p>
+<h2>I need to find a particular order</h2>
+<p>Use the Orders search field or filter orders by status.</p>
+<h2>I need customer information</h2>
+<p>Open the Customers section and search for the customer.</p>
+<h2>I need a report</h2>
+<p>Use the Statistics &amp; Earnings section to generate an earnings statement in PDF or CSV format.</p>
+<hr />
+        </div>
+      </section>
+
+      <section class="guide-section" id="section-52">
+        <div class="guide-section__head">
+          <span class="guide-section__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="guide-section__title">52. Summary</h2>
+        </div>
+        <div class="guide-section__body">
+<p>The BLEGAB Luxury Wigs Admin Dashboard provides the tools required to manage the ecommerce store from one place.</p>
+<p>The main responsibilities of an administrator are:</p>
+<ol>
+<li>Monitor the dashboard.</li>
+<li>Manage products and inventory.</li>
+<li>Organize product categories.</li>
+<li>Process and update orders.</li>
+<li>Review customer information.</li>
+<li>Monitor sales and earnings.</li>
+<li>Configure store and shipping settings.</li>
+<li>Manage administrator security.</li>
+<li>Review notifications.</li>
+<li>Keep store information accurate and up to date.</li>
+</ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="guide-footer">
+      <p>BLEGAB Luxury Wigs &mdash; Admin Dashboard Guide</p>
+    </footer>
+
+  </div>
+
+  <button type="button" id="guideBackToTop" class="guide-back-to-top" aria-label="Back to top" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <script src="assets/js/guide.js"></script>
+</body>
+</html>

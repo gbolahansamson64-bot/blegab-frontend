@@ -1,17 +1,18 @@
-const API_URL = "https://api.blegab.com/api";
+const SUCCESS_API_URL = "https://api.blegab.com/api";
 
 const params = new URLSearchParams(window.location.search);
-
 const sessionId = params.get("session_id");
 
 const orderDetails = document.getElementById("order-details");
 
 let attempts = 0;
-
 const MAX_ATTEMPTS = 15;
-
 const RETRY_DELAY = 2000;
 
+
+// ==================================================
+// VERIFY PAYMENT
+// ==================================================
 
 async function verifyPayment() {
 
@@ -29,9 +30,16 @@ async function verifyPayment() {
 
     try {
 
+        console.log(
+            "VERIFYING STRIPE SESSION:",
+            sessionId
+        );
+
+
         const response = await fetch(
-            `${API_URL}/orders/verify-payment/${sessionId}`,
+            `${SUCCESS_API_URL}/orders/verify-payment/${encodeURIComponent(sessionId)}`,
             {
+                method: "GET",
                 credentials: "include"
             }
         );
@@ -40,38 +48,47 @@ async function verifyPayment() {
         const data = await response.json();
 
 
-        // -----------------------------------------
-        // DEBUG
-        // -----------------------------------------
+        console.log(
+            "PAYMENT VERIFICATION RESPONSE:",
+            {
+                status: response.status,
+                ok: response.ok,
+                data: data
+            }
+        );
 
-        console.log("PAYMENT VERIFICATION RESPONSE:", {
-            status: response.status,
-            ok: response.ok,
-            data: data
-        });
 
+        // ==================================================
+        // ORDER STILL BEING CREATED
+        // ==================================================
 
-        // -----------------------------------------
-        // ORDER NOT CREATED YET
-        // -----------------------------------------
-
-         if (
-             response.status === 202 &&
-             data.processing === true
-            ) {
+        if (
+            response.status === 202 &&
+            data.processing === true
+        ) {
 
             attempts++;
+
+
+            console.log(
+                `Order still processing. Attempt ${attempts}/${MAX_ATTEMPTS}`
+            );
 
 
             if (attempts >= MAX_ATTEMPTS) {
 
                 orderDetails.innerHTML = `
+                    <h3>Payment Received 🎉</h3>
+
                     <p>
-                        Payment was received successfully.
+                        Your payment was successful.
                     </p>
 
                     <p>
                         Your order is still being processed.
+                    </p>
+
+                    <p>
                         Please check your order history shortly.
                     </p>
                 `;
@@ -81,9 +98,7 @@ async function verifyPayment() {
 
 
             orderDetails.innerHTML = `
-                <p>
-                    Payment was received successfully.
-                </p>
+                <h3>Payment Received 🎉</h3>
 
                 <p>
                     Confirming your order...
@@ -95,46 +110,115 @@ async function verifyPayment() {
             `;
 
 
-            setTimeout(verifyPayment, RETRY_DELAY);
+            setTimeout(
+                verifyPayment,
+                RETRY_DELAY
+            );
+
 
             return;
         }
 
 
-        // -----------------------------------------
-        // OTHER BACKEND ERRORS
-        // -----------------------------------------
+        // ==================================================
+        // BACKEND ERROR
+        // ==================================================
 
         if (!response.ok) {
 
             throw new Error(
-                data.message || "Unable to verify payment."
+                data.message ||
+                "Unable to verify payment."
             );
 
         }
 
 
-        // -----------------------------------------
-        // MAKE SURE ORDER EXISTS
-        // -----------------------------------------
+        // ==================================================
+        // PAYMENT MUST BE CONFIRMED
+        // ==================================================
+
+        if (
+            data.success !== true ||
+            data.paid !== true
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Payment could not be confirmed."
+            );
+
+        }
+
+
+        // ==================================================
+        // ORDER NOT RETURNED
+        // ==================================================
 
         if (!data.order) {
 
             console.error(
-                "PAYMENT VERIFIED BUT NO ORDER WAS RETURNED:",
+                "Payment verified but no order returned:",
                 data
             );
 
-            throw new Error(
-                "Payment was verified, but order information was not returned."
+
+            /*
+             * The webhook may have completed payment,
+             * but the order may not yet be visible.
+             *
+             * Retry instead of getting stuck.
+             */
+
+            attempts++;
+
+
+            if (attempts >= MAX_ATTEMPTS) {
+
+                orderDetails.innerHTML = `
+                    <h3>Payment Received 🎉</h3>
+
+                    <p>
+                        Your payment was successful.
+                    </p>
+
+                    <p>
+                        Your order is still being processed.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            orderDetails.innerHTML = `
+                <h3>Payment Received 🎉</h3>
+
+                <p>
+                    Confirming your order...
+                </p>
+            `;
+
+
+            setTimeout(
+                verifyPayment,
+                RETRY_DELAY
             );
 
+
+            return;
         }
 
 
-        // -----------------------------------------
+        // ==================================================
         // SUCCESS
-        // -----------------------------------------
+        // ==================================================
+
+        console.log(
+            "✅ PAYMENT VERIFIED AND ORDER FOUND:",
+            data.order
+        );
+
 
         displayOrder(data.order);
 
@@ -145,6 +229,39 @@ async function verifyPayment() {
             "PAYMENT VERIFICATION ERROR:",
             error
         );
+
+
+        /*
+         * Do not immediately show an error if this is
+         * simply a temporary webhook/database delay.
+         */
+
+        attempts++;
+
+
+        if (attempts < MAX_ATTEMPTS) {
+
+            orderDetails.innerHTML = `
+                <h3>Payment Received 🎉</h3>
+
+                <p>
+                    Confirming your order...
+                </p>
+
+                <p>
+                    Please wait a moment.
+                </p>
+            `;
+
+
+            setTimeout(
+                verifyPayment,
+                RETRY_DELAY
+            );
+
+
+            return;
+        }
 
 
         orderDetails.innerHTML = `
@@ -158,11 +275,11 @@ async function verifyPayment() {
 }
 
 
-function displayOrder(order) {
+// ==================================================
+// DISPLAY ORDER
+// ==================================================
 
-    // -----------------------------------------
-    // EXTRA SAFETY CHECK
-    // -----------------------------------------
+function displayOrder(order) {
 
     if (!order) {
 
@@ -171,23 +288,33 @@ function displayOrder(order) {
             order
         );
 
+
         orderDetails.innerHTML = `
             <p style="color:red">
                 Order information could not be loaded.
             </p>
         `;
 
+
         return;
     }
 
 
+    console.log(
+        "DISPLAYING ORDER:",
+        order
+    );
+
+
     orderDetails.innerHTML = `
 
-        <h3>Order Confirmed 🎉</h3>
+        <h3>
+            Order Confirmed 🎉
+        </h3>
 
         <p>
             <strong>Order ID:</strong>
-            ${order._id}
+            ${order._id || order.id || ""}
         </p>
 
         <p>
@@ -218,7 +345,71 @@ function displayOrder(order) {
 
     `;
 
+
+    // ==================================================
+    // SAVE ORDER FOR CONFIRMATION PAGE
+    // ==================================================
+
+    try {
+
+        if (
+            window.OrderConfirmation &&
+            window.OrderConfirmation.saveOrderToSession
+        ) {
+
+            window.OrderConfirmation.saveOrderToSession(
+                order
+            );
+
+        } else {
+
+            sessionStorage.setItem(
+                "lastOrderData",
+                JSON.stringify(order)
+            );
+
+        }
+
+    } catch (storageError) {
+
+        console.error(
+            "Unable to save order to sessionStorage:",
+            storageError
+        );
+
+    }
+
+
+    // ==================================================
+    // REDIRECT TO ORDER CONFIRMATION
+    // ==================================================
+
+    setTimeout(function () {
+
+        const orderId =
+            order._id ||
+            order.id;
+
+
+        if (orderId) {
+
+            window.location.href =
+                `order-confirmation.html?orderId=${encodeURIComponent(orderId)}`;
+
+        } else {
+
+            window.location.href =
+                "order-confirmation.html";
+
+        }
+
+    }, 3000);
+
 }
 
+
+// ==================================================
+// START VERIFICATION
+// ==================================================
 
 verifyPayment();

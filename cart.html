@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="assets/css/cart.css" />
 <link rel="stylesheet" href="assets/css/shop.css" />
 <link rel="stylesheet" href="assets/css/checkout.css" />
+<link rel="stylesheet" href="assets/css/custom-select.css" />
 <link rel="stylesheet" href="assets/css/footer.css" />
   <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
 </head>
@@ -89,8 +90,8 @@
             <span data-summary-subtotal>$0.00</span>
           </div>
           <div class="cart-page__summary-row">
-            <span>Shipping</span>
-            <span class="cart-page__summary-free">Free</span>
+            <span>Shipping Fee:</span>
+            <span class="cart-page__summary-free" data-cart-summary-shipping>Calculated at checkout</span>
           </div>
 
           <div class="cart-page__summary-divider"></div>
@@ -236,12 +237,12 @@
               <button type="button" class="option-pill">20"</button>
             </div>
 
-            <p class="product-modal__option-label">Density</p>
-            <div class="product-modal__pills" data-option-group="density">
+            <!-- <p class="product-modal__option-label">Density</p> -->
+            <!-- <div class="product-modal__pills" data-option-group="density">
               <button type="button" class="option-pill">150%</button>
               <button type="button" class="option-pill is-active">180%</button>
               <button type="button" class="option-pill">200%</button>
-            </div>
+            </div> -->
 
             <p class="product-modal__option-label">Lace Type</p>
             <div class="product-modal__pills" data-option-group="lace">
@@ -272,31 +273,209 @@
         </span>
       </div>
 
-      <div class="checkout-modal__steps">
-        <div class="checkout-step is-active" data-checkout-step-indicator="1">
-          <span class="checkout-step__num">1</span>
-          <span class="checkout-step__label">Shipping Information</span>
-        </div>
-      </div>
+     <div class="checkout-modal__steps">
+  <div class="checkout-step is-active" data-checkout-step-indicator="1">
+    <span class="checkout-step__num">1</span>
+    <span class="checkout-step__label">Checkout Options</span>
+  </div>
 
-      <div class="checkout-modal__body">
+    <div class="checkout-step" data-checkout-step-indicator="2">
+    <span class="checkout-step__num">2</span>
+    <span class="checkout-step__label">Guest Information</span>
+  </div>
+
+</div>
+
+<div class="checkout-modal__body">
         <div class="checkout-modal__main">
 
           <!-- STEP 1 -->
-          <div class="checkout-step-panel" data-checkout-step-panel="1">
-            <div class="checkout-section checkout-section--shipping">
-              <h3 data-mobile-step="1">Shipping Information</h3>
-              <p class="checkout-section__hint">Enter the address where you want your order delivered.</p>
+          <!-- =====================================================
+     STEP 1: CHECKOUT OPTIONS
+     ===================================================== -->
+
+<div class="checkout-step-panel checkout-step-panel--options"
+     data-checkout-step-panel="1">
+
+  <div class="checkout-section checkout-section--shipping">
+
+    <h3 data-mobile-step="1">Checkout Options</h3>
+
+    <p class="checkout-section__hint">
+      Choose how you want to continue with your order.
+    </p>
+
+<!-- LOGGED-IN CUSTOMER -->
+
+<div class="checkout-account-country-panel" data-account-country-panel hidden>
+
+  <label for="checkout-account-country">
+    Re-Select your Country / Region
+  </label>
+
+  <select id="checkout-account-country" aria-label="Select your country">
+    <option value="">Select your country</option>
+  </select>
+
+  <p>
+    Select your country before continuing. Your shipping fee will be calculated automatically.
+  </p>
+
+  <a
+    href="#"
+    class="checkout-account-contact-admin"
+    data-account-contact-admin
+    hidden
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Click to contact Admin for shipping fee
+  </a>
+
+</div>
+
+<button
+  type="button"
+  class="checkout-option checkout-option--account"
+  data-checkout-option="account"
+>
+  <div>
+    <strong>
+      Checkout as
+      <span
+        data-checkout-user-name
+        class="checkout-user-name"
+      ></span>
+    </strong>
+
+    <span data-checkout-account-description>
+      Use your saved account information
+    </span>
+  </div>
+
+  <span class="checkout-option__arrow">→</span>
+</button>
+
+<!-- GUEST CHECKOUT -->
+<button
+  type="button"
+  class="checkout-option checkout-option--guest"
+  data-checkout-option="guest"
+>
+  <div>
+    <strong>Checkout as Guest</strong>
+
+    <span>
+      Enter your shipping information and continue securely to payment.
+    </span>
+  </div>
+
+  <span class="checkout-option__arrow">→</span>
+</button>
+
+
+<!-- CREATE ACCOUNT -->
+<button
+  type="button"
+  class="checkout-option checkout-option--signup"
+  data-checkout-option="signup"
+>
+  <div>
+    <strong>Create an Account</strong>
+
+    <span>
+      Create your Blegab account for a faster checkout next time.
+    </span>
+  </div>
+
+  <span class="checkout-option__arrow">→</span>
+</button>
+
+
+    <!-- SECURE CHECKOUT -->
+    <div class="checkout-stripe-banner checkout-stripe-banner--static">
+
+      <svg
+        class="checkout-stripe-banner__icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <rect x="4" y="11" width="16" height="9" rx="2"/>
+        <path
+          d="M8 11V7a4 4 0 0 1 8 0v4"
+          stroke-linecap="round"
+        />
+      </svg>
+
+      <div class="checkout-stripe-banner__text">
+
+        <strong>Secure &amp; Trusted Checkout</strong>
+
+        <p>
+          Your payment will be securely processed by
+          <span class="checkout-stripe-banner__brand">Stripe</span>.
+          <br>
+          We never store your card details.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- SECURE PAYMENT INFORMATION -->
+    <div class="checkout-redirect-panel checkout-redirect-panel--stripe checkout-redirect-panel--static">
+
+      <span class="checkout-redirect-panel__lock">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="5" y="11" width="14" height="9" rx="2"/>
+          <path
+            d="M8 11V8a4 4 0 0 1 8 0v3"
+            stroke-linecap="round"
+          />
+        </svg>
+
+      </span>
+
+      <h3>Proceed to Secure Payment</h3>
+
+      <p>
+        Click the button below to continue to our secure payment
+        partner, Stripe. You’ll be able to choose your preferred
+        payment method.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- STEP 2: CUSTOMER INFORMATION (guest form — parked, not deleted) -->
+
+<div class="checkout-step-panel" data-checkout-step-panel="2">
+    <div class="checkout-section checkout-section--shipping" data-guest-only>
+    <h3 data-mobile-step="2">Guest Shipping Information</h3>
+
+<p class="checkout-section__hint">
+  Enter the address where you want your order delivered.
+</p>
+
 
               <div class="checkout-field">
                 <label>Country / Region <span class="checkout-field__required">*</span></label>
                 <span class="checkout-field-error" data-field-error="country"></span>
                 <select id="checkout-country" required>
                   <option value="">Select your country</option>
-                  <option>Nigeria</option>
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Canada</option>
                 </select>
               </div>
 
@@ -354,20 +533,13 @@
                 </div>
               </div>
 
-              <div class="checkout-field">
+                            <div class="checkout-field">
                 <label>Phone Number (Optional)</label>
                 <input type="tel" id="checkout-phone" placeholder=" 555 123 4567" />
               </div>
 
-              <label class="checkout-save-info">
-                <input type="checkbox" />
-                <span class="checkout-save-info__box">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </span>
-                Save this information for next time
-              </label>
+            
             </div>
-          </div>
 
           <!-- Stripe secure-checkout indicator -->
           <div class="checkout-stripe-banner">
@@ -410,10 +582,11 @@
             </li>
             <li>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z" stroke-linejoin="round"/></svg>
-              <strong>Privacy Protected</strong>
+                            <strong>Privacy Protected</strong>
               <span>Your data is safe</span>
             </li>
           </ul>
+        </div>
         </div>
 
         <!-- ORDER SUMMARY -->
@@ -425,10 +598,21 @@
             <span>Subtotal (<span data-checkout-summary-count>0</span> items)</span>
             <span data-checkout-summary-subtotal>$0.00</span>
           </div>
-          <div class="checkout-summary__row">
-            <span>Shipping</span>
-            <span class="free">Free</span>
+          <div class="checkout-summary__row" data-checkout-shipping-row>
+            <span>Shipping Fee:</span>
+            <span data-checkout-summary-shipping>Select country</span>
           </div>
+
+          <a
+            href="#"
+            class="checkout-contact-admin"
+            data-contact-admin-shipping
+            hidden
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Contact Admin for shipping fee
+          </a>
           <div class="checkout-summary__divider"></div>
           <div class="checkout-summary__row checkout-summary__row--total">
             <span>Estimated Total</span>
@@ -466,10 +650,15 @@
   <script src="assets/js/footer.js"></script>
 
   <!-- Scripts -->
-   <script src="assets/js/cart-api.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/cart.js"></script>
-  <script src="assets/js/checkout.js"></script>
+<script src="assets/js/cart-api.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/shipping-calculator.js"></script>
+
+<!-- Website-wide custom dropdown -->
+<script src="assets/js/custom-select.js"></script>
+
+<script src="assets/js/checkout.js"></script>
 
 </body>
 </html>

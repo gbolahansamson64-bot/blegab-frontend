@@ -87,7 +87,7 @@ const BLEGAB_AUTH = {
 
         await window.BLEGAB_CART.renderDrawer();
 
-        await window.BLEGAB_WISHLIST.renderBadge();
+        // await window.BLEGAB_WISHLIST.renderBadge();
 
     } catch (error) {
 
@@ -433,170 +433,170 @@ data-cart-remove="${product._id}">
 
 };
 
-window.BLEGAB_WISHLIST = {
+// window.BLEGAB_WISHLIST = {
 
-    async getItems() {
+//     async getItems() {
 
-        try {
+//         try {
 
-            const response = await fetch(`${API_URL}/wishlist`, {
+//             const response = await fetch(`${API_URL}/wishlist`, {
 
-                credentials: "include"
+//                 credentials: "include"
 
-            });
+//             });
 
-            if (!response.ok) return [];
+//             if (!response.ok) return [];
 
-            const data = await response.json();
+//             const data = await response.json();
 
-            return data.wishlist.products || [];
+//             return data.wishlist.products || [];
 
-        } catch (error) {
+//         } catch (error) {
 
-            console.error(error);
+//             console.error(error);
 
-            return [];
+//             return [];
 
-        }
+//         }
 
-    },
+//     },
 
-    async toggle(productId) {
+//     async toggle(productId) {
 
-        try {
+//         try {
 
-            const response = await fetch(`${API_URL}/wishlist/toggle`, {
+//             const response = await fetch(`${API_URL}/wishlist/toggle`, {
 
-                method: "POST",
+//                 method: "POST",
 
-                credentials: "include",
+//                 credentials: "include",
 
-                headers: {
+//                 headers: {
 
-                    "Content-Type": "application/json"
+//                     "Content-Type": "application/json"
 
-                },
+//                 },
 
-                body: JSON.stringify({
+//                 body: JSON.stringify({
 
-                    productId
+//                     productId
 
-                })
+//                 })
 
-            });
+//             });
 
-            const data = await response.json();
+//             const data = await response.json();
 
-            if (!response.ok) {
+//             if (!response.ok) {
 
-                alert(data.message);
+//                 alert(data.message);
 
-                return false;
+//                 return false;
 
-            }
+//             }
 
-            await this.renderBadge();
+//             await this.renderBadge();
 
-            return data.wishlisted;
+//             return data.wishlisted;
 
-        }
+//         }
 
-        catch (error) {
+//         catch (error) {
 
-            console.error(error);
+//             console.error(error);
 
-            return false;
+//             return false;
 
-        }
+//         }
 
-    },
+//     },
 
-    async has(productId) {
+//     async has(productId) {
 
-        try {
+//         try {
 
-            const response = await fetch(
-                `${API_URL}/wishlist/check/${productId}`,
-                {
-                    credentials: "include"
-                }
-            );
+//             const response = await fetch(
+//                 `${API_URL}/wishlist/check/${productId}`,
+//                 {
+//                     credentials: "include"
+//                 }
+//             );
 
-            if (!response.ok) return false;
+//             if (!response.ok) return false;
 
-            const data = await response.json();
+//             const data = await response.json();
 
-            return data.wishlisted;
+//             return data.wishlisted;
 
-        }
+//         }
 
-        catch (error) {
+//         catch (error) {
 
-            console.error(error);
+//             console.error(error);
 
-            return false;
+//             return false;
 
-        }
+//         }
 
-    },
+//     },
 
-    async clear() {
+//     async clear() {
 
-        try {
+//         try {
 
-            await fetch(`${API_URL}/wishlist/clear`, {
+//             await fetch(`${API_URL}/wishlist/clear`, {
 
-                method: "DELETE",
+//                 method: "DELETE",
 
-                credentials: "include"
+//                 credentials: "include"
 
-            });
+//             });
 
-            await this.renderBadge();
+//             await this.renderBadge();
 
-        }
+//         }
 
-        catch (error) {
+//         catch (error) {
 
-            console.error(error);
+//             console.error(error);
 
-        }
+//         }
 
-    },
+//     },
 
-    async renderBadge() {
+//     async renderBadge() {
 
-        try {
+//         try {
 
-            const response = await fetch(`${API_URL}/wishlist/count`, {
+//             const response = await fetch(`${API_URL}/wishlist/count`, {
 
-                credentials: "include"
+//                 credentials: "include"
 
-            });
+//             });
 
-            if (!response.ok) return;
+//             if (!response.ok) return;
 
-            const data = await response.json();
+//             const data = await response.json();
 
-            document
-                .querySelectorAll("[data-wishlist-count]")
-                .forEach(element => {
+//             document
+//                 .querySelectorAll("[data-wishlist-count]")
+//                 .forEach(element => {
 
-                    element.textContent = data.count;
+//                     element.textContent = data.count;
 
-                });
+//                 });
 
-        }
+//         }
 
-        catch (error) {
+//         catch (error) {
 
-            console.error(error);
+//             console.error(error);
 
-        }
+//         }
 
-    }
+//     }
 
-};
+// };
 
 // Delegated clicks for qty +/- and remove — works even though items are added to the DOM after page load
 document.addEventListener("click", async function (event) {
@@ -704,7 +704,6 @@ async function renderAccountState() {
     const user = await BLEGAB_AUTH.getUser();
     await window.BLEGAB_CART.renderBadge();
     await window.BLEGAB_CART.renderDrawer();
-    await window.BLEGAB_WISHLIST.renderBadge();
     const header = document.querySelector(".site-header");
 
     if (header) {
@@ -743,7 +742,6 @@ async function renderAccountState() {
 
 window.BLEGAB_CART.renderBadge();
 window.BLEGAB_CART.renderDrawer();
-window.BLEGAB_WISHLIST.renderBadge();
 
 document.addEventListener("click", function (event) {
 
@@ -755,7 +753,7 @@ document.addEventListener("click", function (event) {
 
 });
 
-document.addEventListener('DOMContentLoaded', renderAccountState);
+// document.addEventListener('DOMContentLoaded', renderAccountState);
 
 
 

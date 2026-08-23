@@ -35,11 +35,170 @@ function formatMoney(amount) {
 
 }
 
-function formatQtyDisplay(num) {
-  if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
-  if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
-  if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
-  return num.toString();
+function getCartProductImage(image) {
+  if (!image) {
+    return "/assets/images/placeholder.png";
+  }
+
+  var value = String(image).trim();
+
+  if (!value) {
+    return "/assets/images/placeholder.png";
+  }
+
+  // Full URL — Cloudinary or another remote image
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  // Backend-relative path
+  if (value.startsWith("/")) {
+    return "https://api.blegab.com" + value;
+  }
+
+  // Existing frontend asset path
+  if (value.startsWith("assets/")) {
+    return "/" + value;
+  }
+
+  // Bare filename returned by backend
+  return "https://api.blegab.com/assets/images/products/" + value;
+}
+
+// function formatQtyDisplay(num) {
+//   if (num >= 1e9) return (num / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+//   if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+//   if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+//   return num.toString();
+// }
+
+
+/* =========================================================
+   CART PAGE SHIPPING RULES
+   ========================================================= */
+ const CART_SHIPPING_RATES = {
+   'United States': 20,
+   'Canada': 30,
+   'Nigeria': 50,
+   'United Kingdom': 50
+ };
+
+function cartShippingForCountry(country) {
+  const key = String(country || '').trim();
+
+  return Object.prototype.hasOwnProperty.call(
+    CART_SHIPPING_RATES,
+    key
+  )
+    ? CART_SHIPPING_RATES[key]
+    : null;
+}
+
+async function getCartShippingCountry() {
+
+  /*
+   * -------------------------------------------------------
+   * 1. Try the authenticated user's saved country first.
+   * -------------------------------------------------------
+   */
+
+  try {
+
+    const response = await fetch(
+      'https://api.blegab.com/api/auth/me',
+      {
+        method: 'GET',
+        credentials: 'include'
+      }
+    );
+
+    if (response.ok) {
+
+      const data = await response.json();
+
+      const user = data.user || null;
+
+      const loggedInCountry =
+        user?.address?.country ||
+        user?.country ||
+        '';
+
+      if (loggedInCountry) {
+        return loggedInCountry;
+      }
+    }
+
+  } catch (error) {
+
+    console.warn(
+      'Unable to load logged-in customer country:',
+      error
+    );
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * 2. If customer is a guest, use the country selected
+   *    during checkout.
+   * -------------------------------------------------------
+   */
+
+  try {
+
+    const guestCountry =
+      sessionStorage.getItem('blegab_checkout_country');
+
+    if (guestCountry) {
+      return guestCountry;
+    }
+
+  } catch (error) {
+
+    console.warn(
+      'Unable to read checkout country:',
+      error
+    );
+  }
+
+
+  /*
+   * -------------------------------------------------------
+   * 3. No country available yet.
+   * -------------------------------------------------------
+   */
+
+  return '';
+}
+
+function renderCartShipping(subtotal, country) {
+  const row = document.querySelector('[data-cart-summary-shipping-row]');
+  const totalEl = document.querySelector('[data-summary-total]');
+  const shipping = cartShippingForCountry(country);
+
+  if (!row) return;
+
+  if (!country) {
+    row.innerHTML = '<span>Shipping</span><span data-cart-summary-shipping>Calculated at checkout</span>';
+    if (totalEl) totalEl.textContent = formatMoney(subtotal);
+    return;
+  }
+
+  if (shipping === null) {
+    row.innerHTML = '';
+    const button = document.createElement('a');
+    button.href = 'https://wa.me/14696180809?text=' + encodeURIComponent('Hello Blegab, I need help with the shipping fee for my country.');
+    button.target = '_blank';
+    button.rel = 'noopener noreferrer';
+    button.className = 'checkout-contact-admin-btn';
+    button.textContent = 'Contact Admin for shipping fee';
+    row.appendChild(button);
+    if (totalEl) totalEl.textContent = formatMoney(subtotal);
+    return;
+  }
+
+  row.innerHTML = '<span>Shipping</span><span data-cart-summary-shipping>' + formatMoney(shipping) + '</span>';
+  if (totalEl) totalEl.textContent = formatMoney(Number(subtotal) + shipping);
 }
 
 /* -----------------------------
@@ -95,10 +254,11 @@ async function renderCartPage() {
       }
       var lineTotal = item.lineTotal;
 
-      var image =
-      product.images && product.images.length
-        ? product.images[0]
-        : "/images/placeholder.png";
+      var image = getCartProductImage(
+  product.images && product.images.length
+    ? product.images[0]
+    : ""
+);
 
       return (
         '<div class="cart-page__row" data-cart-page-row="' + product._id + '">' +
@@ -185,19 +345,43 @@ async function renderCartPage() {
     }).join("");
 
     var subtotalEl = document.querySelector("[data-summary-subtotal]");
-    var totalEl = document.querySelector("[data-summary-total]");
-    var countEl = document.querySelector("[data-summary-count]");
-    var afterpayEl = document.querySelector("[data-summary-afterpay]");
+var totalEl = document.querySelector("[data-summary-total]");
+var countEl = document.querySelector("[data-summary-count]");
+var afterpayEl = document.querySelector("[data-summary-afterpay]");
 
-    if (subtotalEl) subtotalEl.textContent = formatMoney(subtotal);
-    if (totalEl) totalEl.textContent = formatMoney(subtotal);
-    if (countEl) countEl.textContent = itemCount;
-    if (afterpayEl) afterpayEl.textContent = formatMoney(subtotal / 4);
+if (subtotalEl) {
+  subtotalEl.textContent = formatMoney(subtotal);
+}
+
+if (totalEl) {
+  totalEl.textContent = formatMoney(subtotal);
+}
+
+if (countEl) {
+  countEl.textContent = itemCount;
+}
+
+if (afterpayEl) {
+  afterpayEl.textContent = formatMoney(subtotal / 4);
+}
+
+
+// --------------------------------------------------
+// SHIPPING
+// Try to get the logged-in customer's country.
+// Guests will remain "Calculated at checkout"
+// until a country is selected during checkout.
+// --------------------------------------------------
+var shippingCountry = await getCartShippingCountry();
+
+renderCartShipping(subtotal, shippingCountry);
 
   } catch (err) {
     console.error("Failed to load cart:", err);
   }
 }
+
+window.BLEGAB_RENDER_CART_PAGE = renderCartPage;
 
 /* -----------------------------
    Qty +/- and delete — delegated, since rows are re-rendered
@@ -443,6 +627,10 @@ function initProductModal() {
 
   if (!overlay || !modal) return;
 
+  if (modal.dataset.modalInitialized) return;
+
+  modal.dataset.modalInitialized = "true";
+
   document.addEventListener("click", async function (e) {
 
     var trigger = e.target.closest("[data-open-product]");
@@ -489,10 +677,11 @@ function initProductModal() {
     modal.querySelector("[data-modal-price]").textContent =
       formatMoney(product.price);
 
-    var image =
+    var image = getCartProductImage(
   product.images && product.images.length
     ? product.images[0]
-    : "/images/placeholder.png";
+    : ""
+);
 
     modal.querySelector("[data-modal-main-image]").src = image;
 
@@ -512,9 +701,9 @@ function initProductModal() {
 
     modal.dataset.activeProduct = product._id;
 
-    let qty = 1;
+    // let qty = 1;
 
-    modal.querySelector("[data-qty-value]").textContent = qty;
+    // modal.querySelector("[data-qty-value]").textContent = qty;
 
     modal.classList.add("is-open");
 

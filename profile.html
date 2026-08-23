@@ -128,7 +128,12 @@
                 </button>
               </div>
 
-              <input type="file" accept="image/png, image/jpeg, image/webp" data-avatar-input class="visually-hidden" aria-hidden="true" tabindex="-1" />
+              <input
+  type="file"
+  accept="image/png, image/jpeg, image/webp"
+  data-avatar-input
+  class="visually-hidden"
+/>
             </div>
             <p class="avatar-uploader__hint" data-avatar-hint>JPG, PNG or WEBP. One photo, up to 5MB.</p>
           </div>
@@ -208,9 +213,9 @@
             <div class="field-row field-row--3">
               <div class="field">
                 <label for="state">State / Region</label>
-                <select id="state" name="state" data-field="state" autocomplete="address-level1" disabled>
-                  <option value="">Select a country first</option>
-                </select>
+                <select id="state" name="state" data-field="state" autocomplete="address-level1">
+  <option value="">Select a country first</option>
+</select>
               </div>
               <div class="field">
                 <label for="city">City</label>
@@ -239,9 +244,10 @@
     </div>
   </main>
 
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/custom-select.js"></script>
-  <script type="module" src="assets/js/profile.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/custom-select.js"></script>
+
+<script type="module" src="assets/js/profile.js"></script>
 
   <div data-site-footer></div>
   <script src="assets/js/footer.js"></script>

@@ -124,7 +124,7 @@ async function fetchOrders() {
 
         length: item.product?.length || "",
 
-        density: item.product?.density || "",
+        // density: item.product?.density || "",
 
         laceType: item.product?.laceType || ""
 
@@ -157,8 +157,8 @@ category:
 length:
     order.orderItems[0]?.product?.length || "",
 
-density:
-    order.orderItems[0]?.product?.density || "",
+// density:
+//     order.orderItems[0]?.product?.density || "",
 
 laceType:
     order.orderItems[0]?.product?.laceType || ""
@@ -694,7 +694,7 @@ function initOrderModal() {
 
             + '<div><strong>Length:</strong> ' + (item.length || "—") + '</div>'
 
-            + '<div><strong>Density:</strong> ' + (item.density || "—") + '</div>'
+            // + '<div><strong>Density:</strong> ' + (item.density || "—") + '</div>'
 
             + '<div><strong>Lace Type:</strong> ' + (item.laceType || "—") + '</div>'
 
@@ -982,7 +982,7 @@ function orderDetailHtml(order) {
             item("Quantity", itemData.quantity) +
             item("Price", "$" + itemData.price.toFixed(2)) +
             item("Length", itemData.length || "—") +
-            item("Density", itemData.density || "—") +
+            // item("Density", itemData.density || "—") +
             item("Lace Type", itemData.laceType || "—");
 
     });
@@ -1068,7 +1068,7 @@ function downloadOrderPdf(order) {
     'Category: ' + order.category,
     'Quantity: ' + order.quantity,
     'Length: ' + order.length,
-    'Density: ' + order.density,
+    // 'Density: ' + order.density,
     'Lace Type: ' + order.laceType,
     '',
     'Customer: ' + order.customerName,
@@ -1158,7 +1158,7 @@ function downloadOrdersPdf(orders, filename, title) {
 
                 "Length: " + (item.length || "—"),
 
-                "Density: " + (item.density || "—"),
+                // "Density: " + (item.density || "—"),
 
                 "Lace Type: " + (item.laceType || "—")
 

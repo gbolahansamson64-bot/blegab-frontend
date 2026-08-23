@@ -104,7 +104,10 @@
   border-radius: 28px;
   padding: var(--space-2xl) var(--space-xl);
   box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
-  overflow: hidden;
+
+  /* Allow Country and State custom dropdowns to extend
+     outside the profile card without being clipped. */
+  overflow: visible;
 }
 
 /* Gold hairline across the top edge — the one signature accent */
@@ -445,9 +448,14 @@
   background-position: right 12px center;
 }
 
-.phone-field .select-wrap {
-  flex: 0 0 50%;
-  width: auto;
+.select-wrap {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.select-wrap.is-open {
+  z-index: 100;
 }
 
 @media (max-width: 479.98px) {
@@ -593,4 +601,365 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+}
+
+
+.profile-card select {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  border-radius: 10px;
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  cursor: pointer;
+}
+
+.profile-card select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
+}
+
+.profile-card select option {
+  background: var(--color-bg-dark-alt);
+  color: var(--color-white);
+}
+
+.profile-card select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   SEARCHABLE COUNTRY / STATE DROPDOWN
+   ========================================================= */
+
+.blegab-search-select {
+  position: relative;
+  width: 100%;
+}
+
+.blegab-search-select__input {
+  width: 100%;
+  height: 52px;
+  border: 1px solid #d9d5cf;
+  background: #fff;
+  padding: 0 48px 0 16px;
+  font: inherit;
+  color: #171717;
+  outline: none;
+  cursor: text;
+}
+
+.blegab-search-select__input:focus {
+  border-color: #171717;
+}
+
+.blegab-search-select__arrow {
+  position: absolute;
+  right: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.blegab-search-select__menu {
+  position: absolute;
+  z-index: 99999;
+  left: 0;
+  right: 0;
+  top: calc(100% + 5px);
+  max-height: 280px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dedad4;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .12);
+  display: none;
+}
+
+.blegab-search-select.is-open
+.blegab-search-select__menu {
+  display: block;
+}
+
+.blegab-search-select__option {
+  width: 100%;
+  border: 0;
+  background: #fff;
+  text-align: left;
+  padding: 13px 16px;
+  font: inherit;
+  color: #222;
+  cursor: pointer;
+}
+
+.blegab-search-select__option:hover,
+.blegab-search-select__option.is-active {
+  background: #f5f2ed;
+}
+
+.blegab-search-select__empty {
+  padding: 14px 16px;
+  color: #777;
+  font-size: 14px;
+}
+
+.blegab-search-select__native {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
+/* =========================================================
+   SEARCH FIELD INSIDE EXISTING DROPDOWN
+   Search stays fixed.
+   ONLY the country/state option list scrolls.
+   Scrollbar itself is hidden.
+   ========================================================= */
+
+/* The dropdown panel itself NEVER scrolls */
+.select-panel {
+  overflow: hidden !important;
+  max-height: 360px;
+  padding: 0 !important;
+}
+
+/* Fixed search area */
+.select-panel__search {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+
+  padding: 10px;
+
+  background: var(--color-bg-dark-alt);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Search icon */
+.select-panel__search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-gold);
+
+  pointer-events: none;
+
+  font-size: 30px;
+  line-height: 1;
+
+  z-index: 3;
+}
+
+/* Keep typed text clear of the icon */
+.select-panel__search-input {
+  padding-left: 42px !important;
+}
+
+/* Search input */
+.select-panel__search-input {
+  display: block;
+
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+
+  background: var(--color-bg-dark);
+  color: var(--color-white);
+
+  padding: 0 12px 0 46px;
+
+  outline: none;
+
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.select-panel__search-input:focus {
+  border-color: var(--color-gold);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+.select-panel__search-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.8;
+}
+
+
+/* =========================================================
+   ONLY THIS AREA SCROLLS
+   ========================================================= */
+
+.select-panel__options {
+  display: block;
+
+  max-height: 300px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /*
+   * Hide scrollbar completely while
+   * keeping mouse-wheel / touch scrolling.
+   */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.select-panel__options::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+
+/* =========================================================
+   OPTIONS
+   ========================================================= */
+
+.select-option {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 14px 16px;
+
+  color: var(--color-white);
+  background: transparent;
+
+  cursor: pointer;
+
+  font-family: var(--font-body);
+  font-size: 14.5px;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.select-option:hover,
+.select-option.is-active {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.select-option.is-selected {
+  color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.select-option.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.select-option--empty {
+  cursor: default;
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   Prevent the OLD custom select panel from becoming
+   the scrolling element.
+   ========================================================= */
+
+.select-wrap.is-open .select-panel {
+  overflow: hidden !important;
+}
+
+.select-wrap.is-open .select-panel__search {
+  position: relative;
+}
+
+.select-wrap.is-open .select-panel__options {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.select-wrap.is-open .select-panel__options::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.select-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.select-panel__search {
+  flex: 0 0 auto !important;
+}
+
+.select-panel__options {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.select-panel__options::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* =========================================================
+   MOBILE PROFILE TOOLBAR
+   Stack the action buttons vertically on mobile.
+   ========================================================= */
+@media (max-width: 767.98px) {
+  .profile-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+
+  .profile-toolbar__right {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .profile-toolbar__shop {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .profile-back-btn {
+    align-self: flex-start;
+  }
 }

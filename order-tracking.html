@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Your Order | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
+  <link rel="stylesheet" href="assets/css/order-tracking.css" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+</head>
+<body>
+  <!-- Header -->
+  <div data-site-header></div>
+
+  <!-- Main Content -->
+  <main class="order-tracking-page">
+    <div class="order-tracking-container">
+      
+      <!-- Page Header -->
+      <div class="order-tracking-header">
+        <h1>Track Your Order</h1>
+        <p>Enter your order details to see the current status and estimated delivery date.</p>
+      </div>
+
+      <!-- Search Form (initial state) -->
+      <form id="order-tracking-form" class="order-tracking-form">
+        <div class="tracking-form-group">
+          <label for="tracking-order-id">Order Number</label>
+          <input 
+            type="text" 
+            id="tracking-order-id" 
+            placeholder="e.g., ORD-001" 
+            required
+          />
+        </div>
+        <div class="tracking-form-group">
+          <label for="tracking-email">Email Address</label>
+          <input 
+            type="email" 
+            id="tracking-email" 
+            placeholder="your@email.com" 
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Track Package</button>
+      </form>
+
+      <!-- Error Container -->
+      <div id="tracking-error" style="display: none;"></div>
+
+      <!-- Tracking Details (hidden initially) -->
+      <div id="order-tracking-container" style="display: none;">
+        
+        <!-- Header Info -->
+        <div class="tracking-header-card">
+          <div class="tracking-header-left">
+            <h2>Order <span id="track-order-id">--</span></h2>
+            <div id="track-order-status" class="track-order-status">--</div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="downloadTrackingPDF()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Download Receipt
+          </button>
+        </div>
+
+        <!-- Tracking Info -->
+        <div id="track-tracking-info" class="tracking-info-card">
+          <!-- Tracking details will be populated here -->
+        </div>
+
+        <!-- Timeline -->
+        <div class="order-timeline-card">
+          <h3>Delivery Timeline</h3>
+          <div id="order-timeline" class="order-timeline">
+            <!-- Timeline events will be populated here -->
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="tracking-additional-card">
+          <button type="button" id="show-more-info" class="btn-toggle">
+            <span>Show More Details</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div id="order-additional-info" style="display: none;" class="additional-info">
+            <div class="info-section">
+              <h4>FAQ</h4>
+              <dl>
+                <dt>How do I get my tracking number?</dt>
+                <dd>Your tracking number will be sent to your email once your order is shipped.</dd>
+                
+                <dt>Can I change my delivery address?</dt>
+                <dd>Once your order has shipped, unfortunately we cannot change the address. Please contact us immediately if you need to.</dd>
+                
+                <dt>What if my package doesn't arrive?</dt>
+                <dd>If your package doesn't arrive by the estimated delivery date, please contact us and we'll investigate.</dd>
+                
+                <dt>How do I return my order?</dt>
+                <dd>We offer 30-day returns on most items. Visit our return center for more information.</dd>
+              </dl>
+            </div>
+
+            <div class="info-section">
+              <h4>Need Help?</h4>
+              <p>
+                <strong>Email:</strong> <a href="mailto:support@blegab.com">support@blegab.com</a><br>
+                <strong>WhatsApp:</strong> <a href="https://wa.me/14696180809">Message us</a><br>
+                <strong>Phone:</strong> <a href="tel:+1-469-618-0809">+1-469-618-0809</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div data-site-footer></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/header.js"></script>
+  <script src="assets/js/footer.js"></script>
+  <script src="assets/js/order-tracking.js"></script>
+</body>
+</html>

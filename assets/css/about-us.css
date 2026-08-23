@@ -550,14 +550,20 @@ body {
   text-align: center;
 }
 
-.stat__emoji {
-  display: block;
-  font-size: 28px;
+.stat__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--space-xs);
 }
 
-.stat__emoji--spin {
-  display: inline-block;
+.stat__icon {
+  width: 30px;
+  height: 30px;
+  color: var(--color-gold);
+}
+
+.stat__icon-wrap--spin .stat__icon {
   animation: globeSpin 6s linear infinite;
 }
 
@@ -567,19 +573,19 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stat__emoji--spin {
+  .stat__icon-wrap--spin .stat__icon {
     animation: none;
   }
 }
 
-.stat__title {
+.stat__number {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 17px;
   color: var(--color-gold);
 }
 
-.stat__subtitle {
+.stat__label {
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -590,6 +596,30 @@ body {
 @media (min-width: 700px) {
   .stats-bar__grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .stats-bar {
+    padding-block: var(--space-md);
+  }
+
+  .stats-bar__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg) var(--space-sm);
+  }
+
+  .stat__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .stat__number {
+    font-size: 14px;
+  }
+
+  .stat__label {
+    font-size: 10px;
   }
 }
 

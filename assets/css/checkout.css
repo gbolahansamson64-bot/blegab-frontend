@@ -129,12 +129,17 @@
 
 /* ---------- Step indicator ---------- */
 .checkout-modal__steps {
-  display: flex;
+  /* parked for now — not deleted, just hidden until guest flow is reworked */
+  display: none;
   align-items: center;
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-lg);
   border-bottom: 1px solid var(--color-border-dark);
   flex-shrink: 0;
+}
+
+.checkout-account-payment {
+  margin-top: var(--space-md);
 }
 
 .checkout-step {
@@ -1388,5 +1393,1007 @@
     font-size: 13px;
     white-space: normal;
     line-height: 1.4;
+  }
+}
+
+
+/* =========================================================
+   CHECKOUT OPTIONS — Luxury Blegab Style
+   ========================================================= */
+
+.checkout-option {
+  width: 100%;
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 20px;
+  margin-bottom: 12px;
+
+  background: var(--color-bg-dark);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+
+  color: var(--color-white);
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.checkout-option:hover {
+  border-color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.04);
+  transform: translateY(-1px);
+}
+
+.checkout-option:active {
+  transform: translateY(0);
+}
+
+/* ---------- Main title ---------- */
+
+.checkout-option strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* ---------- Description ---------- */
+
+.checkout-option div > span {
+  display: block;
+
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------- Arrow ---------- */
+
+.checkout-option > span {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: var(--color-gold);
+  font-size: 19px;
+  line-height: 1;
+
+  border: 1px solid var(--color-border-dark);
+  border-radius: 50%;
+
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.checkout-option:hover > span {
+  border-color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateX(2px);
+}
+
+/* ---------- Logged-in customer name ---------- */
+
+.checkout-option [data-checkout-user-name] {
+  color: var(--color-gold);
+}
+
+/* ---------- Hidden account option ---------- */
+
+.checkout-option[hidden] {
+  display: none;
+}
+
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 480px) {
+
+  .checkout-option {
+    min-height: 76px;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .checkout-option strong {
+    font-size: 13px;
+  }
+
+  .checkout-option div > span {
+    font-size: 11.5px;
+  }
+
+  .checkout-option > span {
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+  }
+
+}
+
+
+
+/* =========================================================
+   FINAL CHECKOUT MODAL LAYOUT
+   ========================================================= */
+
+.checkout-modal {
+  width: min(1040px, calc(100vw - 40px));
+  height: min(820px, calc(100dvh - 40px));
+  max-height: calc(100dvh - 40px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.checkout-modal__body {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+
+  gap: 28px;
+  padding: 24px 28px 28px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  align-items: start;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.checkout-modal__main {
+  min-width: 0;
+  width: 100%;
+}
+
+.checkout-step-panel {
+  width: 100%;
+  min-width: 0;
+}
+
+/* VERY IMPORTANT */
+.checkout-step-panel[hidden] {
+  display: none !important;
+}
+
+/* Checkout option cards */
+.checkout-option {
+  width: 100%;
+  min-height: 82px;
+
+  padding: 18px 20px;
+  margin-bottom: 12px;
+
+  box-sizing: border-box;
+}
+
+.checkout-option > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.checkout-option strong {
+  display: block;
+  line-height: 1.25;
+}
+
+.checkout-option div > span {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Order summary */
+.checkout-modal__summary {
+  width: 100%;
+  min-width: 0;
+
+  position: sticky;
+  top: 0;
+
+  max-height: none;
+  overflow: visible;
+
+  align-self: start;
+}
+
+/* Form should never overflow its column */
+.checkout-field,
+.checkout-field-row {
+  width: 100%;
+  min-width: 0;
+}
+
+.checkout-field input,
+.checkout-field select,
+.checkout-combobox,
+.checkout-combobox__input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 860px) {
+
+  .checkout-modal {
+    width: min(720px, calc(100vw - 24px));
+    height: min(900px, calc(100dvh - 24px));
+    max-height: calc(100dvh - 24px);
+  }
+
+  .checkout-modal__body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .checkout-modal__summary {
+    position: static;
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .checkout-modal {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    border-radius: 0;
+  }
+
+  .checkout-modal__body {
+    display: block;
+
+    height: auto;
+    min-height: 0;
+
+    padding: 16px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .checkout-modal__main {
+    display: block;
+    width: 100%;
+  }
+
+  /*
+   * DO NOT allow the responsive "display: contents"
+   * rule to make hidden checkout steps visible.
+   */
+  .checkout-step-panel[hidden] {
+    display: none !important;
+  }
+
+  .checkout-step-panel:not([hidden]) {
+    display: block;
+    width: 100%;
+  }
+
+  .checkout-section {
+    width: 100%;
+    margin-bottom: 18px;
+  }
+
+  .checkout-option {
+    width: 100%;
+    min-height: 76px;
+
+    padding: 15px 16px;
+    margin-bottom: 10px;
+  }
+
+  .checkout-option strong {
+    font-size: 14px;
+  }
+
+  .checkout-option div > span {
+    font-size: 12px;
+  }
+
+  /* Stack form fields */
+  .checkout-field-row {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  .checkout-field {
+    width: 100%;
+  }
+
+  .checkout-field input,
+  .checkout-field select,
+  .checkout-combobox__input {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .checkout-modal__summary {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-top: 18px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+  .checkout-modal__body {
+    padding: 12px;
+  }
+
+  .checkout-modal__header {
+    padding: 10px 12px;
+  }
+
+  .checkout-option {
+    padding: 13px;
+  }
+}
+
+
+/* =========================================================
+   CHECKOUT — NEVER SHOW A HIDDEN STEP
+   ========================================================= */
+
+.checkout-step-panel[hidden] {
+  display: none !important;
+}
+
+
+/* =========================================================
+   CHECKOUT OPTIONS — ACCOUNT / GUEST / SIGNUP
+   ========================================================= */
+
+.checkout-option--guest,
+.checkout-option--signup {
+  display: flex;
+}
+
+.checkout-option--guest strong,
+.checkout-option--signup strong {
+  color: var(--color-white);
+}
+
+.checkout-option--signup {
+  margin-bottom: 0;
+}
+
+.checkout-option--guest:hover,
+.checkout-option--signup:hover {
+  border-color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.04);
+}
+/* =========================================================
+   SHIPPING / COUNTRY RULE UI
+   ========================================================= */
+.checkout-account-country-panel {
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-dark);
+  box-sizing: border-box;
+}
+
+/* Country dropdown comes FIRST */
+.checkout-account-country-panel + .checkout-option,
+.checkout-account-country-panel + .checkout-option--guest,
+.checkout-account-country-panel + .checkout-option--signup {
+  margin-top: 0;
+}
+
+.checkout-account-country-panel[hidden],
+.checkout-contact-admin[hidden] {
+  display: none !important;
+}
+
+.checkout-account-country-panel label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.checkout-account-country-panel select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-dark-alt);
+  color: var(--color-white);
+  font: inherit;
+}
+
+.checkout-account-country-panel select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+.checkout-account-country-panel p {
+  margin: 8px 0 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.checkout-option.is-disabled,
+.checkout-option:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.checkout-option.is-disabled:hover,
+.checkout-option:disabled:hover {
+  border-color: var(--color-border-dark);
+  background: var(--color-bg-dark);
+}
+
+.checkout-summary__row[data-checkout-shipping-row].is-contact-required > span:last-child {
+  color: var(--color-gold);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.checkout-contact-admin {
+  display: block;
+  width: 100%;
+  margin: 12px 0 4px;
+  padding: 13px 14px;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  background: var(--color-gold);
+  color: #000000;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  animation: checkoutContactPulse 1.35s ease-in-out infinite;
+}
+
+.checkout-contact-admin:hover {
+  background: var(--color-gold);
+  color: #000000;
+}
+
+@keyframes checkoutContactPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkout-contact-admin { animation: none; }
+}
+
+.checkout-account-contact-admin {
+  display: block;
+  margin-top: 10px;
+  color: var(--color-gold);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-align: left;
+  cursor: pointer;
+}
+
+.checkout-account-contact-admin:hover {
+  color: var(--color-white);
+}
+
+.checkout-account-contact-admin[hidden] {
+  display: none !important;
+}
+
+/* =========================================================
+   SEARCHABLE COUNTRY / STATE DROPDOWN
+   ========================================================= */
+
+.blegab-search-select {
+  position: relative;
+  width: 100%;
+}
+
+.blegab-search-select__input {
+  width: 100%;
+  height: 52px;
+  border: 1px solid #d9d5cf;
+  background: #fff;
+  padding: 0 48px 0 16px;
+  font: inherit;
+  color: #171717;
+  outline: none;
+  cursor: text;
+}
+
+.blegab-search-select__input:focus {
+  border-color: #171717;
+}
+
+.blegab-search-select__arrow {
+  position: absolute;
+  right: 17px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.blegab-search-select__menu {
+  position: absolute;
+  z-index: 99999;
+  left: 0;
+  right: 0;
+  top: calc(100% + 5px);
+  max-height: 280px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #dedad4;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .12);
+  display: none;
+}
+
+.blegab-search-select.is-open
+.blegab-search-select__menu {
+  display: block;
+}
+
+.blegab-search-select__option {
+  width: 100%;
+  border: 0;
+  background: #fff;
+  text-align: left;
+  padding: 13px 16px;
+  font: inherit;
+  color: #222;
+  cursor: pointer;
+}
+
+.blegab-search-select__option:hover,
+.blegab-search-select__option.is-active {
+  background: #f5f2ed;
+}
+
+.blegab-search-select__empty {
+  padding: 14px 16px;
+  color: #777;
+  font-size: 14px;
+}
+
+.blegab-search-select__native {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* =========================================================
+   SEARCH FIELD INSIDE EXISTING DROPDOWN
+   Search stays fixed.
+   ONLY the country/state option list scrolls.
+   Scrollbar itself is hidden.
+   ========================================================= */
+
+/* The dropdown panel itself NEVER scrolls */
+.select-panel {
+  overflow: hidden !important;
+  max-height: 360px;
+  padding: 0 !important;
+}
+
+/* Fixed search area */
+.select-panel__search {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+
+  padding: 10px;
+
+  background: var(--color-bg-dark-alt);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Search icon */
+.select-panel__search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-gold);
+
+  pointer-events: none;
+
+  font-size: 30px;
+  line-height: 1;
+
+  z-index: 3;
+}
+
+/* Keep typed text clear of the icon */
+.select-panel__search-input {
+  padding-left: 42px !important;
+}
+
+/* Search input */
+.select-panel__search-input {
+  display: block;
+
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+
+  background: var(--color-bg-dark);
+  color: var(--color-white);
+
+  padding: 0 12px 0 46px;
+
+  outline: none;
+
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.select-panel__search-input:focus {
+  border-color: var(--color-gold);
+
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.12);
+}
+
+.select-panel__search-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.8;
+}
+
+
+/* =========================================================
+   ONLY THIS AREA SCROLLS
+   ========================================================= */
+
+.select-panel__options {
+  display: block;
+
+  max-height: 300px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /*
+   * Hide scrollbar completely while
+   * keeping mouse-wheel / touch scrolling.
+   */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.select-panel__options::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+
+/* =========================================================
+   OPTIONS
+   ========================================================= */
+
+.select-option {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 14px 16px;
+
+  color: var(--color-white);
+  background: transparent;
+
+  cursor: pointer;
+
+  font-family: var(--font-body);
+  font-size: 14.5px;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.select-option:hover,
+.select-option.is-active {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.select-option.is-selected {
+  color: var(--color-gold);
+  background: rgba(212, 175, 55, 0.06);
+}
+
+.select-option.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.select-option--empty {
+  cursor: default;
+  opacity: 0.65;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   Prevent the OLD custom select panel from becoming
+   the scrolling element.
+   ========================================================= */
+
+.select-wrap.is-open .select-panel {
+  overflow: hidden !important;
+}
+
+.select-wrap.is-open .select-panel__search {
+  position: relative;
+}
+
+.select-wrap.is-open .select-panel__options {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.select-wrap.is-open .select-panel__options::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.select-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.select-panel__search {
+  flex: 0 0 auto !important;
+}
+
+.select-panel__options {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.select-panel__options::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+
+/* =========================================================
+   LOGGED-IN CHECKOUT
+   COUNTRY / REGION FIRST
+   ACCOUNT CHECKOUT BUTTON SECOND
+   ========================================================= */
+
+/* Country / Region always comes first */
+.checkout-account-country-panel {
+  order: 1;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* Logged-in account checkout CTA */
+.checkout-option--account {
+  order: 2;
+
+  width: 100%;
+  min-height: 86px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  padding: 18px 20px;
+  margin-bottom: 12px;
+
+  box-sizing: border-box;
+
+  /* SOLID BLE GAB GOLD */
+  background: var(--color-gold);
+  border: 1px solid var(--color-gold);
+
+  /* Dark text against gold */
+  color: #17120f;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 18px rgba(212, 175, 55, 0.18);
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+/* Make the CTA clearly clickable */
+.checkout-option--account:hover {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 26px rgba(212, 175, 55, 0.30);
+}
+
+.checkout-option--account:active {
+  transform: translateY(0);
+
+  box-shadow:
+    0 4px 12px rgba(212, 175, 55, 0.18);
+}
+
+/* "Checkout as..." */
+.checkout-option--account strong {
+  display: block;
+  margin-bottom: 5px;
+
+  color: #17120f;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+/* Logged-in user's name */
+.checkout-option--account [data-checkout-user-name] {
+  color: #17120f;
+  font-weight: 900;
+}
+
+/* "Use your saved account information" */
+.checkout-option--account div > span {
+  display: block;
+
+  color: rgba(23, 18, 15, 0.72);
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Arrow circle */
+.checkout-option--account > span {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  color: var(--color-gold);
+
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+
+  background: var(--color-bg-dark);
+  border: 1px solid rgba(23, 18, 15, 0.30);
+  border-radius: 50%;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.checkout-option--account:hover > span {
+  background: rgba(23, 18, 15, 0.14);
+  border-color: rgba(23, 18, 15, 0.45);
+  transform: translateX(3px);
+  color: var(--color-bg-dark);
+}
+
+/* Contact-admin message stays underneath */
+.checkout-account-contact-admin {
+  order: 3;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .checkout-option--account {
+    min-height: 76px;
+    padding: 16px;
+
+    gap: 12px;
+  }
+
+  .checkout-option--account strong {
+    font-size: 13px;
+  }
+
+  .checkout-option--account div > span {
+    font-size: 11.5px;
+  }
+
+  .checkout-option--account > span {
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
   }
 }

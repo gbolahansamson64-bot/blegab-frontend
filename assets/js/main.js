@@ -26,21 +26,146 @@ document.addEventListener('DOMContentLoaded', function () {
      BLEGAB_AUTH.signOut()                      // on logout
    and the header will update itself everywhere automatically.
    ----------------------------- */
+/* =========================================================
+   REAL BACKEND AUTH STATE
+   The backend session/cookie is the source of truth.
+   ========================================================= */
+
 window.BLEGAB_AUTH = {
+
+  user: null,
+
+  isLoaded: false,
+
   getUser: function () {
+    return this.user;
+  },
+
+  isSignedIn: function () {
+    return !!this.user;
+  },
+
+  load: async function () {
+
     try {
-      return JSON.parse(localStorage.getItem('blegab_user'));
-    } catch (e) {
+
+      const response = await fetch(
+        'https://api.blegab.com/api/auth/me',
+        {
+          method: 'GET',
+          credentials: 'include'
+        }
+      );
+
+      if (!response.ok) {
+        this.user = null;
+        this.isLoaded = true;
+        renderAccountState();
+        return null;
+      }
+
+      const data = await response.json();
+
+      /*
+       * Your backend currently appears to return:
+       *
+       * {
+       *   user: {...}
+       * }
+       *
+       * so we read data.user.
+       */
+
+      this.user = data.user || null;
+
+      this.isLoaded = true;
+
+      renderAccountState();
+
+      return this.user;
+
+    } catch (error) {
+
+      console.error(
+        'Failed to load authentication state:',
+        error
+      );
+
+      this.user = null;
+      this.isLoaded = true;
+
+      renderAccountState();
+
       return null;
     }
   },
+
   signIn: function (user) {
-    localStorage.setItem('blegab_user', JSON.stringify(user));
+
+    /*
+     * Do NOT save authentication state to localStorage.
+     *
+     * The backend cookie/session is responsible for
+     * authentication.
+     */
+
+    this.user = user || null;
+
     renderAccountState();
   },
-  signOut: function () {
-    localStorage.removeItem('blegab_user');
-    renderAccountState();
+
+  signOut: async function () {
+
+    try {
+
+      const response = await fetch(
+        'https://api.blegab.com/api/auth/logout',
+        {
+          method: 'POST',
+          credentials: 'include'
+        }
+      );
+
+      if (!response.ok) {
+
+        let data = {};
+
+        try {
+          data = await response.json();
+        } catch (e) {}
+
+        console.error(
+          data.message || 'Logout failed'
+        );
+
+        return false;
+      }
+
+      this.user = null;
+
+      renderAccountState();
+
+      /*
+       * Refresh cart because the authenticated cart
+       * may have changed after logout.
+       */
+
+      if (window.BLEGAB_CART) {
+        await window.BLEGAB_CART.renderBadge();
+        await window.BLEGAB_CART.renderDrawer();
+      }
+
+      return true;
+
+    } catch (error) {
+
+      console.error(
+        'Logout failed:',
+        error
+      );
+
+      return false;
+    }
   }
 };
 
@@ -176,40 +301,39 @@ getCart: async function () {
 
 
   // ---------------------------------------
-  // GET CART COUNT
-  // (counts distinct products in the cart,
-  // not total quantity across all items)
-  // ---------------------------------------
-  getCount: async function () {
+// GET CART COUNT
+// Counts total quantity of all items
+// ---------------------------------------
+getCount: async function () {
 
-    try {
+  try {
 
-      const response = await fetch(
-        'https://api.blegab.com/api/cart',
-        {
-          method: 'GET',
-          credentials: 'include'
-        }
-      );
-
-      const data = await response.json();
-
-      if (!data.success) {
-        return 0;
+    const response = await fetch(
+      'https://api.blegab.com/api/cart/count',
+      {
+        method: 'GET',
+        credentials: 'include'
       }
+    );
 
-      return data.cart?.items?.length || 0;
+    const data = await response.json();
 
-    } catch (error) {
-
-      console.error(
-        'Failed to load cart count:',
-        error
-      );
-
+    if (!response.ok || !data.success) {
       return 0;
     }
-  },
+
+    return data.count || 0;
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load cart count:',
+      error
+    );
+
+    return 0;
+  }
+},
 
 
   // ---------------------------------------
@@ -1006,9 +1130,14 @@ function setupSearchWidget(input, form, resultsBox) {
 
 function findProductMatches(query) {
   var normalized = query.trim().toLowerCase();
-  if (normalized === '' || !window.BLEGAB_PRODUCTS) return [];
+  if (
+  normalized === '' ||
+  !window.BLEGAB_SHOP_PRODUCTS
+) {
+  return [];
+}
 
-  return window.BLEGAB_PRODUCTS.filter(function (product) {
+return window.BLEGAB_SHOP_PRODUCTS.filter(function (product) {
     return product.name.toLowerCase().indexOf(normalized) !== -1;
   });
 }
@@ -1033,7 +1162,7 @@ function renderSearchResults(query, resultsBox) {
   } else {
     matches.forEach(function (product) {
       var link = document.createElement('a');
-      link.href = product.url;
+      link.href = 'shop.html?product=' + encodeURIComponent(product.id);
       link.className = 'search-results__item';
       link.textContent = product.name;
       resultsBox.appendChild(link);

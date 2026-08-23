@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation | Blegab Luxury Wigs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
+  <link rel="stylesheet" href="assets/css/order-confirmation.css" />
+  <link rel="icon" type="image/webp" href="assets/images/farvicon.webp" />
+</head>
+<body>
+  <!-- Header -->
+  <div data-site-header></div>
+
+  <!-- Main Content -->
+  <main class="order-confirmation">
+    <div class="order-confirmation__container">
+      
+      <!-- Success Icon -->
+      <div class="order-confirmation__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="order-confirmation__title">Order Confirmed!</h1>
+      <p class="order-confirmation__subtitle">Thank you for your purchase. Your order has been received.</p>
+
+      <!-- Order Number -->
+      <div class="order-confirmation__order-id">
+        <span>Order #</span>
+        <strong id="confirmation-order-id">--</strong>
+      </div>
+
+      <!-- Email Confirmation -->
+      <p class="order-confirmation__email-notice">
+        A confirmation email has been sent to <strong id="confirmation-email">your email</strong>
+      </p>
+
+      <!-- Order Details Section -->
+      <section class="order-confirmation__details">
+        <div class="order-confirmation__section">
+          <h2 class="order-confirmation__section-title">Order Summary</h2>
+          
+          <div class="order-confirmation__items">
+            <div id="confirmation-items-list">
+              <!-- Items will be populated here -->
+            </div>
+          </div>
+
+          <div class="order-confirmation__totals">
+            <div class="order-confirmation__total-row">
+              <span>Subtotal</span>
+              <span id="confirmation-subtotal">$0.00</span>
+            </div>
+            <div class="order-confirmation__total-row">
+              <span>Shipping</span>
+              <span id="confirmation-shipping">$0.00</span>
+            </div>
+            <div class="order-confirmation__total-row order-confirmation__total-row--emphasis">
+              <span>Total</span>
+              <span id="confirmation-total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="order-confirmation__section">
+          <h2 class="order-confirmation__section-title">Shipping Address</h2>
+          <div class="order-confirmation__address">
+            <p id="confirmation-address">
+              <!-- Address will be populated here -->
+            </p>
+            <p id="confirmation-delivery-date" class="order-confirmation__delivery-date">
+              Estimated Delivery: <strong id="confirmation-delivery-date-value">--</strong>
+            </p>
+          </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="order-confirmation__section">
+          <h2 class="order-confirmation__section-title">Payment Method</h2>
+          <p id="confirmation-payment-method">-- Ending in --</p>
+        </div>
+      </section>
+
+      <!-- CTA Buttons -->
+      <div class="order-confirmation__actions">
+        <a id="track-order-link" href="order-tracking.html" class="btn btn-primary order-confirmation__btn">
+          Track Your Order
+        </a>
+        <a href="shop.html" class="btn btn-secondary order-confirmation__btn">
+          Continue Shopping
+        </a>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="order-confirmation__info">
+        <div class="order-confirmation__info-item">
+          <svg class="order-confirmation__info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <div>
+            <strong>Processing Time</strong>
+            <p>Your order will be processed within 24-48 hours</p>
+          </div>
+        </div>
+
+        <div class="order-confirmation__info-item">
+          <svg class="order-confirmation__info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="1"></circle>
+            <path d="M12 1v6m0 6v6"></path>
+            <path d="M4.22 4.22l4.24 4.24m4.24 0l4.24 4.24"></path>
+            <path d="M19.78 4.22l-4.24 4.24M8.46 15.46l-4.24 4.24"></path>
+          </svg>
+          <div>
+            <strong>Tracking Number</strong>
+            <p id="confirmation-tracking-number">Coming soon in your email</p>
+          </div>
+        </div>
+
+        <div class="order-confirmation__info-item">
+          <svg class="order-confirmation__info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <div>
+            <strong>Need Help?</strong>
+            <p>Contact us at <a href="contact-us.html">support@blegab.com</a> or via WhatsApp</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <section class="order-confirmation__faq">
+        <h2>Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+          <button class="faq-toggle" data-faq-toggle>
+            <span>How can I track my order?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>You can track your order in the "My Orders" section. Once your order ships, you'll receive a tracking number via email.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" data-faq-toggle>
+            <span>Can I cancel or modify my order?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>Orders can be modified or cancelled within 2 hours of purchase. Contact us immediately if you need assistance.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" data-faq-toggle>
+            <span>What if my order arrives damaged?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>We stand behind the quality of our products. If your order arrives damaged, contact us with photos and we'll replace it immediately.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" data-faq-toggle>
+            <span>How long does shipping take?</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>Shipping times vary by location. Standard shipping typically takes 5-7 days within the US, and 7-21 days internationally.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <div data-site-footer></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/header.js"></script>
+  <script src="assets/js/footer.js"></script>
+  <script src="assets/js/order-confirmation.js"></script>
+</body>
+</html>
