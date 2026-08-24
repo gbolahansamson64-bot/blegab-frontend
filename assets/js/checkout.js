@@ -147,6 +147,7 @@ function initCheckoutModal() {
   const accountIncompleteProfileEl = modal.querySelector('[data-account-incomplete-profile]');
   const accountIncompleteProfileTextEl = modal.querySelector('[data-account-incomplete-profile-text]');
   const guestCountryEl = modal.querySelector('#checkout-country');
+  const guestContactAdminBtn = modal.querySelector('[data-guest-contact-admin]');
   const guestStateEl = modal.querySelector('#checkout-state');
   const guestStateListEl = modal.querySelector('[data-state-combobox-list]');
   const guestCityEl = modal.querySelector('#checkout-city');
@@ -387,6 +388,10 @@ function initCheckoutModal() {
     accountContactAdminBtn.hidden = true;
   }
 
+  if (guestContactAdminBtn) {
+    guestContactAdminBtn.hidden = true;
+  }
+
   // --------------------------------------------------
   // NO COUNTRY SELECTED
   // --------------------------------------------------
@@ -439,6 +444,16 @@ function initCheckoutModal() {
       contactAdminBtn.hidden = false;
 
       contactAdminBtn.href =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
+        )}`;
+    }
+
+    // Guest checkout contact button, inline right under the country field
+    if (!isAccount && guestContactAdminBtn) {
+      guestContactAdminBtn.hidden = false;
+
+      guestContactAdminBtn.href =
         `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
           `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
         )}`;
