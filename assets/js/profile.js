@@ -942,6 +942,7 @@ async function initProfileForm() {
 
 
   var currentImage = null;
+  var currentImageFile = null;
 
   var savedSnapshot = "";
 
@@ -1365,72 +1366,43 @@ await loadProfileFromBackend();
      ===================================================== */
 
   function handleFile(file) {
-
     if (
-      !file.type ||
-      file.type.indexOf("image/") !== 0
+        !file.type ||
+        file.type.indexOf("image/") !== 0
     ) {
+        showAvatarHint(
+            "Please choose an image file.",
+            true
+        );
 
-      showAvatarHint(
-        "Please choose an image file.",
-        true
-      );
-
-      return;
+        return;
     }
 
+    if (file.size > maxFileSizeBytes) {
+        showAvatarHint(
+            "That image is over 5MB — please choose a smaller one.",
+            true
+        );
 
-    if (
-      file.size >
-      maxFileSizeBytes
-    ) {
-
-      showAvatarHint(
-        "That image is over 5MB — please choose a smaller one.",
-        true
-      );
-
-      return;
+        return;
     }
 
+    // Keep the actual file for the upload
+    currentImageFile = file;
 
-    var reader =
-      new FileReader();
+    // Create a temporary browser preview
+    var previewUrl =
+        URL.createObjectURL(file);
 
+    setAvatarImage(previewUrl);
 
-    reader.onload =
-      function (event) {
+    showAvatarHint(
+        defaultHintText,
+        false
+    );
 
-        setAvatarImage(
-          event.target.result
-        );
-
-
-        showAvatarHint(
-          defaultHintText,
-          false
-        );
-
-
-        updateSaveButtonState();
-
-      };
-
-
-    reader.onerror =
-      function () {
-
-        showAvatarHint(
-          "Unable to read this image.",
-          true
-        );
-
-      };
-
-
-    reader.readAsDataURL(file);
-
-  }
+    updateSaveButtonState();
+}
 
 
   function setAvatarImage(
@@ -1472,6 +1444,10 @@ await loadProfileFromBackend();
 
 
   function clearAvatarImage() {
+
+    if (currentImage && currentImage.startsWith("blob:")) {
+    URL.revokeObjectURL(currentImage);
+    }
 
     currentImage =
       null;
