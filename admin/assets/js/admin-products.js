@@ -1055,7 +1055,7 @@ formData.append("length", lengthInput.value);
 
 // formData.append("density", densityInput.value);
 
-formData.append("laceType", laceTypeInput.value);
+formData.append("laceType", laceTypeInput.value.trim());
 
 prdModalImages.forEach(function(image){
 

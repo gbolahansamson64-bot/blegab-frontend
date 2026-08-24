@@ -105,6 +105,19 @@ function getUserCityValue(user) {
   return user?.address?.city || user?.city || "";
 }
 
+// Fields a registered user needs saved on their profile before we can
+// checkout using their account info (country is handled separately
+// via the account country selector in the modal).
+function getMissingProfileFields(user) {
+  const address = user?.address || {};
+  const missing = [];
+  if (!String(address.street || "").trim()) missing.push("street address");
+  if (!String(getUserStateValue(user) || "").trim()) missing.push("state");
+  if (!String(getUserCityValue(user) || "").trim()) missing.push("city");
+  if (!String(address.postalCode || "").trim()) missing.push("postal code");
+  return missing;
+}
+
 function normalizeLocationValue(value, countries, finder) {
   const raw = String(value || "").trim();
   if (!raw) return null;
@@ -131,6 +144,8 @@ function initCheckoutModal() {
   const accountCountryPanel = modal.querySelector('[data-account-country-panel]');
   const accountCountryEl = modal.querySelector('#checkout-account-country');
   const accountContactAdminBtn = modal.querySelector('[data-account-contact-admin]');
+  const accountIncompleteProfileEl = modal.querySelector('[data-account-incomplete-profile]');
+  const accountIncompleteProfileTextEl = modal.querySelector('[data-account-incomplete-profile-text]');
   const guestCountryEl = modal.querySelector('#checkout-country');
   const guestStateEl = modal.querySelector('#checkout-state');
   const guestStateListEl = modal.querySelector('[data-state-combobox-list]');
@@ -152,6 +167,7 @@ function initCheckoutModal() {
   let accountCountryCode = "";
   let guestStateOptions = [];
   let guestCityOptions = [];
+  let currentProfileMissingFields = [];
 
   function shippingApi() {
     return window.BLEGAB_SHIPPING || null;
@@ -515,7 +531,9 @@ function initCheckoutModal() {
 function updateAccountButtonState() {
   if (!accountCheckoutBtn) return;
 
-  const supported = !!accountCountryCode && !!currentShipping?.supported;
+  const countrySupported = !!accountCountryCode && !!currentShipping?.supported;
+  const profileComplete = currentProfileMissingFields.length === 0;
+  const supported = countrySupported && profileComplete;
   const needsCountry = !accountCountryCode;
 
   // Keep the country selector visible at all times.
@@ -525,7 +543,8 @@ function updateAccountButtonState() {
   }
 
   // The "Continue as username" button is only enabled
-  // when a valid/supported country has been selected.
+  // when a valid/supported country has been selected AND
+  // the saved profile has the address details we need.
   accountCheckoutBtn.disabled = !supported;
   accountCheckoutBtn.classList.toggle("is-disabled", !supported);
 
@@ -533,6 +552,16 @@ function updateAccountButtonState() {
     accountCheckoutBtn.setAttribute("aria-disabled", "true");
   } else {
     accountCheckoutBtn.removeAttribute("aria-disabled");
+  }
+
+  // Tell the user their profile is missing details instead of
+  // silently sending them to Stripe with a blank address.
+  if (accountIncompleteProfileEl) {
+    accountIncompleteProfileEl.hidden = profileComplete;
+    if (!profileComplete && accountIncompleteProfileTextEl) {
+      accountIncompleteProfileTextEl.textContent =
+        `Your saved profile is missing your ${currentProfileMissingFields.join(", ")}. Please complete your profile before checking out with your account.`;
+    }
   }
 }
 
@@ -659,6 +688,7 @@ function updateAccountButtonState() {
         if (accountCheckoutBtn) accountCheckoutBtn.hidden = false;
         if (guestCheckoutBtn) guestCheckoutBtn.hidden = true;
         if (signupCheckoutBtn) signupCheckoutBtn.hidden = true;
+        currentProfileMissingFields = getMissingProfileFields(user);
         fillGuestFromUser(user);
         setAccountCountryFromUser(user);
         goToStep(1);
@@ -710,6 +740,10 @@ function updateAccountButtonState() {
 
       const rule = shippingRule(accountCountryCode);
       if (!rule.supported) return;
+
+      // Defense in depth: the button is disabled while the profile is
+      // incomplete, but never let a stale click through to Stripe.
+      if (currentProfileMissingFields.length) return;
 
       setButtonLoading(accountCheckoutBtn, true);
       try {
