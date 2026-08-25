@@ -8,7 +8,7 @@
 
 const CHECKOUT_API_URL = "https://api.blegab.com/api";
 const LOCATION_MODULE_URL =
-  "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm";
+  "https://cdn.jsdelivr.net/npm/@countrystatecity/countries-browser@1.0.4/+esm";
 const WHATSAPP_NUMBER = "14696180809";
 
 async function createCheckoutSession(checkoutData) {
@@ -229,56 +229,44 @@ function initCheckoutModal() {
     return country ? country.isoCode : "";
   }
 
-  function normalizeState(countryCode, value) {
+  async function normalizeState(countryCode, value) {
     const raw = String(value || "")
       .trim()
       .toLowerCase();
-    if (!raw || !countryCode || !locationData) return "";
-    const states = locationData.State.getStatesOfCountry(countryCode) || [];
-    const state =
-      states.find((s) => String(s.isoCode).toLowerCase() === raw) ||
-      states.find((s) => String(s.name).toLowerCase() === raw);
-    return state ? state.isoCode : "";
-  }
 
-  // Global variable to cache the structured data
-  let locationData = null;
+    if (!raw || !countryCode || !locationData) {
+      return "";
+    }
+
+    const states = await locationData.getStatesOfCountry(countryCode);
+
+    const state =
+      states.find(
+        (s) => String(s.isoCode || s.iso2 || "").toLowerCase() === raw,
+      ) || states.find((s) => String(s.name || "").toLowerCase() === raw);
+
+    return state ? state.isoCode || state.iso2 || "" : "";
+  }
 
   async function loadLocationData() {
     if (locationData) return locationData;
 
-    try {
-      // 1. Fetch the module directly via dynamic import
-      const module = await import(LOCATION_MODULE_URL);
+    const module = await import(LOCATION_MODULE_URL);
 
-      // 2. Safely capture the named exports (checking for default wrapper fallback)
-      const Country =
-        module.Country || (module.default && module.default.Country);
-      const State = module.State || (module.default && module.default.State);
-      const City = module.City || (module.default && module.default.City);
+    const countries = await module.getCountries();
 
-      if (!Country) {
-        throw new Error("Could not resolve Country object from ESM module.");
-      }
+    locationData = {
+      countries,
 
-      // 3. Extract the data safely
-      const countries = Country.getAllCountries();
+      getStatesOfCountry: module.getStatesOfCountry,
 
-      locationData = {
-        Country,
-        State,
-        City,
-        countries,
-      };
+      getCitiesOfState: module.getCitiesOfState,
+    };
 
-      // 4. Populate your UI selects
-      populateCountrySelect(guestCountryEl);
-      populateCountrySelect(accountCountryEl);
+    populateCountrySelect(guestCountryEl);
+    populateCountrySelect(accountCountryEl);
 
-      return locationData;
-    } catch (error) {
-      console.error("Failed to load country data module:", error);
-    }
+    return locationData;
   }
 
   function populateCountrySelect(select) {
@@ -290,40 +278,52 @@ function initCheckoutModal() {
         .join("");
   }
 
-  function getStates(countryCode) {
+  async function getStates(countryCode) {
     if (!countryCode || !locationData) return [];
-    return locationData.State.getStatesOfCountry(countryCode) || [];
+
+    return await locationData.getStatesOfCountry(countryCode);
   }
 
-  function getCities(countryCode, stateCode) {
+  async function getCities(countryCode, stateCode) {
     if (!countryCode || !stateCode || !locationData) return [];
-    return locationData.City.getCitiesOfState(countryCode, stateCode) || [];
+
+    return await locationData.getCitiesOfState(countryCode, stateCode);
   }
 
-  function renderStateOptions(countryCode) {
-    guestStateOptions = getStates(countryCode);
+  async function renderStateOptions(countryCode) {
+    guestStateOptions = await getStates(countryCode);
+
     if (!guestStateEl) return;
 
     guestStateEl.value = "";
     guestStateEl.disabled = false;
+
     guestStateEl.placeholder = guestStateOptions.length
       ? "Search or enter your state"
       : "Enter your state";
-    if (guestStateListEl) guestStateListEl.hidden = true;
+
+    if (guestStateListEl) {
+      guestStateListEl.hidden = true;
+    }
   }
 
-  function renderCityOptions(countryCode, stateCode) {
-    guestCityOptions = getCities(countryCode, stateCode);
+  async function renderCityOptions(countryCode, stateCode) {
+    guestCityOptions = await getCities(countryCode, stateCode);
+
     if (!guestCityEl) return;
 
     guestCityEl.value = "";
     guestCityEl.disabled = !stateCode;
+
     guestCityEl.placeholder = stateCode
       ? guestCityOptions.length
         ? "Search for your city"
         : "Enter your city"
       : "Select state first";
-    if (guestCityListEl) guestCityListEl.hidden = true;
+
+    if (guestCityListEl) {
+      guestCityListEl.hidden = true;
+    }
   }
 
   function renderComboboxList(input, list, options, key) {
@@ -378,7 +378,9 @@ function initCheckoutModal() {
       if (!state) return;
       guestStateEl.value = state.name;
       guestStateListEl.hidden = true;
-      renderCityOptions(guestCountryEl.value, state.isoCode);
+      renderCityOptions(guestCountryEl.value, state.isoCode).catch(
+        console.error,
+      );
       updateGuestContinueState();
     });
   }
@@ -417,9 +419,10 @@ function initCheckoutModal() {
   }
 
   if (guestCountryEl) {
-    guestCountryEl.addEventListener("change", function () {
-      renderStateOptions(guestCountryEl.value);
-      renderCityOptions(guestCountryEl.value, "");
+    guestCountryEl.addEventListener("change", async function () {
+      await renderStateOptions(guestCountryEl.value);
+      await renderCityOptions(guestCountryEl.value, "");
+
       updateShipping(guestCountryEl.value, false);
       updateGuestContinueState();
     });
