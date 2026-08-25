@@ -1,4 +1,16 @@
+/* =========================================================
+   BLEGAB SHIPPING RULES
+   Frontend display/calculation only. Backend files are untouched.
 
+   Supported destinations from the checkout wireframe:
+   United States  -> $20
+   Canada         -> $30
+   Nigeria        -> $50
+   United Kingdom -> $50
+
+   Every other country requires the customer to contact Admin.
+   There is NO free-shipping threshold.
+   ========================================================= */
 
 const SHIPPING_RATES = Object.freeze({
   US: { cost: 20, daysMin: 5, daysMax: 7 },
@@ -59,48 +71,33 @@ function getShippingMethods(countryCode) {
 }
 
 function calculateShipping(subtotal, countryCode, method = 'standard') {
-  const code = normalizeCountryCode(countryCode);
-  const rule = getShippingRule(code);
+  const rule = getShippingRule(countryCode);
   const safeSubtotal = Number(subtotal || 0);
 
-  // Unsupported country
   if (!rule.supported) {
     return {
       supported: false,
       contactAdmin: true,
       cost: null,
       subtotal: safeSubtotal,
-      total: safeSubtotal,
-      country: code,
+      country: rule.countryCode,
       method,
-      error:
-        'Shipping fee is not available for this country. Contact Admin for shipping fee.'
+      error: 'Shipping fee is not available for this country. Contact Admin for shipping fee.'
     };
   }
-
-  // Free shipping for USA and Canada when subtotal is above $500
-  const freeShippingApplied =
-    (code === 'US' || code === 'CA') &&
-    safeSubtotal > 500;
-
-  const shippingCost = freeShippingApplied ? 0 : rule.cost;
 
   return {
     supported: true,
     contactAdmin: false,
-    cost: shippingCost,
+    cost: rule.cost,
     subtotal: safeSubtotal,
-    total: safeSubtotal + shippingCost,
-    country: code,
-    countryName: rule.countryName,
+    total: safeSubtotal + rule.cost,
+    country: rule.countryCode,
     method,
     daysMin: rule.daysMin,
     daysMax: rule.daysMax,
-    estimatedDelivery: getEstimatedDeliveryDate(
-      rule.daysMin,
-      rule.daysMax
-    ),
-    freeShippingApplied
+    estimatedDelivery: getEstimatedDeliveryDate(rule.daysMin, rule.daysMax),
+    freeShippingApplied: false
   };
 }
 
