@@ -141,9 +141,25 @@ function initCheckoutModal() {
     return state ? state.isoCode : "";
   }
 
+  // iOS Safari (WebKit) sometimes resolves a dynamically-imported ESM module
+  // before its named exports are fully populated, so `module.Country` can be
+  // momentarily undefined right after `await import(...)` resolves. This does
+  // not happen on Chrome/Android. Retry a few times with a short delay so we
+  // wait for the real exports instead of throwing.
+  async function importLocationModule() {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const module = await import(LOCATION_MODULE_URL);
+      if (module?.Country?.getAllCountries && module?.State && module?.City) {
+        return module;
+      }
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    throw new Error("Unable to load country data. Please refresh and try again.");
+  }
+
   async function loadLocationData() {
     if (locationData) return locationData;
-    const module = await import(LOCATION_MODULE_URL);
+    const module = await importLocationModule();
     const countries = module.Country.getAllCountries();
     locationData = {
       Country: module.Country,
