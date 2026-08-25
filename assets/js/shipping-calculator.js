@@ -4,17 +4,19 @@
 
    Supported destinations from the checkout wireframe:
    United States  -> $20
-   Canada         -> $30
+   Canada         -> $20
    Nigeria        -> $50
    United Kingdom -> $50
 
    Every other country requires the customer to contact Admin.
-   There is NO free-shipping threshold.
+
+   Free shipping: orders of $500+ subtotal ship free to US & Canada.
+   No other supported country has a free-shipping threshold.
    ========================================================= */
 
 const SHIPPING_RATES = Object.freeze({
   US: { cost: 20, daysMin: 5, daysMax: 7 },
-  CA: { cost: 30, daysMin: 7, daysMax: 10 },
+  CA: { cost: 20, daysMin: 7, daysMax: 10 },
   NG: { cost: 50, daysMin: 14, daysMax: 21 },
   GB: { cost: 50, daysMin: 5, daysMax: 7 }
 });
@@ -27,6 +29,10 @@ const SHIPPING_COUNTRIES = Object.freeze({
 });
 
 const SHIPPING_WHATSAPP_NUMBER = '14696180809';
+
+// Free shipping threshold — only applies to countries listed here.
+const FREE_SHIPPING_THRESHOLD = 500;
+const FREE_SHIPPING_COUNTRIES = Object.freeze(['US', 'CA']);
 
 function normalizeCountryCode(countryCode) {
   return String(countryCode || '').trim().toUpperCase();
@@ -86,18 +92,22 @@ function calculateShipping(subtotal, countryCode, method = 'standard') {
     };
   }
 
+  const freeShippingApplied = FREE_SHIPPING_COUNTRIES.includes(rule.countryCode)
+    && safeSubtotal >= FREE_SHIPPING_THRESHOLD;
+  const cost = freeShippingApplied ? 0 : rule.cost;
+
   return {
     supported: true,
     contactAdmin: false,
-    cost: rule.cost,
+    cost,
     subtotal: safeSubtotal,
-    total: safeSubtotal + rule.cost,
+    total: safeSubtotal + cost,
     country: rule.countryCode,
     method,
     daysMin: rule.daysMin,
     daysMax: rule.daysMax,
     estimatedDelivery: getEstimatedDeliveryDate(rule.daysMin, rule.daysMax),
-    freeShippingApplied: false
+    freeShippingApplied
   };
 }
 
