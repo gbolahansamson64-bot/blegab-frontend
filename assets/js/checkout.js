@@ -241,28 +241,44 @@ function initCheckoutModal() {
     return state ? state.isoCode : "";
   }
 
-  // Define your module URL
-  // const LOCATION_MODULE_URL = "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm";
+  // Global variable to cache the structured data
+  let locationData = null;
 
   async function loadLocationData() {
     if (locationData) return locationData;
 
-    // 1. Safely import the ESM module directly
-    const module = await import(LOCATION_MODULE_URL);
+    try {
+      // 1. Fetch the module directly via dynamic import
+      const module = await import(LOCATION_MODULE_URL);
 
-    // 2. Extract your data
-    const countries = module.Country.getAllCountries();
-    locationData = {
-      Country: module.Country,
-      State: module.State,
-      City: module.City,
-      countries,
-    };
+      // 2. Safely capture the named exports (checking for default wrapper fallback)
+      const Country =
+        module.Country || (module.default && module.default.Country);
+      const State = module.State || (module.default && module.default.State);
+      const City = module.City || (module.default && module.default.City);
 
-    // 3. Update the UI
-    populateCountrySelect(guestCountryEl);
-    populateCountrySelect(accountCountryEl);
-    return locationData;
+      if (!Country) {
+        throw new Error("Could not resolve Country object from ESM module.");
+      }
+
+      // 3. Extract the data safely
+      const countries = Country.getAllCountries();
+
+      locationData = {
+        Country,
+        State,
+        City,
+        countries,
+      };
+
+      // 4. Populate your UI selects
+      populateCountrySelect(guestCountryEl);
+      populateCountrySelect(accountCountryEl);
+
+      return locationData;
+    } catch (error) {
+      console.error("Failed to load country data module:", error);
+    }
   }
 
   function populateCountrySelect(select) {
