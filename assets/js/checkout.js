@@ -6,7 +6,7 @@
    - Backend/API endpoints are unchanged.
    ========================================================= */
 
-const CHECKOUT_API_URL = "https://localhost:5000/api";
+const CHECKOUT_API_URL = "https://api.blegab.com/api";
 const LOCATION_MODULE_URL = "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm";
 const WHATSAPP_NUMBER = "14696180809";
 
