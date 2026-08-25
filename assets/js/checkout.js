@@ -221,7 +221,8 @@ function initCheckoutModal() {
 
   async function loadLocationData() {
     if (locationData) return locationData;
-    const module = await import(LOCATION_MODULE_URL);
+    // const module = await import(LOCATION_MODULE_URL);
+    const module = window.CountriesModule;
     const countries = module.Country.getAllCountries();
     locationData = {
       Country: module.Country,

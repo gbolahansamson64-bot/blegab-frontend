@@ -71,56 +71,48 @@ function getShippingMethods(countryCode) {
 }
 
 function calculateShipping(subtotal, countryCode, method = 'standard') {
-  const rule = getShippingRule(countryCode);
+  const code = normalizeCountryCode(countryCode);
+  const rule = getShippingRule(code);
   const safeSubtotal = Number(subtotal || 0);
 
-    // Free shipping for USA and Canada on orders above $500
-  if (
-    (countryCode === 'US' || countryCode === 'CA') &&
-    safeSubtotal > 500
-  ) {
-    return {
-      supported: true,
-      contactAdmin: false,
-      cost: 0,
-      subtotal: safeSubtotal,
-      total: safeSubtotal,
-      country: countryCode,
-      method,
-      daysMin: rule.daysMin,
-      daysMax: rule.daysMax,
-      estimatedDelivery: getEstimatedDeliveryDate(
-        rule.daysMin,
-        rule.daysMax
-      ),
-      freeShippingApplied: true
-    };
-  }
-
+  // Unsupported country
   if (!rule.supported) {
     return {
       supported: false,
       contactAdmin: true,
       cost: null,
       subtotal: safeSubtotal,
-      country: rule.countryCode,
+      total: safeSubtotal,
+      country: code,
       method,
-      error: 'Shipping fee is not available for this country. Contact Admin for shipping fee.'
+      error:
+        'Shipping fee is not available for this country. Contact Admin for shipping fee.'
     };
   }
+
+  // Free shipping for USA and Canada when subtotal is above $500
+  const freeShippingApplied =
+    (code === 'US' || code === 'CA') &&
+    safeSubtotal > 500;
+
+  const shippingCost = freeShippingApplied ? 0 : rule.cost;
 
   return {
     supported: true,
     contactAdmin: false,
-    cost: rule.cost,
+    cost: shippingCost,
     subtotal: safeSubtotal,
-    total: safeSubtotal + rule.cost,
-    country: rule.countryCode,
+    total: safeSubtotal + shippingCost,
+    country: code,
+    countryName: rule.countryName,
     method,
     daysMin: rule.daysMin,
     daysMax: rule.daysMax,
-    estimatedDelivery: getEstimatedDeliveryDate(rule.daysMin, rule.daysMax),
-    freeShippingApplied: false
+    estimatedDelivery: getEstimatedDeliveryDate(
+      rule.daysMin,
+      rule.daysMax
+    ),
+    freeShippingApplied
   };
 }
 
