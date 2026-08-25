@@ -1,20 +1,4 @@
-/* =========================================================
-   BLEGAB LUXURY WIGS — ADMIN SETTINGS
-   Connected to the real backend API.
 
-   Handles:
-   - Business Profile
-   - Shipping Rules
-   - Add Shipping Country
-   - Edit Shipping Rule
-   - Delete Shipping Rule
-   - Enable / Disable Shipping Country
-   - Admin Security Settings
-   - Save All Settings
-
-   Backend:
-   http://localhost:5000/api/admin
-   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
 

@@ -1,16 +1,4 @@
-/* =========================================================
-   BLEGAB SHIPPING RULES
-   Frontend display/calculation only. Backend files are untouched.
 
-   Supported destinations from the checkout wireframe:
-   United States  -> $20
-   Canada         -> $30
-   Nigeria        -> $50
-   United Kingdom -> $50
-
-   Every other country requires the customer to contact Admin.
-   There is NO free-shipping threshold.
-   ========================================================= */
 
 const SHIPPING_RATES = Object.freeze({
   US: { cost: 20, daysMin: 5, daysMax: 7 },

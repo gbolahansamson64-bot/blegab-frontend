@@ -6,73 +6,26 @@
    - Backend/API endpoints are unchanged.
    ========================================================= */
 
-const CHECKOUT_API_URL = "https://api.blegab.com/api";
-const LOCATION_MODULE_URL =
-  "https://cdn.jsdelivr.net/npm/@countrystatecity/countries-browser@1.0.4/+esm";
+const CHECKOUT_API_URL = "https://localhost:5000/api";
+const LOCATION_MODULE_URL = "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm";
 const WHATSAPP_NUMBER = "14696180809";
 
 async function createCheckoutSession(checkoutData) {
-  // --------------------------------------------------
-  // Convert the frontend cart response into the format
-  // expected by the backend guest checkout.
-  //
-  // Backend expects:
-  //
-  // items: [
-  //   {
-  //     productId: "...",
-  //     quantity: 2
-  //   }
-  // ]
-  // --------------------------------------------------
-
-  const payload = {
-    ...checkoutData,
-  };
-
-  if (!Array.isArray(payload.items) && payload.cart?.cart?.items) {
-    payload.items = payload.cart.cart.items
-      .filter(function (item) {
-        return item.product && item.product._id;
-      })
-      .map(function (item) {
-        return {
-          productId: item.product._id,
-          quantity: Number(item.quantity),
-        };
-      });
-  }
-
-  // The backend does not need the full frontend cart object.
-  delete payload.cart;
-
   const response = await fetch(`${CHECKOUT_API_URL}/orders/checkout`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(checkoutData)
   });
 
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Unable to create Stripe checkout.");
-  }
-
-  if (!data.url) {
-    throw new Error("Stripe checkout URL was not returned by the server.");
-  }
-
+  if (!response.ok) throw new Error(data.message || "Unable to create Stripe checkout.");
+  if (!data.url) throw new Error("Stripe checkout URL was not returned by the server.");
   return data;
 }
 
 function setButtonLoading(button, loading) {
-  if (
-    window.BLEGAB_BUTTONS &&
-    typeof window.BLEGAB_BUTTONS.setLoading === "function"
-  ) {
+  if (window.BLEGAB_BUTTONS && typeof window.BLEGAB_BUTTONS.setLoading === "function") {
     window.BLEGAB_BUTTONS.setLoading(button, loading);
   } else if (button) {
     button.disabled = !!loading;
@@ -91,82 +44,44 @@ function getUserCityValue(user) {
   return user?.address?.city || user?.city || "";
 }
 
-// Fields a registered user needs saved on their profile before we can
-// checkout using their account info (country is handled separately
-// via the account country selector in the modal).
-function getMissingProfileFields(user) {
-  const address = user?.address || {};
-  const missing = [];
-  if (!String(address.street || "").trim()) missing.push("street address");
-  if (!String(getUserStateValue(user) || "").trim()) missing.push("state");
-  if (!String(getUserCityValue(user) || "").trim()) missing.push("city");
-  if (!String(address.postalCode || "").trim()) missing.push("postal code");
-  return missing;
-}
-
 function normalizeLocationValue(value, countries, finder) {
   const raw = String(value || "").trim();
   if (!raw) return null;
   const lower = raw.toLowerCase();
-  return (
-    countries.find((c) => String(c.isoCode).toLowerCase() === lower) ||
-    countries.find((c) => String(c.name).toLowerCase() === lower) ||
-    (finder ? finder(raw) : null)
-  );
+  return countries.find(c => String(c.isoCode).toLowerCase() === lower)
+    || countries.find(c => String(c.name).toLowerCase() === lower)
+    || (finder ? finder(raw) : null);
 }
 
 function initCheckoutModal() {
-  const overlay = document.querySelector("[data-checkout-modal-overlay]");
-  const modal = document.querySelector("[data-checkout-modal]");
-  const checkoutBtn = document.querySelector("[data-checkout]");
+  const overlay = document.querySelector('[data-checkout-modal-overlay]');
+  const modal = document.querySelector('[data-checkout-modal]');
+  const checkoutBtn = document.querySelector('[data-checkout]');
   if (!overlay || !modal || !checkoutBtn) return;
 
-  const continueBtn = modal.querySelector("[data-checkout-continue]");
-  const accountCheckoutBtn = modal.querySelector(
-    '[data-checkout-option="account"]',
-  );
-  const guestCheckoutBtn = modal.querySelector(
-    '[data-checkout-option="guest"]',
-  );
-  const signupCheckoutBtn = modal.querySelector(
-    '[data-checkout-option="signup"]',
-  );
-  const closeBtns = modal.querySelectorAll("[data-checkout-modal-close]");
-  const stepIndicators = modal.querySelectorAll(
-    "[data-checkout-step-indicator]",
-  );
-  const stepPanels = modal.querySelectorAll("[data-checkout-step-panel]");
-  const checkoutUserNameEl = modal.querySelector("[data-checkout-user-name]");
-  const accountCountryPanel = modal.querySelector(
-    "[data-account-country-panel]",
-  );
-  const accountCountryEl = modal.querySelector("#checkout-account-country");
-  const accountContactAdminBtn = modal.querySelector(
-    "[data-account-contact-admin]",
-  );
-  const accountIncompleteProfileEl = modal.querySelector(
-    "[data-account-incomplete-profile]",
-  );
-  const accountIncompleteProfileTextEl = modal.querySelector(
-    "[data-account-incomplete-profile-text]",
-  );
-  const guestCountryEl = modal.querySelector("#checkout-country");
-  const guestContactAdminBtn = modal.querySelector(
-    "[data-guest-contact-admin]",
-  );
-  const guestStateEl = modal.querySelector("#checkout-state");
-  const guestStateListEl = modal.querySelector("[data-state-combobox-list]");
-  const guestCityEl = modal.querySelector("#checkout-city");
-  const guestCityListEl = modal.querySelector("[data-city-combobox-list]");
-  const contactAdminBtn = modal.querySelector("[data-contact-admin-shipping]");
-  const shippingRowEl = modal.querySelector("[data-checkout-shipping-row]");
-  const shippingCostEl = modal.querySelector(
-    "[data-checkout-summary-shipping]",
-  );
-  const totalEl = modal.querySelector("[data-checkout-summary-total]");
-  const subtotalEl = modal.querySelector("[data-checkout-summary-subtotal]");
-  const countEl = modal.querySelector("[data-checkout-summary-count]");
-  const ctaTotalEl = modal.querySelector("[data-checkout-cta-total]");
+  const continueBtn = modal.querySelector('[data-checkout-continue]');
+  const accountCheckoutBtn = modal.querySelector('[data-checkout-option="account"]');
+  const guestCheckoutBtn = modal.querySelector('[data-checkout-option="guest"]');
+  const signupCheckoutBtn = modal.querySelector('[data-checkout-option="signup"]');
+  const closeBtns = modal.querySelectorAll('[data-checkout-modal-close]');
+  const stepIndicators = modal.querySelectorAll('[data-checkout-step-indicator]');
+  const stepPanels = modal.querySelectorAll('[data-checkout-step-panel]');
+  const checkoutUserNameEl = modal.querySelector('[data-checkout-user-name]');
+  const accountCountryPanel = modal.querySelector('[data-account-country-panel]');
+  const accountCountryEl = modal.querySelector('#checkout-account-country');
+  const accountContactAdminBtn = modal.querySelector('[data-account-contact-admin]');
+  const guestCountryEl = modal.querySelector('#checkout-country');
+  const guestStateEl = modal.querySelector('#checkout-state');
+  const guestStateListEl = modal.querySelector('[data-state-combobox-list]');
+  const guestCityEl = modal.querySelector('#checkout-city');
+  const guestCityListEl = modal.querySelector('[data-city-combobox-list]');
+  const contactAdminBtn = modal.querySelector('[data-contact-admin-shipping]');
+  const shippingRowEl = modal.querySelector('[data-checkout-shipping-row]');
+  const shippingCostEl = modal.querySelector('[data-checkout-summary-shipping]');
+  const totalEl = modal.querySelector('[data-checkout-summary-total]');
+  const subtotalEl = modal.querySelector('[data-checkout-summary-subtotal]');
+  const countEl = modal.querySelector('[data-checkout-summary-count]');
+  const ctaTotalEl = modal.querySelector('[data-checkout-cta-total]');
 
   let currentStep = 1;
   let currentCheckoutUser = null;
@@ -176,7 +91,6 @@ function initCheckoutModal() {
   let accountCountryCode = "";
   let guestStateOptions = [];
   let guestCityOptions = [];
-  let currentProfileMissingFields = [];
 
   function shippingApi() {
     return window.BLEGAB_SHIPPING || null;
@@ -184,24 +98,18 @@ function initCheckoutModal() {
 
   function shippingRule(countryCode) {
     const api = shippingApi();
-    return api
-      ? api.getShippingRule(countryCode)
-      : {
-          supported: false,
-          contactAdmin: true,
-          cost: null,
-        };
+    return api ? api.getShippingRule(countryCode) : {
+      supported: false,
+      contactAdmin: true,
+      cost: null
+    };
   }
 
   function contactWhatsApp(countryName) {
     const message = countryName
       ? `Hello Blegab, I need the shipping fee for ${countryName}.`
       : "Hello Blegab, I need information about the shipping fee for my country.";
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
-      "_blank",
-      "noopener,noreferrer",
-    );
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   }
 
   if (contactAdminBtn) {
@@ -215,200 +123,134 @@ function initCheckoutModal() {
   }
 
   function getCountryName(code) {
-    const country = locationData?.countries?.find(
-      (c) => c.isoCode === String(code || "").toUpperCase(),
-    );
+    const country = locationData?.countries?.find(c => c.isoCode === String(code || "").toUpperCase());
     return country ? country.name : String(code || "");
   }
 
   function normalizeCountry(value) {
-    const country = normalizeLocationValue(
-      value,
-      locationData?.countries || [],
-    );
+    const country = normalizeLocationValue(value, locationData?.countries || []);
     return country ? country.isoCode : "";
   }
 
-  async function normalizeState(countryCode, value) {
-    const raw = String(value || "")
-      .trim()
-      .toLowerCase();
-
-    if (!raw || !countryCode || !locationData) {
-      return "";
-    }
-
-    const states = await locationData.getStatesOfCountry(countryCode);
-
-    const state =
-      states.find(
-        (s) => String(s.isoCode || s.iso2 || "").toLowerCase() === raw,
-      ) || states.find((s) => String(s.name || "").toLowerCase() === raw);
-
-    return state ? state.isoCode || state.iso2 || "" : "";
+  function normalizeState(countryCode, value) {
+    const raw = String(value || "").trim().toLowerCase();
+    if (!raw || !countryCode || !locationData) return "";
+    const states = locationData.State.getStatesOfCountry(countryCode) || [];
+    const state = states.find(s => String(s.isoCode).toLowerCase() === raw)
+      || states.find(s => String(s.name).toLowerCase() === raw);
+    return state ? state.isoCode : "";
   }
 
   async function loadLocationData() {
     if (locationData) return locationData;
-
     const module = await import(LOCATION_MODULE_URL);
-
-    const countries = await module.getCountries();
-
+    const countries = module.Country.getAllCountries();
     locationData = {
-      countries,
-
-      getStatesOfCountry: module.getStatesOfCountry,
-
-      getCitiesOfState: module.getCitiesOfState,
+      Country: module.Country,
+      State: module.State,
+      City: module.City,
+      countries
     };
-
     populateCountrySelect(guestCountryEl);
     populateCountrySelect(accountCountryEl);
-
     return locationData;
   }
 
   function populateCountrySelect(select) {
     if (!select || !locationData) return;
-    select.innerHTML =
-      '<option value="">Select your country</option>' +
-      locationData.countries
-        .map((c) => `<option value="${c.isoCode}">${c.name}</option>`)
-        .join("");
+    select.innerHTML = '<option value="">Select your country</option>' +
+      locationData.countries.map(c => `<option value="${c.isoCode}">${c.name}</option>`).join("");
   }
 
-  async function getStates(countryCode) {
+  function getStates(countryCode) {
     if (!countryCode || !locationData) return [];
-
-    return await locationData.getStatesOfCountry(countryCode);
+    return locationData.State.getStatesOfCountry(countryCode) || [];
   }
 
-  async function getCities(countryCode, stateCode) {
+  function getCities(countryCode, stateCode) {
     if (!countryCode || !stateCode || !locationData) return [];
-
-    return await locationData.getCitiesOfState(countryCode, stateCode);
+    return locationData.City.getCitiesOfState(countryCode, stateCode) || [];
   }
 
-  async function renderStateOptions(countryCode) {
-    guestStateOptions = await getStates(countryCode);
-
+  function renderStateOptions(countryCode) {
+    guestStateOptions = getStates(countryCode);
     if (!guestStateEl) return;
 
     guestStateEl.value = "";
     guestStateEl.disabled = false;
-
-    guestStateEl.placeholder = guestStateOptions.length
-      ? "Search or enter your state"
-      : "Enter your state";
-
-    if (guestStateListEl) {
-      guestStateListEl.hidden = true;
-    }
+    guestStateEl.placeholder =
+  guestStateOptions.length
+    ? "Search or enter your state"
+    : "Enter your state";
+    if (guestStateListEl) guestStateListEl.hidden = true;
   }
 
-  async function renderCityOptions(countryCode, stateCode) {
-    guestCityOptions = await getCities(countryCode, stateCode);
-
+  function renderCityOptions(countryCode, stateCode) {
+    guestCityOptions = getCities(countryCode, stateCode);
     if (!guestCityEl) return;
 
     guestCityEl.value = "";
     guestCityEl.disabled = !stateCode;
-
     guestCityEl.placeholder = stateCode
-      ? guestCityOptions.length
-        ? "Search for your city"
-        : "Enter your city"
+      ? (guestCityOptions.length ? "Search for your city" : "Enter your city")
       : "Select state first";
-
-    if (guestCityListEl) {
-      guestCityListEl.hidden = true;
-    }
+    if (guestCityListEl) guestCityListEl.hidden = true;
   }
 
   function renderComboboxList(input, list, options, key) {
     if (!list || !input) return;
     const query = input.value.trim().toLowerCase();
     const filtered = query
-      ? options.filter((item) => item.name.toLowerCase().includes(query))
+      ? options.filter(item => item.name.toLowerCase().includes(query))
       : options;
 
     if (!filtered.length) {
-      list.innerHTML =
-        '<li class="checkout-combobox__empty">No matching results</li>';
+      list.innerHTML = '<li class="checkout-combobox__empty">No matching results</li>';
     } else {
-      list.innerHTML = filtered
-        .slice(0, 100)
-        .map(
-          (item) =>
-            `<li class="checkout-combobox__option" data-${key}-value="${item.isoCode || item.name}">${item.name}</li>`,
-        )
-        .join("");
+      list.innerHTML = filtered.slice(0, 100).map(item =>
+        `<li class="checkout-combobox__option" data-${key}-value="${item.isoCode || item.name}">${item.name}</li>`
+      ).join("");
     }
     list.hidden = false;
   }
 
   if (guestStateEl) {
     guestStateEl.addEventListener("input", function () {
-      renderComboboxList(
-        guestStateEl,
-        guestStateListEl,
-        guestStateOptions,
-        "state",
-      );
+      renderComboboxList(guestStateEl, guestStateListEl, guestStateOptions, "state");
       updateGuestContinueState();
     });
     guestStateEl.addEventListener("focus", function () {
-      renderComboboxList(
-        guestStateEl,
-        guestStateListEl,
-        guestStateOptions,
-        "state",
-      );
+      renderComboboxList(guestStateEl, guestStateListEl, guestStateOptions, "state");
     });
   }
 
   if (guestStateListEl) {
-    guestStateListEl.addEventListener("mousedown", (e) => e.preventDefault());
+    guestStateListEl.addEventListener("mousedown", e => e.preventDefault());
     guestStateListEl.addEventListener("click", function (e) {
       const option = e.target.closest("[data-state-value]");
       if (!option) return;
       const stateCode = option.getAttribute("data-state-value");
-      const state = guestStateOptions.find((s) => s.isoCode === stateCode);
+      const state = guestStateOptions.find(s => s.isoCode === stateCode);
       if (!state) return;
       guestStateEl.value = state.name;
       guestStateListEl.hidden = true;
-      renderCityOptions(guestCountryEl.value, state.isoCode).catch(
-        console.error,
-      );
+      renderCityOptions(guestCountryEl.value, state.isoCode);
       updateGuestContinueState();
     });
   }
 
   if (guestCityEl) {
     guestCityEl.addEventListener("input", function () {
-      if (guestCityOptions.length)
-        renderComboboxList(
-          guestCityEl,
-          guestCityListEl,
-          guestCityOptions,
-          "city",
-        );
+      if (guestCityOptions.length) renderComboboxList(guestCityEl, guestCityListEl, guestCityOptions, "city");
       updateGuestContinueState();
     });
     guestCityEl.addEventListener("focus", function () {
-      if (guestCityOptions.length)
-        renderComboboxList(
-          guestCityEl,
-          guestCityListEl,
-          guestCityOptions,
-          "city",
-        );
+      if (guestCityOptions.length) renderComboboxList(guestCityEl, guestCityListEl, guestCityOptions, "city");
     });
   }
 
   if (guestCityListEl) {
-    guestCityListEl.addEventListener("mousedown", (e) => e.preventDefault());
+    guestCityListEl.addEventListener("mousedown", e => e.preventDefault());
     guestCityListEl.addEventListener("click", function (e) {
       const option = e.target.closest("[data-city-value]");
       if (!option) return;
@@ -419,10 +261,9 @@ function initCheckoutModal() {
   }
 
   if (guestCountryEl) {
-    guestCountryEl.addEventListener("change", async function () {
-      await renderStateOptions(guestCountryEl.value);
-      await renderCityOptions(guestCountryEl.value, "");
-
+    guestCountryEl.addEventListener("change", function () {
+      renderStateOptions(guestCountryEl.value);
+      renderCityOptions(guestCountryEl.value, "");
       updateShipping(guestCountryEl.value, false);
       updateGuestContinueState();
     });
@@ -445,193 +286,130 @@ function initCheckoutModal() {
       "checkout-address",
       "checkout-state",
       "checkout-city",
-      "checkout-zip",
+      "checkout-zip"
     ];
-    return ids.every((id) => {
+    return ids.every(id => {
       const el = modal.querySelector(`#${id}`);
       return el && String(el.value || "").trim() !== "";
     });
   }
 
   function updateShipping(countryCode, isAccount) {
-    const rule = shippingRule(countryCode);
-    currentShipping = rule;
+  const rule = shippingRule(countryCode);
+  currentShipping = rule;
 
-    if (shippingRowEl) {
-      shippingRowEl.classList.remove("is-contact-required");
+  if (shippingRowEl) {
+    shippingRowEl.classList.remove("is-contact-required");
+  }
+
+  if (contactAdminBtn) {
+    contactAdminBtn.hidden = true;
+  }
+
+  // Hide the account-country contact message by default.
+  if (accountContactAdminBtn) {
+    accountContactAdminBtn.hidden = true;
+  }
+
+  if (!countryCode) {
+    if (shippingCostEl) {
+      shippingCostEl.textContent = "Select country";
     }
-
-    if (contactAdminBtn) {
-      contactAdminBtn.hidden = true;
-    }
-
-    if (accountContactAdminBtn) {
-      accountContactAdminBtn.hidden = true;
-    }
-
-    if (guestContactAdminBtn) {
-      guestContactAdminBtn.hidden = true;
-    }
-
-    // --------------------------------------------------
-    // NO COUNTRY SELECTED
-    // --------------------------------------------------
-
-    if (!countryCode) {
-      if (shippingCostEl) {
-        shippingCostEl.textContent = "Select country";
-      }
-
-      if (totalEl) {
-        totalEl.textContent = `$${subtotal.toFixed(2)}`;
-      }
-
-      if (ctaTotalEl) {
-        ctaTotalEl.textContent = `$${subtotal.toFixed(2)}`;
-      }
-
-      return rule;
-    }
-
-    // --------------------------------------------------
-    // COUNTRY NOT SUPPORTED
-    // --------------------------------------------------
-
-    if (!rule.supported) {
-      if (shippingCostEl) {
-        shippingCostEl.textContent = "Contact Admin for shipping fee";
-      }
-
-      if (totalEl) {
-        totalEl.textContent = `$${subtotal.toFixed(2)}`;
-      }
-
-      if (ctaTotalEl) {
-        ctaTotalEl.textContent = `$${subtotal.toFixed(2)}`;
-      }
-
-      if (shippingRowEl) {
-        shippingRowEl.classList.add("is-contact-required");
-      }
-
-      // Guest checkout contact button
-      if (contactAdminBtn) {
-        contactAdminBtn.hidden = false;
-
-        contactAdminBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`,
-        )}`;
-      }
-
-      // Guest checkout contact button, inline right under the country field
-      if (!isAccount && guestContactAdminBtn) {
-        guestContactAdminBtn.hidden = false;
-
-        guestContactAdminBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`,
-        )}`;
-      }
-
-      // Registered customer contact button
-      if (isAccount && accountContactAdminBtn) {
-        accountContactAdminBtn.hidden = false;
-
-        accountContactAdminBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`,
-        )}`;
-      }
-
-      return rule;
-    }
-
-    // --------------------------------------------------
-    // NORMAL SHIPPING FEE
-    // --------------------------------------------------
-
-    let shipping = Number(rule.cost || 0);
-
-    const normalizedCountryCode = String(countryCode || "").toUpperCase();
-
-    // --------------------------------------------------
-    // FREE SHIPPING PROMOTION
-    //
-    // USA + Canada
-    // Subtotal >= $500
-    // --------------------------------------------------
-
-    const qualifiesForFreeShipping =
-      subtotal > 500 &&
-      (normalizedCountryCode === "US" || normalizedCountryCode === "CA");
-
-    if (qualifiesForFreeShipping) {
-      shipping = 0;
-
-      if (shippingCostEl) {
-        shippingCostEl.textContent = "Free Shipping";
-      }
-    } else {
-      if (shippingCostEl) {
-        shippingCostEl.textContent = `$${shipping.toFixed(2)}`;
-      }
-    }
-
-    // --------------------------------------------------
-    // UPDATE TOTAL
-    // --------------------------------------------------
-
-    const total = subtotal + shipping;
 
     if (totalEl) {
-      totalEl.textContent = `$${total.toFixed(2)}`;
+      totalEl.textContent = `$${subtotal.toFixed(2)}`;
     }
 
     if (ctaTotalEl) {
-      ctaTotalEl.textContent = `$${total.toFixed(2)}`;
+      ctaTotalEl.textContent = `$${subtotal.toFixed(2)}`;
     }
 
-    return {
-      ...rule,
-      cost: shipping,
-      freeShipping: qualifiesForFreeShipping,
-    };
+    return rule;
   }
 
-  function updateAccountButtonState() {
-    if (!accountCheckoutBtn) return;
-
-    const countrySupported =
-      !!accountCountryCode && !!currentShipping?.supported;
-    const profileComplete = currentProfileMissingFields.length === 0;
-    const supported = countrySupported && profileComplete;
-    const needsCountry = !accountCountryCode;
-
-    // Keep the country selector visible at all times.
-    // The user may want to change/reselect their country.
-    if (accountCountryPanel) {
-      accountCountryPanel.hidden = false;
+  // Country has no registered shipping fee.
+  if (!rule.supported) {
+    if (shippingCostEl) {
+      shippingCostEl.textContent = "Contact Admin for shipping fee";
     }
 
-    // The "Continue as username" button is only enabled
-    // when a valid/supported country has been selected AND
-    // the saved profile has the address details we need.
-    accountCheckoutBtn.disabled = !supported;
-    accountCheckoutBtn.classList.toggle("is-disabled", !supported);
-
-    if (needsCountry) {
-      accountCheckoutBtn.setAttribute("aria-disabled", "true");
-    } else {
-      accountCheckoutBtn.removeAttribute("aria-disabled");
+    if (totalEl) {
+      totalEl.textContent = `$${subtotal.toFixed(2)}`;
     }
 
-    // Tell the user their profile is missing details instead of
-    // silently sending them to Stripe with a blank address.
-    if (accountIncompleteProfileEl) {
-      accountIncompleteProfileEl.hidden = profileComplete;
-      if (!profileComplete && accountIncompleteProfileTextEl) {
-        accountIncompleteProfileTextEl.textContent = `Your saved profile is missing your ${currentProfileMissingFields.join(", ")}. Please complete your profile before checking out with your account.`;
-      }
+    if (ctaTotalEl) {
+      ctaTotalEl.textContent = `$${subtotal.toFixed(2)}`;
     }
+
+    if (shippingRowEl) {
+      shippingRowEl.classList.add("is-contact-required");
+    }
+
+    // Existing contact button in the order summary.
+    if (contactAdminBtn) {
+      contactAdminBtn.hidden = false;
+      contactAdminBtn.href =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
+        )}`;
+    }
+
+    // NEW:
+    // Show the clickable message directly underneath
+    // the country selector for logged-in/account checkout.
+    if (isAccount && accountContactAdminBtn) {
+      accountContactAdminBtn.hidden = false;
+      accountContactAdminBtn.href =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
+        )}`;
+    }
+
+    return rule;
   }
+
+  // Country has a registered shipping fee.
+  const shipping = Number(rule.cost || 0);
+  const total = subtotal + shipping;
+
+  if (shippingCostEl) {
+    shippingCostEl.textContent = `$${shipping.toFixed(2)}`;
+  }
+
+  if (totalEl) {
+    totalEl.textContent = `$${total.toFixed(2)}`;
+  }
+
+  if (ctaTotalEl) {
+    ctaTotalEl.textContent = `$${total.toFixed(2)}`;
+  }
+
+  return rule;
+}
+
+function updateAccountButtonState() {
+  if (!accountCheckoutBtn) return;
+
+  const supported = !!accountCountryCode && !!currentShipping?.supported;
+  const needsCountry = !accountCountryCode;
+
+  // Keep the country selector visible at all times.
+  // The user may want to change/reselect their country.
+  if (accountCountryPanel) {
+    accountCountryPanel.hidden = false;
+  }
+
+  // The "Continue as username" button is only enabled
+  // when a valid/supported country has been selected.
+  accountCheckoutBtn.disabled = !supported;
+  accountCheckoutBtn.classList.toggle("is-disabled", !supported);
+
+  if (needsCountry) {
+    accountCheckoutBtn.setAttribute("aria-disabled", "true");
+  } else {
+    accountCheckoutBtn.removeAttribute("aria-disabled");
+  }
+}
 
   function updateGuestContinueState() {
     if (!continueBtn || currentCheckoutUser) return;
@@ -657,7 +435,7 @@ function initCheckoutModal() {
       "checkout-email": user?.email || "",
       "checkout-phone": user?.phone || "",
       "checkout-address": user?.address?.street || "",
-      "checkout-zip": user?.address?.postalCode || "",
+      "checkout-zip": user?.address?.postalCode || ""
     };
     Object.entries(fields).forEach(([id, value]) => {
       const el = modal.querySelector(`#${id}`);
@@ -670,21 +448,16 @@ function initCheckoutModal() {
     if (!itemsEl) return;
 
     const response = await window.BLEGAB_CART.getCart();
-    if (!response || !response.success || !response.cart)
-      throw new Error(response?.message || "Failed to load cart");
+    if (!response || !response.success || !response.cart) throw new Error(response?.message || "Failed to load cart");
 
     itemsEl.innerHTML = "";
-    (response.cart.items || []).forEach((item) => {
+    (response.cart.items || []).forEach(item => {
       const product = item.product;
       if (!product) return;
       const image = product.images?.[0]
-        ? String(product.images[0]).startsWith("http")
-          ? product.images[0]
-          : `/assets/images/products/${product.images[0]}`
+        ? (String(product.images[0]).startsWith("http") ? product.images[0] : `/assets/images/products/${product.images[0]}`)
         : "/assets/images/placeholder.png";
-      itemsEl.insertAdjacentHTML(
-        "beforeend",
-        `
+      itemsEl.insertAdjacentHTML("beforeend", `
         <div class="checkout-summary__item">
           <img src="${image}" alt="${product.name || "Product"}">
           <div class="checkout-summary__item-info">
@@ -692,27 +465,23 @@ function initCheckoutModal() {
             <span class="meta">×${item.quantity}</span>
           </div>
           <span class="checkout-summary__item-price">$${Number(item.lineTotal || 0).toFixed(2)}</span>
-        </div>`,
-      );
+        </div>`);
     });
 
     subtotal = Number(response.subtotal || 0);
     if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
     if (countEl) countEl.textContent = response.totalItems || 0;
 
-    updateShipping(
-      currentCheckoutUser ? accountCountryCode : guestCountryEl?.value || "",
-      !!currentCheckoutUser,
-    );
+    updateShipping(currentCheckoutUser ? accountCountryCode : guestCountryEl?.value || "", !!currentCheckoutUser);
   }
 
   function goToStep(step) {
     currentStep = step;
     modal.classList.toggle("checkout-modal--step-2", step === 2);
-    stepPanels.forEach((panel) => {
+    stepPanels.forEach(panel => {
       panel.hidden = panel.dataset.checkoutStepPanel !== String(step);
     });
-    stepIndicators.forEach((indicator) => {
+    stepIndicators.forEach(indicator => {
       const num = indicator.dataset.checkoutStepIndicator;
       indicator.classList.toggle("is-active", num === String(step));
       indicator.classList.toggle("is-done", Number(num) < step);
@@ -748,9 +517,7 @@ function initCheckoutModal() {
 
       let user = null;
       try {
-        const response = await fetch(`${CHECKOUT_API_URL}/auth/me`, {
-          credentials: "include",
-        });
+        const response = await fetch(`${CHECKOUT_API_URL}/auth/me`, { credentials: "include" });
         if (response.ok) {
           const data = await response.json();
           user = data.user || null;
@@ -762,15 +529,11 @@ function initCheckoutModal() {
       currentCheckoutUser = user;
 
       if (user) {
-        const displayName =
-          `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-          user.email ||
-          "Account";
+        const displayName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email || "Account";
         if (checkoutUserNameEl) checkoutUserNameEl.textContent = displayName;
         if (accountCheckoutBtn) accountCheckoutBtn.hidden = false;
         if (guestCheckoutBtn) guestCheckoutBtn.hidden = true;
         if (signupCheckoutBtn) signupCheckoutBtn.hidden = true;
-        currentProfileMissingFields = getMissingProfileFields(user);
         fillGuestFromUser(user);
         setAccountCountryFromUser(user);
         goToStep(1);
@@ -791,9 +554,9 @@ function initCheckoutModal() {
     }
   });
 
-  closeBtns.forEach((btn) => btn.addEventListener("click", closeModal));
+  closeBtns.forEach(btn => btn.addEventListener("click", closeModal));
   overlay.addEventListener("click", closeModal);
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", e => {
     if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
   });
 
@@ -802,17 +565,7 @@ function initCheckoutModal() {
       currentCheckoutUser = null;
       const guestSection = modal.querySelector("[data-guest-only]");
       if (guestSection) guestSection.hidden = false;
-      [
-        "checkout-first-name",
-        "checkout-last-name",
-        "checkout-email",
-        "checkout-phone",
-        "checkout-country",
-        "checkout-address",
-        "checkout-city",
-        "checkout-state",
-        "checkout-zip",
-      ].forEach((id) => {
+      ["checkout-first-name", "checkout-last-name", "checkout-email", "checkout-phone", "checkout-country", "checkout-address", "checkout-city", "checkout-state", "checkout-zip"].forEach(id => {
         const el = modal.querySelector(`#${id}`);
         if (el) el.value = "";
       });
@@ -824,10 +577,7 @@ function initCheckoutModal() {
     });
   }
 
-  if (signupCheckoutBtn)
-    signupCheckoutBtn.addEventListener("click", () => {
-      window.location.href = "signup.html";
-    });
+  if (signupCheckoutBtn) signupCheckoutBtn.addEventListener("click", () => { window.location.href = "signup.html"; });
 
   if (accountCheckoutBtn) {
     accountCheckoutBtn.addEventListener("click", async function () {
@@ -835,10 +585,6 @@ function initCheckoutModal() {
 
       const rule = shippingRule(accountCountryCode);
       if (!rule.supported) return;
-
-      // Defense in depth: the button is disabled while the profile is
-      // incomplete, but never let a stale click through to Stripe.
-      if (currentProfileMissingFields.length) return;
 
       setButtonLoading(accountCheckoutBtn, true);
       try {
@@ -854,8 +600,8 @@ function initCheckoutModal() {
           city: getUserCityValue(currentCheckoutUser),
           address: address.street || "",
           postalCode: address.postalCode || "",
-          // shippingCost: Number(rule.cost),
-          cart,
+          shippingCost: Number(rule.cost),
+          cart
         });
         window.location.assign(data.url);
       } catch (error) {
@@ -865,25 +611,16 @@ function initCheckoutModal() {
     });
   }
 
-  [
-    "checkout-first-name",
-    "checkout-last-name",
-    "checkout-email",
-    "checkout-address",
-    "checkout-city",
-    "checkout-state",
-    "checkout-zip",
-    "checkout-phone",
-  ].forEach((id) => {
+  ["checkout-first-name", "checkout-last-name", "checkout-email", "checkout-address", "checkout-city", "checkout-state", "checkout-zip", "checkout-phone"].forEach(id => {
     const input = modal.querySelector(`#${id}`);
     if (!input) return;
     input.addEventListener("input", updateGuestContinueState);
     input.addEventListener("change", updateGuestContinueState);
   });
 
-  //   if (country) {
-  //     countryWrapper.style.display = "block";
-  // }
+  if (country) {
+    countryWrapper.style.display = "block";
+}
 
   if (continueBtn) {
     continueBtn.addEventListener("click", async function () {
@@ -908,8 +645,8 @@ function initCheckoutModal() {
           city: modal.querySelector("#checkout-city").value.trim(),
           address: modal.querySelector("#checkout-address").value.trim(),
           postalCode: modal.querySelector("#checkout-zip").value.trim(),
-          // shippingCost: Number(rule.cost),
-          cart,
+          shippingCost: Number(rule.cost),
+          cart
         });
         window.location.assign(data.url);
       } catch (error) {
@@ -920,9 +657,7 @@ function initCheckoutModal() {
   }
 
   // Keep guest country list available even before the first checkout click if the modal is opened by other code.
-  loadLocationData().catch((error) =>
-    console.error("Unable to load country/state data:", error),
-  );
+  loadLocationData().catch(error => console.error("Unable to load country/state data:", error));
 }
 
 document.addEventListener("DOMContentLoaded", initCheckoutModal);
