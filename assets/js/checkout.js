@@ -970,6 +970,10 @@ function initCheckoutModal() {
     shippingRowEl.classList.remove("is-contact-required");
   }
 
+  if (shippingCostEl) {
+    shippingCostEl.classList.remove("free");
+  }
+
   if (contactAdminBtn) {
     contactAdminBtn.hidden = true;
   }
@@ -1041,7 +1045,10 @@ function initCheckoutModal() {
   const total = subtotal + shipping;
 
   if (shippingCostEl) {
-    shippingCostEl.textContent = `$${shipping.toFixed(2)}`;
+    shippingCostEl.textContent = rule.freeShippingApplied
+      ? "Free"
+      : `$${shipping.toFixed(2)}`;
+    shippingCostEl.classList.toggle("free", !!rule.freeShippingApplied);
   }
 
   if (totalEl) {

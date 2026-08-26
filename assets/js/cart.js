@@ -896,11 +896,14 @@ function cartShippingForCountry(country, subtotal) {
     return null;
   }
 
-  const qualifiesForFreeShipping =
+  const freeShippingApplied =
     CART_FREE_SHIPPING_COUNTRIES.includes(key) &&
     Number(subtotal || 0) > CART_FREE_SHIPPING_THRESHOLD;
 
-  return qualifiesForFreeShipping ? 0 : CART_SHIPPING_RATES[key];
+  return {
+    cost: freeShippingApplied ? 0 : CART_SHIPPING_RATES[key],
+    freeShippingApplied
+  };
 }
 
 async function getCartShippingCountry() {
@@ -1006,8 +1009,10 @@ function renderCartShipping(subtotal, country) {
     return;
   }
 
-  row.innerHTML = '<span>Shipping</span><span data-cart-summary-shipping>' + formatMoney(shipping) + '</span>';
-  if (totalEl) totalEl.textContent = formatMoney(Number(subtotal) + shipping);
+  const shippingText = shipping.freeShippingApplied ? 'Free' : formatMoney(shipping.cost);
+  const shippingClass = shipping.freeShippingApplied ? ' class="cart-page__summary-free"' : '';
+  row.innerHTML = '<span>Shipping</span><span data-cart-summary-shipping' + shippingClass + '>' + shippingText + '</span>';
+  if (totalEl) totalEl.textContent = formatMoney(Number(subtotal) + shipping.cost);
 }
 
 /* -----------------------------
