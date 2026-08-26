@@ -875,34 +875,21 @@ function getCartProductImage(image) {
 
 /* =========================================================
    CART PAGE SHIPPING RULES
+   Rates come from window.BLEGAB_SHIPPING (shipping-calculator.js),
+   which fetches the admin-configured rules from the backend.
+   No rates are hardcoded here anymore.
    ========================================================= */
- const CART_SHIPPING_RATES = {
-   'United States': 20,
-   'Canada': 30,
-   'Nigeria': 50,
-   'United Kingdom': 50
- };
-
-// Countries + subtotal threshold that qualify for free shipping.
-// Must stay in sync with services/shippingService.js on the backend:
-// US/Canada orders with a subtotal ABOVE (not equal to) $500 ship free.
-const CART_FREE_SHIPPING_COUNTRIES = ['United States', 'Canada'];
-const CART_FREE_SHIPPING_THRESHOLD = 500;
 
 function cartShippingForCountry(country, subtotal) {
-  const key = String(country || '').trim();
+  const api = window.BLEGAB_SHIPPING;
+  if (!api) return null;
 
-  if (!Object.prototype.hasOwnProperty.call(CART_SHIPPING_RATES, key)) {
-    return null;
-  }
-
-  const freeShippingApplied =
-    CART_FREE_SHIPPING_COUNTRIES.includes(key) &&
-    Number(subtotal || 0) > CART_FREE_SHIPPING_THRESHOLD;
+  const result = api.calculateShipping(subtotal, country);
+  if (!result.supported) return null;
 
   return {
-    cost: freeShippingApplied ? 0 : CART_SHIPPING_RATES[key],
-    freeShippingApplied
+    cost: result.cost,
+    freeShippingApplied: !!result.freeShippingApplied
   };
 }
 
@@ -1026,6 +1013,12 @@ async function renderCartPage() {
   var headingCountEl = document.querySelector("[data-cart-count-heading]");
 
   if (!listEl) return;
+
+  // Start loading admin-configured shipping rates in parallel
+  // with the cart fetch below; awaited just before it's needed.
+  const shippingRatesReady = window.BLEGAB_SHIPPING
+    ? window.BLEGAB_SHIPPING.loadShippingRates()
+    : Promise.resolve();
 
   try {
     const response = await fetch(API_URL, {
@@ -1187,6 +1180,8 @@ if (afterpayEl) {
 // until a country is selected during checkout.
 // --------------------------------------------------
 var shippingCountry = await getCartShippingCountry();
+
+await shippingRatesReady;
 
 renderCartShipping(subtotal, shippingCountry);
 

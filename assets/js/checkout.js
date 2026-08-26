@@ -1181,7 +1181,11 @@ function updateAccountButtonState() {
 
   checkoutBtn.addEventListener("click", async function () {
     try {
-      const cart = await window.BLEGAB_CART.getCart();
+      const api = shippingApi();
+      const [cart] = await Promise.all([
+        window.BLEGAB_CART.getCart(),
+        api ? api.loadShippingRates() : Promise.resolve()
+      ]);
       if (!cart?.cart?.items?.length) {
         alert("Your cart is empty.");
         return;

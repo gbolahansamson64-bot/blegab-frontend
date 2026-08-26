@@ -193,30 +193,14 @@
    BLEGAB SHIPPING RULES
    Frontend display/calculation only. Backend files are untouched.
 
-   Supported destinations from the checkout wireframe:
-   United States  -> $20
-   Canada         -> $30
-   Nigeria        -> $50
-   United Kingdom -> $50
-
-   Every other country requires the customer to contact Admin.
-   There is NO free-shipping threshold.
+   Rates and available countries now come from the admin-managed
+   ShippingRule collection via GET /api/shipping (public, read-only).
+   Call loadShippingRates() once (e.g. on page load) before relying
+   on getShippingRule()/calculateShipping() - see isLoaded()/whenLoaded()
+   below to guard against calling this too early.
    ========================================================= */
 
-const SHIPPING_RATES = Object.freeze({
-  US: { cost: 20, daysMin: 5, daysMax: 7 },
-  CA: { cost: 30, daysMin: 7, daysMax: 10 },
-  NG: { cost: 50, daysMin: 14, daysMax: 21 },
-  GB: { cost: 50, daysMin: 5, daysMax: 7 }
-});
-
-const SHIPPING_COUNTRIES = Object.freeze({
-  US: 'United States',
-  CA: 'Canada',
-  NG: 'Nigeria',
-  GB: 'United Kingdom'
-});
-
+const SHIPPING_API_URL = 'https://api.blegab.com/api/shipping';
 const SHIPPING_WHATSAPP_NUMBER = '14696180809';
 
 /* =========================================================
@@ -227,6 +211,49 @@ const SHIPPING_WHATSAPP_NUMBER = '14696180809';
    ========================================================= */
 const FREE_SHIPPING_COUNTRIES = Object.freeze(['US', 'CA']);
 const FREE_SHIPPING_THRESHOLD = 500;
+
+// Populated by loadShippingRates(). Empty/unloaded until then.
+let SHIPPING_RATES = {};
+let SHIPPING_COUNTRIES = {};
+let shippingRatesLoadedPromise = null;
+
+async function loadShippingRates() {
+  if (shippingRatesLoadedPromise) return shippingRatesLoadedPromise;
+
+  shippingRatesLoadedPromise = fetch(SHIPPING_API_URL)
+    .then(response => {
+      if (!response.ok) throw new Error('Unable to load shipping rates.');
+      return response.json();
+    })
+    .then(data => {
+      const rules = (data && data.rules) || [];
+      const rates = {};
+      const countries = {};
+
+      rules.forEach(rule => {
+        const code = normalizeCountryCode(rule.countryCode);
+        if (!code) return;
+        rates[code] = { cost: Number(rule.fee) || 0 };
+        countries[code] = rule.country;
+      });
+
+      SHIPPING_RATES = rates;
+      SHIPPING_COUNTRIES = countries;
+      return true;
+    })
+    .catch(error => {
+      console.error('Unable to load shipping rates:', error);
+      // Leave SHIPPING_RATES/SHIPPING_COUNTRIES empty rather than
+      // falling back to stale hardcoded numbers.
+      return false;
+    });
+
+  return shippingRatesLoadedPromise;
+}
+
+function isShippingRatesLoaded() {
+  return shippingRatesLoadedPromise !== null;
+}
 
 function normalizeCountryCode(countryCode) {
   return String(countryCode || '').trim().toUpperCase();
@@ -251,8 +278,6 @@ function getShippingRule(countryCode) {
     countryCode: code,
     countryName: SHIPPING_COUNTRIES[code],
     cost: rule.cost,
-    daysMin: rule.daysMin,
-    daysMax: rule.daysMax,
     contactAdmin: false
   };
 }
@@ -264,9 +289,7 @@ function getShippingMethods(countryCode) {
   return [{
     id: 'standard',
     label: 'Standard',
-    rate: rule.cost,
-    daysMin: rule.daysMin,
-    daysMax: rule.daysMax
+    rate: rule.cost
   }];
 }
 
@@ -300,25 +323,7 @@ function calculateShipping(subtotal, countryCode, method = 'standard') {
     total: safeSubtotal + cost,
     country: rule.countryCode,
     method,
-    daysMin: rule.daysMin,
-    daysMax: rule.daysMax,
-    estimatedDelivery: getEstimatedDeliveryDate(rule.daysMin, rule.daysMax),
     freeShippingApplied
-  };
-}
-
-function getEstimatedDeliveryDate(daysMin, daysMax) {
-  const today = new Date();
-  const minDate = new Date(today);
-  const maxDate = new Date(today);
-
-  minDate.setDate(minDate.getDate() + Number(daysMin || 0));
-  maxDate.setDate(maxDate.getDate() + Number(daysMax || 0));
-
-  return {
-    min: minDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    max: maxDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    display: `${minDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${maxDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
   };
 }
 
@@ -366,16 +371,15 @@ function updateCheckoutShipping(
 
 if (typeof window !== 'undefined') {
   window.BLEGAB_SHIPPING = {
-    SHIPPING_RATES,
-    SHIPPING_COUNTRIES,
     SHIPPING_WHATSAPP_NUMBER,
     FREE_SHIPPING_COUNTRIES,
     FREE_SHIPPING_THRESHOLD,
+    loadShippingRates,
+    isShippingRatesLoaded,
     normalizeCountryCode,
     getShippingRule,
     getShippingMethods,
     calculateShipping,
-    getEstimatedDeliveryDate,
     formatShippingDisplay,
     getShippingWhatsAppUrl,
     updateCheckoutShipping
@@ -384,14 +388,12 @@ if (typeof window !== 'undefined') {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    SHIPPING_RATES,
-    SHIPPING_COUNTRIES,
     FREE_SHIPPING_COUNTRIES,
     FREE_SHIPPING_THRESHOLD,
+    loadShippingRates,
     getShippingRule,
     getShippingMethods,
     calculateShipping,
-    getEstimatedDeliveryDate,
     formatShippingDisplay,
     getShippingWhatsAppUrl,
     updateCheckoutShipping
