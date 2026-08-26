@@ -2668,6 +2668,8 @@
 
 const CHECKOUT_API_URL = "https://api.blegab.com/api";
 const LOCATION_MODULE_URLS = [
+  "https://cdn.jsdelivr.net/npm/@countrystatecity/countries-browser@1.0.4/+esm",
+  "https://esm.sh/@countrystatecity/countries-browser@1.0.4",
   "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm",
   "https://esm.sh/country-state-city@3.2.1"
 ];
@@ -2823,30 +2825,84 @@ function initCheckoutModal() {
   async function loadLocationData() {
     if (locationData) return locationData;
 
-    // iOS Safari has intermittently failed to expose named exports (e.g.
-    // module.Country) from jsdelivr's "+esm" bundle for this package, even
-    // though the dynamic import() itself resolves without throwing. Try a
-    // couple of CDN sources and validate the shape before using it, instead
-    // of trusting the first response blindly.
     let lastError = null;
+
     for (const url of LOCATION_MODULE_URLS) {
       try {
         const module = await import(url);
+
+        // Preferred browser-native package: lazy-loads via fetch and is
+        // designed to avoid the old country-state-city Safari stack issue.
+        if (
+          module &&
+          typeof module.getCountries === "function" &&
+          typeof module.getStatesOfCountry === "function" &&
+          typeof module.getCitiesOfState === "function"
+        ) {
+          const browserCountries = await module.getCountries();
+          if (!Array.isArray(browserCountries) || !browserCountries.length) {
+            throw new Error("Browser location package returned no countries.");
+          }
+
+          const countries = browserCountries.map(c => ({
+            isoCode: String(c.iso2 || c.isoCode || "").toUpperCase(),
+            name: c.name || ""
+          })).filter(c => c.isoCode && c.name);
+
+          locationData = {
+            Country: null,
+            State: {
+              async getStatesOfCountry(countryCode) {
+                const states = await module.getStatesOfCountry(String(countryCode || "").toUpperCase());
+                return (states || []).map(state => ({
+                  name: state.name,
+                  isoCode: String(state.iso2 || state.isoCode || "").toUpperCase(),
+                  countryCode: String(countryCode || "").toUpperCase()
+                }));
+              }
+            },
+            City: {
+              async getCitiesOfState(countryCode, stateCode) {
+                const cities = await module.getCitiesOfState(
+                  String(countryCode || "").toUpperCase(),
+                  String(stateCode || "").toUpperCase()
+                );
+                return (cities || []).map(city => ({
+                  name: city.name,
+                  isoCode: String(city.id || city.isoCode || city.name || ""),
+                  countryCode: String(countryCode || "").toUpperCase(),
+                  stateCode: String(stateCode || "").toUpperCase()
+                }));
+              }
+            },
+            countries
+          };
+
+          populateCountrySelect(guestCountryEl);
+          populateCountrySelect(accountCountryEl);
+          if (guestCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(guestCountryEl);
+          if (accountCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(accountCountryEl);
+          return locationData;
+        }
+
+        // Existing package fallback.
         const CountryApi = module && module.Country;
         const StateApi = module && module.State;
         const CityApi = module && module.City;
         if (!CountryApi || typeof CountryApi.getAllCountries !== "function") {
           throw new Error("Country/state data module loaded but did not expose the expected API.");
         }
-        const countries = CountryApi.getAllCountries() || [];
+
         locationData = {
           Country: CountryApi,
           State: StateApi,
           City: CityApi,
-          countries
+          countries: CountryApi.getAllCountries() || []
         };
         populateCountrySelect(guestCountryEl);
         populateCountrySelect(accountCountryEl);
+        if (guestCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(guestCountryEl);
+        if (accountCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(accountCountryEl);
         return locationData;
       } catch (error) {
         lastError = error;
@@ -2854,12 +2910,6 @@ function initCheckoutModal() {
       }
     }
 
-    // Every CDN source failed (this is the case that was silently breaking
-    // the Country dropdown - see assets/js/country-fallback-data.js).
-    // Degrade gracefully using a bundled, offline country list so checkout
-    // still works with no network dependency. State/City have no offline
-    // data source, so they fall back to free-text entry (handled by
-    // renderStateOptions/renderCityOptions when State/City are null).
     console.error("All country/state data sources failed, using offline country fallback:", lastError);
     const fallbackCountries = Array.isArray(window.BLEGAB_COUNTRY_FALLBACK)
       ? window.BLEGAB_COUNTRY_FALLBACK
@@ -2878,39 +2928,48 @@ function initCheckoutModal() {
       locationData.countries.map(c => `<option value="${c.isoCode}">${c.name}</option>`).join("");
   }
 
-  function getStates(countryCode) {
+  async function getStates(countryCode) {
     if (!countryCode || !locationData || !locationData.State) return [];
-    return locationData.State.getStatesOfCountry(countryCode) || [];
+    try {
+      return await locationData.State.getStatesOfCountry(countryCode) || [];
+    } catch (error) {
+      console.error("Unable to load states for", countryCode, error);
+      return [];
+    }
   }
 
-  function getCities(countryCode, stateCode) {
+  async function getCities(countryCode, stateCode) {
     if (!countryCode || !stateCode || !locationData || !locationData.City) return [];
-    return locationData.City.getCitiesOfState(countryCode, stateCode) || [];
+    try {
+      return await locationData.City.getCitiesOfState(countryCode, stateCode) || [];
+    } catch (error) {
+      console.error("Unable to load cities for", countryCode, stateCode, error);
+      return [];
+    }
   }
 
-  function renderStateOptions(countryCode) {
-    guestStateOptions = getStates(countryCode);
+  async function renderStateOptions(countryCode) {
+    guestStateOptions = await getStates(countryCode);
     if (!guestStateEl) return;
-
     guestStateEl.value = "";
     guestStateEl.disabled = false;
-    guestStateEl.placeholder =
-  guestStateOptions.length
-    ? "Search or enter your state"
-    : "Enter your state";
+    guestStateEl.placeholder = guestStateOptions.length
+      ? "Search or enter your state"
+      : "Enter your state";
     if (guestStateListEl) guestStateListEl.hidden = true;
+    updateGuestContinueState();
   }
 
-  function renderCityOptions(countryCode, stateCode) {
-    guestCityOptions = getCities(countryCode, stateCode);
+  async function renderCityOptions(countryCode, stateCode) {
+    guestCityOptions = await getCities(countryCode, stateCode);
     if (!guestCityEl) return;
-
     guestCityEl.value = "";
     guestCityEl.disabled = !stateCode;
     guestCityEl.placeholder = stateCode
       ? (guestCityOptions.length ? "Search for your city" : "Enter your city")
       : "Select state first";
     if (guestCityListEl) guestCityListEl.hidden = true;
+    updateGuestContinueState();
   }
 
   function renderComboboxList(input, list, options, key) {
@@ -3146,7 +3205,10 @@ function updateAccountButtonState() {
   function setAccountCountryFromUser(user) {
     const raw = getUserCountryValue(user);
     accountCountryCode = normalizeCountry(raw);
-    if (accountCountryEl) accountCountryEl.value = accountCountryCode;
+    if (accountCountryEl) {
+      accountCountryEl.value = accountCountryCode;
+      if (window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(accountCountryEl);
+    }
     updateShipping(accountCountryCode, true);
     updateAccountButtonState();
   }

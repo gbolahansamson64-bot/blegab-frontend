@@ -41,28 +41,103 @@ async function loadLocationLibrary() {
 
     try {
 
+        // Use the browser-native CountryStateCity package first. The older
+        // country-state-city package is known to cause iOS/Safari stack
+        // problems because it loads a very large all-in-one dataset.
         var csc = await import(
-            "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm"
+            "https://cdn.jsdelivr.net/npm/@countrystatecity/countries-browser@1.0.4/+esm"
         );
 
-        Country = csc.Country;
-        State = csc.State;
-        City = csc.City;
+        var countries = await csc.getCountries();
 
-        ALL_COUNTRIES =
-            Country.getAllCountries() || [];
+        if (!Array.isArray(countries) || !countries.length) {
+            throw new Error("Browser location package returned no countries.");
+        }
+
+        Country = {
+            getAllCountries: async function () {
+                return countries.map(function (country) {
+                    return {
+                        isoCode: String(country.iso2 || "").toUpperCase(),
+                        name: country.name || ""
+                    };
+                });
+            }
+        };
+
+        State = {
+            getStatesOfCountry: async function (countryIso) {
+                return await csc.getStatesOfCountry(
+                    String(countryIso || "").toUpperCase()
+                ) || [];
+            }
+        };
+
+        City = {
+            getCitiesOfState: async function (countryIso, stateIso) {
+                return await csc.getCitiesOfState(
+                    String(countryIso || "").toUpperCase(),
+                    String(stateIso || "").toUpperCase()
+                ) || [];
+            }
+        };
+
+        ALL_COUNTRIES = await Country.getAllCountries();
+
+        // Phone codes are intentionally loaded separately so the country
+        // location data stays lazy and Safari does not receive a huge bundle.
+        try {
+            var phoneModule = await import(
+                "https://cdn.jsdelivr.net/npm/@countrystatecity/phonecodes@1.0.2/+esm"
+            );
+            var phonecodes = typeof phoneModule.getPhonecodes === "function"
+                ? await phoneModule.getPhonecodes()
+                : [];
+
+            var phoneByIso = new Map(
+                (phonecodes || []).map(function (item) {
+                    return [
+                        String(item.iso2 || "").toUpperCase(),
+                        String(item.phonecode || "").replace(/^\+/, "")
+                    ];
+                })
+            );
+
+            ALL_COUNTRIES = ALL_COUNTRIES.map(function (country) {
+                return Object.assign({}, country, {
+                    phonecode: phoneByIso.get(country.isoCode) || ""
+                });
+            });
+        } catch (phoneError) {
+            console.error("BLEGAB: phone code library failed to load.", phoneError);
+        }
 
         initLocationFields();
 
     } catch (error) {
 
         console.error(
-            "BLEGAB: country-state-city failed to load.",
+            "BLEGAB: browser location library failed to load.",
             error
         );
 
-        loadFallbackCountries();
+        // Keep the existing package as a non-Safari fallback.
+        try {
+            var legacy = await import(
+                "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm"
+            );
 
+            Country = legacy.Country;
+            State = legacy.State;
+            City = legacy.City;
+            ALL_COUNTRIES = Country.getAllCountries() || [];
+            initLocationFields();
+            return;
+        } catch (legacyError) {
+            console.error("BLEGAB: legacy location library also failed.", legacyError);
+        }
+
+        loadFallbackCountries();
         initLocationFields();
     }
 }
@@ -334,41 +409,24 @@ function normalizeCountry(value) {
 }
 
 
-function normalizeState(countryIso, value) {
+async function normalizeState(countryIso, value) {
 
-    if (
-        !countryIso ||
-        !value ||
-        !State
-    ) {
+    if (!countryIso || !value || !State) {
         return "";
     }
 
-    var raw =
-        String(value)
-            .trim()
-            .toLowerCase();
+    var raw = String(value).trim().toLowerCase();
+    var states = await State.getStatesOfCountry(countryIso) || [];
 
-    var states =
-        State.getStatesOfCountry(
-            countryIso
-        ) || [];
-
-    var match =
-        states.find(function (state) {
-
-            return (
-                String(state.isoCode || "")
-                    .toLowerCase() === raw ||
-
-                String(state.name || "")
-                    .toLowerCase() === raw
-            );
-
-        });
+    var match = states.find(function (state) {
+        return (
+            String(state.isoCode || state.iso2 || "").toLowerCase() === raw ||
+            String(state.name || "").toLowerCase() === raw
+        );
+    });
 
     return match
-        ? match.isoCode
+        ? (match.isoCode || match.iso2 || "")
         : "";
 }
 
@@ -601,79 +659,52 @@ function initLocationFields() {
        FILL STATES
        ===================================================== */
 
-    function fillStates(countryIso) {
+    async function fillStates(countryIso) {
 
         stateSelect.innerHTML =
             '<option value="">Select a state / region</option>';
-
         stateSelect.disabled = false;
-
-        refreshCustomSelect(
-            stateSelect
-        );
-
+        refreshCustomSelect(stateSelect);
 
         if (!countryIso) {
-
             clearCities();
-
             return;
         }
 
-
         var states = [];
 
-
         if (State) {
-
-            states =
-                State.getStatesOfCountry(
-                    countryIso
-                ) || [];
+            states = await State.getStatesOfCountry(countryIso) || [];
         }
 
+        states = states.map(function (state) {
+            return {
+                name: state.name,
+                isoCode: state.isoCode || state.iso2 || ""
+            };
+        });
 
         if (states.length) {
-
             stateSelect.innerHTML =
                 '<option value="">Select a state / region</option>' +
-
-                states
-                    .slice()
-                    .sort(function (a, b) {
-
-                        return a.name.localeCompare(
-                            b.name
-                        );
-
-                    })
-                    .map(function (state) {
-
-                        return (
-                            '<option value="' +
-                            state.isoCode +
-                            '">' +
-                            state.name +
-                            "</option>"
-                        );
-
-                    })
-                    .join("");
-
-            stateSelect.disabled = false;
-
+                states.slice().sort(function (a, b) {
+                    return a.name.localeCompare(b.name);
+                }).map(function (state) {
+                    return (
+                        '<option value="' +
+                        state.isoCode +
+                        '">' +
+                        state.name +
+                        '</option>'
+                    );
+                }).join("");
         } else {
-
             stateSelect.innerHTML =
                 '<option value="">Enter state / region</option>';
-
-            stateSelect.disabled = false;
         }
 
-
-        refreshCustomSelect(
-            stateSelect
-        );
+        stateSelect.disabled = false;
+        refreshCustomSelect(stateSelect);
     }
 
 
@@ -701,69 +732,39 @@ function initLocationFields() {
        FILL CITIES
        ===================================================== */
 
-    function fillCities(
+    async function fillCities(
         countryIso,
         stateIso
     ) {
 
-        if (
-            !countryIso ||
-            !stateIso ||
-            !City
-        ) {
-
+        if (!countryIso || !stateIso || !City) {
             citySelect.disabled = false;
-
-            citySelect.placeholder =
-                "Enter your city";
-
-            if (cityList) {
-                cityList.innerHTML = "";
-            }
-
+            citySelect.placeholder = "Enter your city";
+            if (cityList) cityList.innerHTML = "";
             return;
         }
 
-
-        var cities =
-            City.getCitiesOfState(
-                countryIso,
-                stateIso
-            ) || [];
-
+        var cities = await City.getCitiesOfState(
+            countryIso,
+            stateIso
+        ) || [];
 
         if (cityList) {
-
-            cityList.innerHTML =
-                cities
-                    .slice()
-                    .sort(function (a, b) {
-
-                        return a.name.localeCompare(
-                            b.name
-                        );
-
-                    })
-                    .map(function (city) {
-
-                        return (
-                            '<option value="' +
-                            String(city.name)
-                                .replace(/"/g, "") +
-                            '"></option>'
-                        );
-
-                    })
-                    .join("");
+            cityList.innerHTML = cities.slice().sort(function (a, b) {
+                return a.name.localeCompare(b.name);
+            }).map(function (city) {
+                return (
+                    '<option value="' +
+                    String(city.name).replace(/"/g, "") +
+                    '"></option>'
+                );
+            }).join("");
         }
 
-
         citySelect.disabled = false;
-
-        citySelect.placeholder =
-            cities.length
-                ? "Select or type a city"
-                : "Enter your city";
+        citySelect.placeholder = cities.length
+            ? "Select or type a city"
+            : "Enter your city";
     }
 
 
@@ -1217,78 +1218,45 @@ async function initProfileForm() {
         countryElement.value =
             savedCountry;
 
-        fillSavedLocation();
+        await fillSavedLocation();
     }
 
 
-    function fillSavedLocation() {
+    async function fillSavedLocation() {
 
         if (!countryElement) {
             return;
         }
 
-
-        if (
-            window.BLEGAB_FILL_STATES
-        ) {
-
-            window.BLEGAB_FILL_STATES(
-                savedCountry
-            );
+        if (window.BLEGAB_FILL_STATES) {
+            await window.BLEGAB_FILL_STATES(savedCountry);
         }
 
+        refreshCustomSelect(countryElement);
 
-        refreshCustomSelect(
-            countryElement
+        var savedState = await normalizeState(
+            savedCountry,
+            storedProfile.state
         );
 
+        if (stateElement && savedState) {
+            stateElement.value = savedState;
 
-        setTimeout(function () {
-
-            var savedState =
-                normalizeState(
+            if (window.BLEGAB_FILL_CITIES) {
+                await window.BLEGAB_FILL_CITIES(
                     savedCountry,
-                    storedProfile.state
-                );
-
-
-            if (
-                stateElement &&
-                savedState
-            ) {
-
-                stateElement.value =
-                    savedState;
-
-
-                if (
-                    window.BLEGAB_FILL_CITIES
-                ) {
-
-                    window.BLEGAB_FILL_CITIES(
-                        savedCountry,
-                        savedState
-                    );
-                }
-
-
-                refreshCustomSelect(
-                    stateElement
+                    savedState
                 );
             }
 
+            refreshCustomSelect(stateElement);
+        }
 
-            if (
-                cityElement &&
-                storedProfile.city
-            ) {
-
-                cityElement.value =
-                    storedProfile.city;
-            }
-
-        }, 50);
+        if (cityElement && storedProfile.city) {
+            cityElement.value = storedProfile.city;
+        }
     }
+
 
 
     /* =====================================================
@@ -1300,10 +1268,18 @@ async function initProfileForm() {
         storedProfile.phoneCode
     ) {
 
-        var phoneCountry =
-            normalizeCountry(
-                storedProfile.phoneCode
-            );
+        var phoneRaw = String(storedProfile.phoneCode || "")
+            .trim()
+            .replace(/^\+/, "");
+
+        var phoneCountry = normalizeCountry(storedProfile.phoneCode);
+
+        if (!phoneCountry && phoneRaw) {
+            var phoneMatch = ALL_COUNTRIES.find(function (country) {
+                return String(country.phonecode || "") === phoneRaw;
+            });
+            phoneCountry = phoneMatch ? phoneMatch.isoCode : "";
+        }
 
 
         if (phoneCountry) {
