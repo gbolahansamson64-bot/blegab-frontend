@@ -2854,13 +2854,21 @@ function initCheckoutModal() {
       }
     }
 
-    // Every source failed. Degrade gracefully instead of throwing, so
-    // checkout still opens - country becomes a manual text field and
-    // state/city stay free-text instead of autocomplete.
-    console.error("All country/state data sources failed:", lastError);
-    locationData = { Country: null, State: null, City: null, countries: [] };
+    // Every CDN source failed (this is the case that was silently breaking
+    // the Country dropdown - see assets/js/country-fallback-data.js).
+    // Degrade gracefully using a bundled, offline country list so checkout
+    // still works with no network dependency. State/City have no offline
+    // data source, so they fall back to free-text entry (handled by
+    // renderStateOptions/renderCityOptions when State/City are null).
+    console.error("All country/state data sources failed, using offline country fallback:", lastError);
+    const fallbackCountries = Array.isArray(window.BLEGAB_COUNTRY_FALLBACK)
+      ? window.BLEGAB_COUNTRY_FALLBACK
+      : [];
+    locationData = { Country: null, State: null, City: null, countries: fallbackCountries };
     populateCountrySelect(guestCountryEl);
     populateCountrySelect(accountCountryEl);
+    if (guestCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(guestCountryEl);
+    if (accountCountryEl && window.BlegabCustomSelect) window.BlegabCustomSelect.refresh(accountCountryEl);
     return locationData;
   }
 
