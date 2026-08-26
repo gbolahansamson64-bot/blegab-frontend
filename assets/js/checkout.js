@@ -2667,7 +2667,10 @@
    ========================================================= */
 
 const CHECKOUT_API_URL = "https://api.blegab.com/api";
-const LOCATION_MODULE_URL = "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm";
+const LOCATION_MODULE_URLS = [
+  "https://cdn.jsdelivr.net/npm/country-state-city@3.2.1/+esm",
+  "https://esm.sh/country-state-city@3.2.1"
+];
 const WHATSAPP_NUMBER = "14696180809";
 
 // The backend's /orders/checkout endpoint reads a flat "items" array
@@ -2810,7 +2813,7 @@ function initCheckoutModal() {
 
   function normalizeState(countryCode, value) {
     const raw = String(value || "").trim().toLowerCase();
-    if (!raw || !countryCode || !locationData) return "";
+    if (!raw || !countryCode || !locationData || !locationData.State) return "";
     const states = locationData.State.getStatesOfCountry(countryCode) || [];
     const state = states.find(s => String(s.isoCode).toLowerCase() === raw)
       || states.find(s => String(s.name).toLowerCase() === raw);
@@ -2819,14 +2822,43 @@ function initCheckoutModal() {
 
   async function loadLocationData() {
     if (locationData) return locationData;
-    const module = await import(LOCATION_MODULE_URL);
-    const countries = module.Country.getAllCountries();
-    locationData = {
-      Country: module.Country,
-      State: module.State,
-      City: module.City,
-      countries
-    };
+
+    // iOS Safari has intermittently failed to expose named exports (e.g.
+    // module.Country) from jsdelivr's "+esm" bundle for this package, even
+    // though the dynamic import() itself resolves without throwing. Try a
+    // couple of CDN sources and validate the shape before using it, instead
+    // of trusting the first response blindly.
+    let lastError = null;
+    for (const url of LOCATION_MODULE_URLS) {
+      try {
+        const module = await import(url);
+        const CountryApi = module && module.Country;
+        const StateApi = module && module.State;
+        const CityApi = module && module.City;
+        if (!CountryApi || typeof CountryApi.getAllCountries !== "function") {
+          throw new Error("Country/state data module loaded but did not expose the expected API.");
+        }
+        const countries = CountryApi.getAllCountries() || [];
+        locationData = {
+          Country: CountryApi,
+          State: StateApi,
+          City: CityApi,
+          countries
+        };
+        populateCountrySelect(guestCountryEl);
+        populateCountrySelect(accountCountryEl);
+        return locationData;
+      } catch (error) {
+        lastError = error;
+        console.error("Unable to load country/state data from", url, error);
+      }
+    }
+
+    // Every source failed. Degrade gracefully instead of throwing, so
+    // checkout still opens - country becomes a manual text field and
+    // state/city stay free-text instead of autocomplete.
+    console.error("All country/state data sources failed:", lastError);
+    locationData = { Country: null, State: null, City: null, countries: [] };
     populateCountrySelect(guestCountryEl);
     populateCountrySelect(accountCountryEl);
     return locationData;
@@ -2839,12 +2871,12 @@ function initCheckoutModal() {
   }
 
   function getStates(countryCode) {
-    if (!countryCode || !locationData) return [];
+    if (!countryCode || !locationData || !locationData.State) return [];
     return locationData.State.getStatesOfCountry(countryCode) || [];
   }
 
   function getCities(countryCode, stateCode) {
-    if (!countryCode || !stateCode || !locationData) return [];
+    if (!countryCode || !stateCode || !locationData || !locationData.City) return [];
     return locationData.City.getCitiesOfState(countryCode, stateCode) || [];
   }
 
