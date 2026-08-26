@@ -2770,6 +2770,7 @@ function initCheckoutModal() {
   const accountContactAdminBtn = modal.querySelector('[data-account-contact-admin]');
   const accountIncompleteProfileEl = modal.querySelector('[data-account-incomplete-profile]');
   const guestCountryEl = modal.querySelector('#checkout-country');
+  const guestContactAdminBtn = modal.querySelector('[data-guest-contact-admin]');
   const guestStateEl = modal.querySelector('#checkout-state');
   const guestStateListEl = modal.querySelector('[data-state-combobox-list]');
   const guestCityEl = modal.querySelector('#checkout-city');
@@ -3135,6 +3136,11 @@ function initCheckoutModal() {
     accountContactAdminBtn.hidden = true;
   }
 
+  // Hide the guest-country contact message by default.
+  if (guestContactAdminBtn) {
+    guestContactAdminBtn.hidden = true;
+  }
+
   if (!countryCode) {
     if (shippingCostEl) {
       shippingCostEl.textContent = "Select country";
@@ -3184,6 +3190,18 @@ function initCheckoutModal() {
     if (isAccount && accountContactAdminBtn) {
       accountContactAdminBtn.hidden = false;
       accountContactAdminBtn.href =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+          `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
+        )}`;
+    }
+
+    // Show the equivalent clickable message directly underneath
+    // the country selector for guest checkout (same behavior,
+    // just reachable without scrolling down to the order summary
+    // on mobile/tablet, where the summary sits below the form).
+    if (!isAccount && guestContactAdminBtn) {
+      guestContactAdminBtn.hidden = false;
+      guestContactAdminBtn.href =
         `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
           `Hello Blegab, I need the shipping fee for ${getCountryName(countryCode)}.`
         )}`;
