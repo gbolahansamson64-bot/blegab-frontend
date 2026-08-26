@@ -141,25 +141,9 @@ function initCheckoutModal() {
     return state ? state.isoCode : "";
   }
 
-  // iOS Safari (WebKit) sometimes resolves a dynamically-imported ESM module
-  // before its named exports are fully populated, so `module.Country` can be
-  // momentarily undefined right after `await import(...)` resolves. This does
-  // not happen on Chrome/Android. Retry a few times with a short delay so we
-  // wait for the real exports instead of throwing.
-  async function importLocationModule() {
-    for (let attempt = 0; attempt < 10; attempt++) {
-      const module = await import(LOCATION_MODULE_URL);
-      if (module?.Country?.getAllCountries && module?.State && module?.City) {
-        return module;
-      }
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
-    throw new Error("Unable to load country data. Please refresh and try again.");
-  }
-
   async function loadLocationData() {
     if (locationData) return locationData;
-    const module = await importLocationModule();
+    const module = await import(LOCATION_MODULE_URL);
     const countries = module.Country.getAllCountries();
     locationData = {
       Country: module.Country,
@@ -634,6 +618,10 @@ function updateAccountButtonState() {
     input.addEventListener("change", updateGuestContinueState);
   });
 
+  if (country) {
+    countryWrapper.style.display = "block";
+}
+
   if (continueBtn) {
     continueBtn.addEventListener("click", async function () {
       if (currentCheckoutUser || continueBtn.disabled) return;
@@ -647,10 +635,6 @@ function updateAccountButtonState() {
       setButtonLoading(continueBtn, true);
       try {
         const cart = await window.BLEGAB_CART.getCart();
-        const items = (cart?.cart?.items || []).map(item => ({
-          productId: item.product?._id,
-          quantity: item.quantity
-        }));
         const data = await createCheckoutSession({
           firstName: modal.querySelector("#checkout-first-name").value.trim(),
           lastName: modal.querySelector("#checkout-last-name").value.trim(),
@@ -662,7 +646,7 @@ function updateAccountButtonState() {
           address: modal.querySelector("#checkout-address").value.trim(),
           postalCode: modal.querySelector("#checkout-zip").value.trim(),
           shippingCost: Number(rule.cost),
-          items
+          cart
         });
         window.location.assign(data.url);
       } catch (error) {
@@ -674,12 +658,6 @@ function updateAccountButtonState() {
 
   // Keep guest country list available even before the first checkout click if the modal is opened by other code.
   loadLocationData().catch(error => console.error("Unable to load country/state data:", error));
-
-  // Load admin-configured shipping rates so getShippingRule() has data ready
-  // the moment a country is selected.
-  if (shippingApi() && typeof shippingApi().loadShippingRules === "function") {
-    shippingApi().loadShippingRules().catch(error => console.error("Unable to load shipping rules:", error));
-  }
 }
 
 document.addEventListener("DOMContentLoaded", initCheckoutModal);
