@@ -2982,9 +2982,18 @@ function initCheckoutModal() {
     if (!filtered.length) {
       list.innerHTML = '<li class="checkout-combobox__empty">No matching results</li>';
     } else {
-      list.innerHTML = filtered.slice(0, 100).map(item =>
-        `<li class="checkout-combobox__option" data-${key}-value="${item.isoCode || item.name}">${item.name}</li>`
-      ).join("");
+      list.innerHTML = filtered.slice(0, 100).map(item => {
+        const value = key === "city"
+          ? String(item.name || "")
+          : String(item.isoCode || item.name || "");
+        const postalCode = key === "city"
+          ? String(item.postalCode || item.postcode || item.postal_code || item.zipCode || item.zip || "")
+          : "";
+        const postalAttr = postalCode
+          ? ` data-postal-code="${postalCode.replace(/"/g, "&quot;")}"`
+          : "";
+        return `<li class="checkout-combobox__option" data-${key}-value="${value.replace(/"/g, "&quot;")}"${postalAttr}>${item.name}</li>`;
+      }).join("");
     }
     list.hidden = false;
   }
@@ -3029,7 +3038,22 @@ function initCheckoutModal() {
     guestCityListEl.addEventListener("click", function (e) {
       const option = e.target.closest("[data-city-value]");
       if (!option) return;
-      guestCityEl.value = option.getAttribute("data-city-value");
+      // Safari must display the city name in the City field.
+      // The old value could be the location record's identifier, which
+      // made Safari show a code instead of the selected city name.
+      guestCityEl.value = option.getAttribute("data-city-value") || "";
+
+      // If the location provider supplies a postal code for this city,
+      // populate the existing Postal/ZIP field. Otherwise leave the
+      // existing manual postal-code behavior untouched.
+      const postalEl = modal.querySelector("#checkout-zip");
+      const postalCode = option.getAttribute("data-postal-code") || "";
+      if (postalEl && postalCode) {
+        postalEl.value = postalCode;
+        postalEl.dispatchEvent(new Event("input", { bubbles: true }));
+        postalEl.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+
       guestCityListEl.hidden = true;
       updateGuestContinueState();
     });

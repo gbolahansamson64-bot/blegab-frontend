@@ -86,13 +86,28 @@ async function loadLocationLibrary() {
 
         // Phone codes are intentionally loaded separately so the country
         // location data stays lazy and Safari does not receive a huge bundle.
-        try {
-            var phoneModule = await import(
-                "https://cdn.jsdelivr.net/npm/@countrystatecity/phonecodes@1.0.2/+esm"
-            );
-            var phonecodes = typeof phoneModule.getPhonecodes === "function"
-                ? await phoneModule.getPhonecodes()
-                : [];
+        // Safari can occasionally fail one CDN's ESM import even though the
+        // main location package loaded correctly. Try the same phone-code
+        // package through a second CDN before giving up.
+        var phoneModule = null;
+        var phoneUrls = [
+            "https://cdn.jsdelivr.net/npm/@countrystatecity/phonecodes@1.0.2/+esm",
+            "https://esm.sh/@countrystatecity/phonecodes@1.0.2"
+        ];
+
+        for (var phoneUrl of phoneUrls) {
+            try {
+                phoneModule = await import(phoneUrl);
+                if (phoneModule && typeof phoneModule.getPhonecodes === "function") {
+                    break;
+                }
+            } catch (phoneError) {
+                console.warn("BLEGAB: phone-code source failed on Safari/CDN:", phoneUrl, phoneError);
+            }
+        }
+
+        if (phoneModule && typeof phoneModule.getPhonecodes === "function") {
+            var phonecodes = await phoneModule.getPhonecodes();
 
             var phoneByIso = new Map(
                 (phonecodes || []).map(function (item) {
@@ -108,8 +123,8 @@ async function loadLocationLibrary() {
                     phonecode: phoneByIso.get(country.isoCode) || ""
                 });
             });
-        } catch (phoneError) {
-            console.error("BLEGAB: phone code library failed to load.", phoneError);
+        } else {
+            console.error("BLEGAB: all phone-code sources failed; keeping location data intact.");
         }
 
         initLocationFields();
