@@ -647,6 +647,10 @@ function updateAccountButtonState() {
       setButtonLoading(continueBtn, true);
       try {
         const cart = await window.BLEGAB_CART.getCart();
+        const items = (cart?.cart?.items || []).map(item => ({
+          productId: item.product?._id,
+          quantity: item.quantity
+        }));
         const data = await createCheckoutSession({
           firstName: modal.querySelector("#checkout-first-name").value.trim(),
           lastName: modal.querySelector("#checkout-last-name").value.trim(),
@@ -658,7 +662,7 @@ function updateAccountButtonState() {
           address: modal.querySelector("#checkout-address").value.trim(),
           postalCode: modal.querySelector("#checkout-zip").value.trim(),
           shippingCost: Number(rule.cost),
-          cart
+          items
         });
         window.location.assign(data.url);
       } catch (error) {
