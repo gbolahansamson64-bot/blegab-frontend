@@ -670,6 +670,12 @@ function updateAccountButtonState() {
 
   // Keep guest country list available even before the first checkout click if the modal is opened by other code.
   loadLocationData().catch(error => console.error("Unable to load country/state data:", error));
+
+  // Load admin-configured shipping rates so getShippingRule() has data ready
+  // the moment a country is selected.
+  if (shippingApi() && typeof shippingApi().loadShippingRules === "function") {
+    shippingApi().loadShippingRules().catch(error => console.error("Unable to load shipping rules:", error));
+  }
 }
 
 document.addEventListener("DOMContentLoaded", initCheckoutModal);
