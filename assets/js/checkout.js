@@ -2722,6 +2722,26 @@ function getUserCityValue(user) {
   return user?.address?.city || user?.city || "";
 }
 
+// Fields required to complete an account checkout (matches what
+// accountCheckoutBtn actually sends to createCheckoutSession below).
+// Country is intentionally excluded - that is re-selected on this same
+// screen via accountCountryEl, not part of the saved profile check.
+function isAccountProfileComplete(user) {
+  if (!user) return false;
+  const address = user.address || {};
+  const requiredValues = [
+    user.firstName,
+    user.lastName,
+    user.email,
+    user.phone,
+    address.street,
+    address.postalCode,
+    getUserStateValue(user),
+    getUserCityValue(user)
+  ];
+  return requiredValues.every(value => String(value || "").trim().length > 0);
+}
+
 function normalizeLocationValue(value, countries, finder) {
   const raw = String(value || "").trim();
   if (!raw) return null;
@@ -2748,6 +2768,7 @@ function initCheckoutModal() {
   const accountCountryPanel = modal.querySelector('[data-account-country-panel]');
   const accountCountryEl = modal.querySelector('#checkout-account-country');
   const accountContactAdminBtn = modal.querySelector('[data-account-contact-admin]');
+  const accountIncompleteProfileEl = modal.querySelector('[data-account-incomplete-profile]');
   const guestCountryEl = modal.querySelector('#checkout-country');
   const guestStateEl = modal.querySelector('#checkout-state');
   const guestStateListEl = modal.querySelector('[data-state-combobox-list]');
@@ -3235,6 +3256,9 @@ function updateAccountButtonState() {
     }
     updateShipping(accountCountryCode, true);
     updateAccountButtonState();
+    if (accountIncompleteProfileEl) {
+      accountIncompleteProfileEl.hidden = isAccountProfileComplete(user);
+    }
   }
 
   function fillGuestFromUser(user) {
@@ -3395,6 +3419,14 @@ function updateAccountButtonState() {
   if (accountCheckoutBtn) {
     accountCheckoutBtn.addEventListener("click", async function () {
       if (!currentCheckoutUser || accountCheckoutBtn.disabled) return;
+
+      if (!isAccountProfileComplete(currentCheckoutUser)) {
+        if (accountIncompleteProfileEl) {
+          accountIncompleteProfileEl.hidden = false;
+          accountIncompleteProfileEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        return;
+      }
 
       const rule = shippingRule(accountCountryCode);
       if (!rule.supported) return;
